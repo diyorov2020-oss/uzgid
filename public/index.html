@@ -25,8 +25,11 @@
   .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   select,button,.iconbtn{font:inherit;color:var(--txt);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px;cursor:pointer;transition:.15s;max-width:100%}
   select:hover,button:hover,.iconbtn:hover{border-color:var(--accent)} .iconbtn{padding:9px 11px;font-size:15px}
-  .langs{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-  .langs span{padding:8px 10px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer} .langs span.on{background:var(--accent);color:#fff}
+  .langwrap{position:relative}
+  .langmenu{position:absolute;right:0;top:112%;background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);display:none;z-index:80;overflow:hidden;min-width:140px}
+  .langmenu.open{display:block}
+  .langmenu span{display:block;padding:11px 15px;font-size:13px;font-weight:600;cursor:pointer} .langmenu span:hover{background:var(--card2)}
+  .boshhead{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px;box-shadow:var(--shadow)}
   .nav{display:flex;gap:6px;overflow-x:auto;padding:10px 0;scrollbar-width:none} .nav::-webkit-scrollbar{display:none}
   .navi{flex:0 0 auto;display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;padding:9px 16px;border-radius:10px;background:var(--card);border:1px solid var(--line);color:var(--muted);cursor:pointer;white-space:nowrap}
   .navi:hover{border-color:var(--accent)} .navi.on{background:var(--accent);color:#fff;border-color:transparent}
@@ -105,7 +108,7 @@
 <div class="topbar"><div class="wrap"><header>
   <div class="brand"><div class="logo"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z" fill="#fff"/><circle cx="12" cy="9" r="2.6" fill="#1f6fe5"/></svg></div><div><h1>UZGID</h1><p data-i="tagline">O'zbekiston axborot portali</p></div></div>
   <div class="controls">
-    <div class="langs" id="langs"><span data-l="uz">🇺🇿 O'z</span><span data-l="ru">🇷🇺 Ru</span><span data-l="en">🇬🇧 En</span></div>
+    <div class="langwrap"><button class="iconbtn" id="langBtn">🌐 <span id="langCur">O'z</span> ▾</button><div class="langmenu" id="langMenu"><span data-l="uz">🇺🇿 O'zbekcha</span><span data-l="ru">🇷🇺 Русский</span><span data-l="en">🇬🇧 English</span></div></div>
     <button class="iconbtn" id="themeBtn">🌙</button><button class="iconbtn" id="gpsBtn">📍</button>
     <select id="regionSel"></select><select id="citySel"></select>
   </div>
@@ -113,48 +116,41 @@
 <div class="wrap">
   <nav class="nav" id="nav"></nav>
   <section class="panel on" id="p-bosh">
-    <div style="font-size:13px;color:var(--muted);margin:2px 0 14px" id="boshDate">—</div>
+    <div class="boshhead">
+      <div><div id="boshDate" style="font-size:13px;color:var(--muted)">—</div><div id="boshTime" style="font-size:26px;font-weight:800;font-variant-numeric:tabular-nums">--:--</div></div>
+      <div id="boshWx" style="text-align:right;font-size:13px;color:var(--muted);line-height:1.5">—</div>
+    </div>
     <div class="grid">
-      <div class="card w2"><h2><span class="ic">🌤</span> <span data-i="w_weather"></span> <span class="badge" id="wxCity">—</span></h2><div id="wx"><div class="loading pulse"></div></div></div>
-      <div class="card"><h2><span class="ic">💵</span> <span data-i="w_currency"></span> <span class="badge" data-i="official_banks"></span></h2><div id="cur"><div class="loading pulse"></div></div></div>
-      <div class="card"><h2><span class="ic">🕌</span> <span data-i="w_prayer"></span> <span class="badge" id="prCity">—</span></h2><div id="pr"><div class="loading pulse"></div></div></div>
-      <div class="card w2"><h2><span class="ic">📅</span> <span data-i="w_today"></span></h2><div id="today"><div class="loading pulse"></div></div></div>
       <div class="card w2"><h2><span class="ic">📍</span> <span data-i="w_near"></span></h2><div class="cats" id="nearCats"></div><div id="nearList" class="fuel-list"><div class="loading" data-i="near_hint"></div></div></div>
+      <div class="card"><h2><span class="ic">💡</span> <span data-i="w_today"></span></h2><div id="today"><div class="loading pulse"></div></div></div>
     </div>
   </section>
-  <section class="panel" id="p-joylar">
-    <div class="grid"><div class="card full"><h2><span class="ic">🗺</span> <span data-i="w_places"></span> <span class="badge" id="placeCity">—</span></h2>
-      <div class="cats" id="cats"></div><div id="placeMap"></div><div id="placeList" class="fuel-list"><div class="loading" data-i="select_cat"></div></div></div></div>
-  </section>
-  <section class="panel" id="p-turizm">
-    <div class="grid">
-      <div class="card"><h2><span class="ic">🏛</span> <span data-i="w_poi"></span> <span class="badge" id="poiCity">—</span></h2><div id="poi"><div class="loading pulse"></div></div></div>
-      <div class="card"><h2><span class="ic">📊</span> <span data-i="w_city"></span> <span class="badge" id="statCity">—</span></h2><div id="stats"><div class="loading pulse"></div></div></div>
-      <div class="card"><h2><span class="ic">🗣</span> <span data-i="w_phrase"></span></h2><div id="phrase"></div></div>
-      <div class="card"><h2><span class="ic">🎉</span> <span data-i="w_holidays"></span></h2><div id="holidays"></div></div>
-    </div>
-  </section>
-  <section class="panel" id="p-yangiliklar">
-    <div class="grid"><div class="card full"><h2><span class="ic">📰</span> <span data-i="w_news"></span> <span class="badge">gazeta.uz</span></h2><div id="news"><div class="loading pulse"></div></div></div></div>
-  </section>
-  <section class="panel" id="p-koshar">
-    <div class="grid">
+  <section class="panel" id="p-namoz"><div class="grid"><div class="card full"><h2><span class="ic">🕕</span> <span data-i="w_prayer"></span> <span class="badge" id="prCity">—</span></h2><div id="pr"><div class="loading pulse"></div></div></div></div></section>
+  <section class="panel" id="p-valyuta"><div class="grid"><div class="card full"><h2><span class="ic">💵</span> <span data-i="w_currency"></span> <span class="badge" data-i="official_banks"></span></h2><div id="cur"><div class="loading pulse"></div></div></div></div></section>
+  <section class="panel" id="p-joylar"><div class="grid"><div class="card full"><h2><span class="ic">🗺</span> <span data-i="w_places"></span> <span class="badge" id="placeCity">—</span></h2>
+      <div class="cats" id="cats"></div><div id="placeMap"></div><div id="placeList" class="fuel-list"><div class="loading" data-i="select_cat"></div></div></div></div></section>
+  <section class="panel" id="p-transport"><div class="grid"><div class="card full"><h2><span class="ic">🚆</span> <span data-i="w_transport"></span></h2><div class="govgrid" id="trans"></div></div></div></section>
+  <section class="panel" id="p-xizmatlar"><div class="grid">
+      <div class="card"><h2><span class="ic">🏛</span> <span data-i="w_gov"></span></h2><div class="govgrid" id="gov"></div></div>
+      <div class="card"><h2><span class="ic">💳</span> <span data-i="w_pay"></span></h2><div class="govgrid" id="pay"></div></div>
+      <div class="card"><h2><span class="ic">🎓</span> <span data-i="w_edu"></span></h2><div class="govgrid" id="edu"></div></div>
+    </div></section>
+  <section class="panel" id="p-raqamlar"><div class="grid"><div class="card full"><h2><span class="ic">📞</span> <span data-i="w_nums"></span> <span class="badge">24/7</span></h2><div class="govgrid" id="nums"></div></div></div></section>
+  <section class="panel" id="p-media"><div class="grid">
       <div class="card"><h2><span class="ic">🎬</span> <span data-i="w_kino"></span></h2><div class="govgrid" id="kino"></div></div>
       <div class="card"><h2><span class="ic">🎭</span> <span data-i="w_teatr"></span></h2><div class="govgrid" id="teatr"></div></div>
       <div class="card"><h2><span class="ic">🎫</span> <span data-i="w_afisha"></span></h2><div class="govgrid" id="afisha"></div></div>
       <div class="card"><h2><span class="ic">⚽</span> <span data-i="w_sport"></span></h2><div class="govgrid" id="sport"></div></div>
       <div class="card"><h2><span class="ic">📚</span> <span data-i="w_ebook"></span></h2><div class="govgrid" id="ebook"></div></div>
-    </div>
-  </section>
-  <section class="panel" id="p-foydali">
-    <div class="grid">
-      <div class="card full"><h2><span class="ic">📞</span> <span data-i="w_nums"></span> <span class="badge">24/7</span></h2><div class="govgrid" id="nums"></div></div>
-      <div class="card full"><h2><span class="ic">🏛</span> <span data-i="w_gov"></span> <span class="badge">rasmiy</span></h2><div class="govgrid" id="gov"></div></div>
-      <div class="card"><h2><span class="ic">🚆</span> <span data-i="w_transport"></span></h2><div class="govgrid" id="trans"></div></div>
-      <div class="card"><h2><span class="ic">💳</span> <span data-i="w_pay"></span></h2><div class="govgrid" id="pay"></div></div>
-      <div class="card"><h2><span class="ic">🎓</span> <span data-i="w_edu"></span></h2><div class="govgrid" id="edu"></div></div>
-    </div>
-  </section>
+    </div></section>
+  <section class="panel" id="p-turizm"><div class="grid">
+      <div class="card"><h2><span class="ic">🏛</span> <span data-i="w_poi"></span> <span class="badge" id="poiCity">—</span></h2><div id="poi"><div class="loading pulse"></div></div></div>
+      <div class="card"><h2><span class="ic">📊</span> <span data-i="w_city"></span> <span class="badge" id="statCity">—</span></h2><div id="stats"><div class="loading pulse"></div></div></div>
+      <div class="card"><h2><span class="ic">🗣</span> <span data-i="w_phrase"></span></h2><div id="phrase"></div></div>
+      <div class="card"><h2><span class="ic">🎉</span> <span data-i="w_holidays"></span></h2><div id="holidays"></div></div>
+    </div></section>
+  <section class="panel" id="p-yangiliklar"><div class="grid"><div class="card full"><h2><span class="ic">📰</span> <span data-i="w_news"></span> <span class="badge">gazeta.uz</span></h2><div id="news"><div class="loading pulse"></div></div></div></div></section>
+  <section class="panel" id="p-aloqa"><div class="grid"><div class="card full"><h2><span class="ic">💬</span> <span data-i="n_aloqa"></span></h2><div id="contact"></div></div></div></section>
   <footer><b>UZGID</b> · <span data-i="tagline"></span> · <span id="updated">—</span><br><span data-i="sources"></span>: Open-Meteo, CBU, bank.uz, Aladhan, OpenStreetMap, Wikipedia</footer>
 </div>
 <a class="contact-fab" href="https://t.me/shaxzoddiyorov" target="_blank">💬 <span data-i="contact"></span></a>
@@ -163,7 +159,7 @@
 // ============ TARJIMA ============
 const T={
  uz:{test:"⚙️ Sinov rejimi (beta) — ma'lumotlar tekshirilmoqda",tagline:"O'zbekiston axborot portali",contact:"Aloqa",sources:"Manbalar",official_banks:"rasmiy + banklar",select_cat:"Kategoriya tanlang…",loading:"Yuklanmoqda…",
-   n_bosh:"Bosh",n_joylar:"Joylar",n_turizm:"Turizm",n_yangiliklar:"Yangiliklar",n_foydali:"Foydali",w_gov:"Davlat xizmatlari",w_nums:"Foydali raqamlar",w_transport:"Transport",w_pay:"To'lov tizimlari",w_edu:"Ta'lim va ish",n_koshar:"Ko'ngil ochar",w_kino:"Kino",w_teatr:"Teatr",w_afisha:"Afisha / chiptalar",w_sport:"Sport",w_tvradio:"TV va radio",w_ebook:"Kitoblar / e-kutubxona",w_near:"Menga eng yaqin",near_hint:"Kategoriya tanlang — joylashuvingiz bo'yicha topamiz",near_locating:"Joylashuv aniqlanmoqda…",near_nogps:"Joylashuvni aniqlab bo'lmadi. Ruxsat bering.",asof:"holatiga",cur_src:"Kurslar bank.uz'dan (~10 daq). Banklar CBU rasmiy kursi asosida — talab, naqd pul zaxirasi va raqobatga qarab — o'z olish/sotish narxini belgilaydi. Aniq kurs uchun bank bilan tasdiqlang.",
+   n_bosh:"Bosh",n_joylar:"Joylar",n_turizm:"Turizm",n_yangiliklar:"Yangiliklar",n_foydali:"Foydali",n_namoz:"Namoz",n_valyuta:"Valyuta",n_transport:"Transport",n_xizmatlar:"Xizmatlar",n_raqamlar:"Raqamlar",n_media:"Multimedia",n_aloqa:"Aloqa",w_gov:"Davlat xizmatlari",w_nums:"Foydali raqamlar",w_transport:"Transport",w_pay:"To'lov tizimlari",w_edu:"Ta'lim va ish",n_koshar:"Ko'ngil ochar",w_kino:"Kino",w_teatr:"Teatr",w_afisha:"Afisha / chiptalar",w_sport:"Sport",w_tvradio:"TV va radio",w_ebook:"Kitoblar / e-kutubxona",w_near:"Menga eng yaqin",near_hint:"Kategoriya tanlang — joylashuvingiz bo'yicha topamiz",near_locating:"Joylashuv aniqlanmoqda…",near_nogps:"Joylashuvni aniqlab bo'lmadi. Ruxsat bering.",asof:"holatiga",cur_src:"Kurslar bank.uz'dan (~10 daq). Banklar CBU rasmiy kursi asosida — talab, naqd pul zaxirasi va raqobatga qarab — o'z olish/sotish narxini belgilaydi. Aniq kurs uchun bank bilan tasdiqlang.",
    w_weather:"Ob-havo",w_currency:"Valyuta",w_prayer:"Namoz vaqtlari",w_qibla:"Qibla",w_today:"Bugun · qiziq fakt",w_places:"Joylar va xizmatlar",w_poi:"Turistik joylar",w_city:"Shahar haqida",w_phrase:"So'zlashgich",w_holidays:"Bayramlar",w_news:"Yangiliklar",
    humidity:"Namlik",wind:"Shamol",sunrise:"Tong",sunset:"Botish",airq:"Havo sifati",feels:"his",today:"Bugun",
    cbu_note:"Yuqorida — CBU rasmiy kursi",buy:"Olish",sell:"Sotish",bank:"Bank",no_data:"Ma'lumot yo'q",hint_green:"🟢 yashil — eng foydali kurs.",
@@ -174,7 +170,7 @@ const T={
    cats:["Turistik joylar","Tarixiy","Masjidlar","Mehmonxona","Restoran","Kafe","Shaxobcha","Zaryadlash","Bankomat","Bank","Dorixona","Shifoxona","Do'kon","Davlat idorasi"],
    tips:{mask:"Havo ifloslangan — imkon bo'lsa niqob taqing.",rain:"Yomg'ir kutilmoqda — soyabon oling.",snow:"Qor — ehtiyot bo'ling, issiq kiyining.",hot:"Issiq — ko'proq suv iching, oftobdan saqlaning.",cold:"Sovuq — issiq kiyining.",good:"Ob-havo yaxshi — sayr uchun ajoyib kun!"}},
  ru:{test:"⚙️ Тестовый режим (бета) — данные проверяются",tagline:"Информационный портал Узбекистана",contact:"Связь",sources:"Источники",official_banks:"офиц. + банки",select_cat:"Выберите категорию…",loading:"Загрузка…",
-   n_bosh:"Главная",n_joylar:"Места",n_turizm:"Туризм",n_yangiliklar:"Новости",n_foydali:"Полезное",w_gov:"Госуслуги",w_nums:"Полезные номера",w_transport:"Транспорт",w_pay:"Платёжные системы",w_edu:"Образование и работа",n_koshar:"Досуг",w_kino:"Кино",w_teatr:"Театр",w_afisha:"Афиша / билеты",w_sport:"Спорт",w_tvradio:"ТВ и радио",w_ebook:"Книги / э-библиотека",w_near:"Рядом со мной",near_hint:"Выберите категорию — найдём рядом с вами",near_locating:"Определяем местоположение…",near_nogps:"Не удалось определить местоположение. Разрешите доступ.",asof:"на",cur_src:"Курсы с bank.uz (~10 мин). Банки устанавливают цены покупки/продажи на основе курса ЦБ — с учётом спроса, наличных и конкуренции. Уточняйте точный курс в банке.",
+   n_bosh:"Главная",n_joylar:"Места",n_turizm:"Туризм",n_yangiliklar:"Новости",n_foydali:"Полезное",n_namoz:"Намаз",n_valyuta:"Валюта",n_transport:"Транспорт",n_xizmatlar:"Услуги",n_raqamlar:"Номера",n_media:"Медиа",n_aloqa:"Связь",w_gov:"Госуслуги",w_nums:"Полезные номера",w_transport:"Транспорт",w_pay:"Платёжные системы",w_edu:"Образование и работа",n_koshar:"Досуг",w_kino:"Кино",w_teatr:"Театр",w_afisha:"Афиша / билеты",w_sport:"Спорт",w_tvradio:"ТВ и радио",w_ebook:"Книги / э-библиотека",w_near:"Рядом со мной",near_hint:"Выберите категорию — найдём рядом с вами",near_locating:"Определяем местоположение…",near_nogps:"Не удалось определить местоположение. Разрешите доступ.",asof:"на",cur_src:"Курсы с bank.uz (~10 мин). Банки устанавливают цены покупки/продажи на основе курса ЦБ — с учётом спроса, наличных и конкуренции. Уточняйте точный курс в банке.",
    w_weather:"Погода",w_currency:"Валюта",w_prayer:"Время намаза",w_qibla:"Кибла",w_today:"Сегодня · факт",w_places:"Места и услуги",w_poi:"Достопримечательности",w_city:"О городе",w_phrase:"Разговорник",w_holidays:"Праздники",w_news:"Новости",
    humidity:"Влажность",wind:"Ветер",sunrise:"Восход",sunset:"Закат",airq:"Качество воздуха",feels:"ощущ.",today:"Сегодня",
    cbu_note:"Выше — офиц. курс ЦБ",buy:"Покупка",sell:"Продажа",bank:"Банк",no_data:"Нет данных",hint_green:"🟢 зелёный — лучший курс.",
@@ -185,7 +181,7 @@ const T={
    cats:["Достопримечательности","Историч.","Мечети","Отели","Рестораны","Кафе","АЗС","Зарядка","Банкоматы","Банки","Аптеки","Больницы","Магазины","Госучреждения"],
    tips:{mask:"Воздух загрязнён — по возможности наденьте маску.",rain:"Ожидается дождь — возьмите зонт.",snow:"Снег — будьте осторожны, оденьтесь теплее.",hot:"Жарко — пейте больше воды, избегайте солнца.",cold:"Холодно — оденьтесь теплее.",good:"Погода хорошая — отличный день для прогулки!"}},
  en:{test:"⚙️ Beta — data under testing",tagline:"Uzbekistan information portal",contact:"Contact",sources:"Sources",official_banks:"official + banks",select_cat:"Choose a category…",loading:"Loading…",
-   n_bosh:"Home",n_joylar:"Places",n_turizm:"Tourism",n_yangiliklar:"News",n_foydali:"Useful",w_gov:"Government services",w_nums:"Useful numbers",w_transport:"Transport",w_pay:"Payment systems",w_edu:"Education & jobs",n_koshar:"Leisure",w_kino:"Cinema",w_teatr:"Theatre",w_afisha:"Events / tickets",w_sport:"Sport",w_tvradio:"TV & radio",w_ebook:"Books / e-library",w_near:"Near me",near_hint:"Pick a category — we'll find the nearest",near_locating:"Locating…",near_nogps:"Couldn't get location. Please allow access.",asof:"as of",cur_src:"Rates from bank.uz (~10 min). Banks set buy/sell prices based on the official CBU rate — adjusting for demand, cash reserves and competition. Confirm the exact rate with the bank.",
+   n_bosh:"Home",n_joylar:"Places",n_turizm:"Tourism",n_yangiliklar:"News",n_foydali:"Useful",n_namoz:"Prayer",n_valyuta:"Currency",n_transport:"Transport",n_xizmatlar:"Services",n_raqamlar:"Numbers",n_media:"Media",n_aloqa:"Contact",w_gov:"Government services",w_nums:"Useful numbers",w_transport:"Transport",w_pay:"Payment systems",w_edu:"Education & jobs",n_koshar:"Leisure",w_kino:"Cinema",w_teatr:"Theatre",w_afisha:"Events / tickets",w_sport:"Sport",w_tvradio:"TV & radio",w_ebook:"Books / e-library",w_near:"Near me",near_hint:"Pick a category — we'll find the nearest",near_locating:"Locating…",near_nogps:"Couldn't get location. Please allow access.",asof:"as of",cur_src:"Rates from bank.uz (~10 min). Banks set buy/sell prices based on the official CBU rate — adjusting for demand, cash reserves and competition. Confirm the exact rate with the bank.",
    w_weather:"Weather",w_currency:"Currency",w_prayer:"Prayer times",w_qibla:"Qibla",w_today:"Today · fun fact",w_places:"Places & services",w_poi:"Tourist sites",w_city:"About the city",w_phrase:"Phrasebook",w_holidays:"Holidays",w_news:"News",
    humidity:"Humidity",wind:"Wind",sunrise:"Sunrise",sunset:"Sunset",airq:"Air quality",feels:"feels",today:"Today",
    cbu_note:"Above — official CBU rate",buy:"Buy",sell:"Sell",bank:"Bank",no_data:"No data",hint_green:"🟢 green — best rate.",
@@ -201,7 +197,7 @@ function t(k){ return (T[lang]&&T[lang][k])!=null?T[lang][k]:T.uz[k]; }
 function locale(){ return lang==="ru"?"ru-RU":lang==="en"?"en-GB":"uz"; }
 function applyStatic(){ document.querySelectorAll("[data-i]").forEach(el=>{ const v=t(el.dataset.i); if(v!=null) el.textContent=v; });
   document.documentElement.setAttribute("lang",lang);
-  document.querySelectorAll("#langs span").forEach(s=>s.classList.toggle("on",s.dataset.l===lang)); }
+  const lc={uz:"O'z",ru:"Ru",en:"En"}; if($("langCur")) $("langCur").textContent=lc[lang]||"O'z"; }
 
 // ============ MA'LUMOTLAR ============
 const REGIONS=[{name:"Toshkent shahri",cities:[["Toshkent",41.311,69.279]]},{name:"Toshkent viloyati",cities:[["Nurafshon",41.037,69.343],["Angren",41.017,70.144],["Olmaliq",40.844,69.598],["Chirchiq",41.469,69.582],["Bekobod",40.221,69.269],["Ohangaron",40.909,69.639],["Yangiyo'l",41.113,69.048],["Parkent",41.294,69.676]]},{name:"Sirdaryo",cities:[["Guliston",40.489,68.791],["Yangiyer",40.269,68.821],["Shirin",40.232,68.990],["Sirdaryo",40.842,68.660]]},{name:"Jizzax",cities:[["Jizzax",40.116,67.842],["Zomin",39.960,68.398],["Do'stlik",40.478,67.997],["Paxtakor",40.313,67.957]]},{name:"Samarqand",cities:[["Samarqand",39.654,66.976],["Kattaqo'rg'on",39.899,66.256],["Urgut",39.402,67.242],["Bulung'ur",39.771,67.276],["Oqtosh",39.910,66.148]]},{name:"Buxoro",cities:[["Buxoro",39.767,64.421],["Kogon",39.722,64.552],["G'ijduvon",40.101,64.680],["Vobkent",40.023,64.514],["Qorako'l",39.499,63.844]]},{name:"Navoiy",cities:[["Navoiy",40.084,65.379],["Zarafshon",41.573,64.204],["Uchquduq",42.156,63.556],["Nurota",40.564,65.688],["Karmana",40.140,65.362]]},{name:"Qashqadaryo",cities:[["Qarshi",38.860,65.789],["Shahrisabz",39.057,66.834],["Kitob",39.115,66.881],["G'uzor",38.621,66.247],["Koson",39.041,65.590],["Muborak",39.253,65.153]]},{name:"Surxondaryo",cities:[["Termiz",37.224,67.278],["Denov",38.276,67.892],["Sho'rchi",37.986,67.789],["Boysun",38.207,67.199],["Sherobod",37.674,67.006]]},{name:"Xorazm",cities:[["Urganch",41.550,60.631],["Xiva",41.378,60.363],["Hazorasp",41.320,61.074],["Gurlan",41.848,60.386],["Pitnak",41.180,61.379]]},{name:"Andijon",cities:[["Andijon",40.783,72.344],["Asaka",40.639,72.235],["Xonobod",40.809,72.973],["Shahrixon",40.712,72.058],["Marhamat",40.472,72.315]]},{name:"Namangan",cities:[["Namangan",40.998,71.672],["Chust",41.000,71.239],["Pop",40.873,71.109],["Uchqo'rg'on",41.113,72.070],["Chortoq",41.070,71.821],["Kosonsoy",41.244,71.549]]},{name:"Farg'ona",cities:[["Farg'ona",40.386,71.787],["Marg'ilon",40.471,71.716],["Qo'qon",40.529,70.942],["Quva",40.520,72.070],["Rishton",40.354,71.283],["Quvasoy",40.286,71.976]]},{name:"Qoraqalpog'iston",cities:[["Nukus",42.461,59.617],["Xo'jayli",42.404,59.451],["Beruniy",41.692,60.752],["To'rtko'l",41.550,61.001],["Chimboy",42.936,59.774],["Mo'ynoq",43.766,59.021],["Qo'ng'irot",43.077,58.898]]}];
@@ -215,7 +211,7 @@ const WXD={uz:{0:"Ochiq",1:"Asosan ochiq",2:"Bulutli oralab",3:"Bulutli",45:"Tum
 function wxDesc(c){ return (WXD[lang]&&WXD[lang][c])||WXD.uz[c]||"—"; }
 const CATSEL=[['nwr["tourism"~"attraction|museum|viewpoint|artwork|theme_park|zoo|gallery"]'],['nwr["historic"]'],['nwr["amenity"="place_of_worship"]["religion"="muslim"]'],['nwr["tourism"~"hotel|guest_house|hostel|motel"]'],['nwr["amenity"="restaurant"]'],['nwr["amenity"="cafe"]'],['nwr["amenity"="fuel"]'],['nwr["amenity"="charging_station"]'],['nwr["amenity"="atm"]'],['nwr["amenity"="bank"]'],['nwr["amenity"="pharmacy"]'],['nwr["amenity"~"hospital|clinic|doctors"]'],['nwr["shop"="supermarket"]','nwr["amenity"="marketplace"]'],['nwr["office"="government"]','nwr["amenity"="townhall"]']];
 const CATICO=["🏛","🏰","🕌","🏨","🍽","☕","⛽","🔌","🏧","🏦","💊","🏥","🛒","🏛"];
-const NAVID=["bosh","joylar","turizm","koshar","yangiliklar","foydali"]; const NAVIC=["🏠","🗺","🧭","🎭","📰","🏛"];
+const NAVID=["bosh","namoz","valyuta","joylar","transport","xizmatlar","raqamlar","media","turizm","yangiliklar","aloqa"]; const NAVIC=["🏠","🕕","💵","🗺","🚆","🏛","📞","🎬","🧭","📰","💬"];
 const GOV=[["🏛","My Gov UZ","https://my.gov.uz",{uz:"Davlat xizmatlari",ru:"Госуслуги",en:"Government services"}],["💰","Soliq.uz","https://soliq.uz",{uz:"Soliq qo'mitasi",ru:"Налоговый комитет",en:"Tax committee"}],["🏦","Markaziy bank","https://cbu.uz",{uz:"Valyuta kurslari",ru:"Курсы валют",en:"Exchange rates"}],["✍️","E-Imzo","https://e-imzo.uz",{uz:"Elektron imzo",ru:"Электронная подпись",en:"Digital signature"}],["🆔","OneID","https://id.egov.uz",{uz:"Yagona identifikatsiya",ru:"Единый вход",en:"Single sign-on"}],["📄","Kadastr","https://kadastr.uz",{uz:"Ko'chmas mulk",ru:"Недвижимость",en:"Real estate"}],["🛂","Bojxona","https://customs.uz",{uz:"Bojxona qo'mitasi",ru:"Таможенный комитет",en:"Customs committee"}],["👷","Mehnat","https://mehnat.uz",{uz:"Bandlik va mehnat",ru:"Труд и занятость",en:"Labor & employment"}],["🏥","Sog'liqni saqlash","https://ssv.uz",{uz:"Sog'liqni saqlash vazirligi",ru:"Минздрав",en:"Ministry of Health"}],["📊","Open Data","https://data.egov.uz",{uz:"Ochiq ma'lumotlar",ru:"Открытые данные",en:"Open data"}],["🏙","gov.uz","https://gov.uz",{uz:"Hukumat portali",ru:"Портал правительства",en:"Government portal"}]];
 
 const $=id=>document.getElementById(id);
@@ -227,15 +223,29 @@ function applyTheme(x){ if(x==="dark") document.documentElement.setAttribute("da
 applyTheme(localStorage.getItem("uzgid_theme")||"light");
 $("themeBtn").onclick=()=>{ const c=document.documentElement.getAttribute("data-theme")==="dark"?"dark":"light"; const n=c==="dark"?"light":"dark"; localStorage.setItem("uzgid_theme",n); applyTheme(n); };
 // LANG
-$("langs").querySelectorAll("span").forEach(s=>s.onclick=()=>{ lang=s.dataset.l; localStorage.setItem("uzgid_lang",lang); applyStatic(); buildNav(); loaded={}; loadTab(activeTab); });
+$("langBtn").onclick=(e)=>{ e.stopPropagation(); $("langMenu").classList.toggle("open"); };
+document.addEventListener("click",(e)=>{ if(!e.target.closest(".langwrap")) $("langMenu").classList.remove("open"); });
+$("langMenu").querySelectorAll("span").forEach(s=>s.onclick=()=>{ lang=s.dataset.l; localStorage.setItem("uzgid_lang",lang); $("langMenu").classList.remove("open"); applyStatic(); buildNav(); loaded={}; loadTab(activeTab); });
 
 // NAV
 function buildNav(){ $("nav").innerHTML=NAVID.map((id,i)=>`<div class="navi ${id===activeTab?'on':''}" data-t="${id}">${NAVIC[i]} ${t("n_"+id)}</div>`).join("");
   document.querySelectorAll(".navi").forEach(x=>x.onclick=()=>openTab(x.dataset.t)); }
 function openTab(id){ activeTab=id; document.querySelectorAll(".navi").forEach(x=>x.classList.toggle("on",x.dataset.t===id)); document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+id)); loadTab(id); window.scrollTo({top:0,behavior:"smooth"}); }
 function loadTab(id){ if(loaded[id]) return; loaded[id]=true;
-  if(id==="bosh"){ loadWeather(); loadCurrency(); loadPrayer(); loadToday(); renderNear(); }
-  else if(id==="joylar"){ buildCats(); loadPlaces(); } else if(id==="turizm"){ loadPOI(); loadStats(); renderPhrasebook(); renderHolidays(); } else if(id==="yangiliklar") loadNews(); else if(id==="koshar"){ renderLinks("kino",KINO); renderLinks("teatr",TEATR); renderLinks("afisha",AFISHA); renderLinks("sport",SPORT); renderLinks("ebook",EBOOK); } else if(id==="foydali"){ renderNums(); renderLinks("gov",GOV); renderLinks("trans",TRANS); renderLinks("pay",PAY); renderLinks("edu",EDU); } }
+  if(id==="bosh"){ loadBoshWx(); loadToday(); renderNear(); }
+  else if(id==="namoz") loadPrayer();
+  else if(id==="valyuta") loadCurrency();
+  else if(id==="joylar"){ buildCats(); loadPlaces(); }
+  else if(id==="transport") renderLinks("trans",TRANS);
+  else if(id==="xizmatlar"){ renderLinks("gov",GOV); renderLinks("pay",PAY); renderLinks("edu",EDU); }
+  else if(id==="raqamlar") renderNums();
+  else if(id==="media"){ renderLinks("kino",KINO); renderLinks("teatr",TEATR); renderLinks("afisha",AFISHA); renderLinks("sport",SPORT); renderLinks("ebook",EBOOK); }
+  else if(id==="turizm"){ loadPOI(); loadStats(); renderPhrasebook(); renderHolidays(); }
+  else if(id==="yangiliklar") loadNews();
+  else if(id==="aloqa") renderContact(); }
+function boshClock(){ const el=$("boshTime"); if(el) el.textContent=new Intl.DateTimeFormat(locale(),{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZone:"Asia/Tashkent",hour12:false}).format(new Date()); }
+function loadBoshWx(){ boshClock(); (async()=>{ try{ const d=await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${CITY.lat}&longitude=${CITY.lon}&current=temperature_2m,weather_code&timezone=Asia%2FTashkent`)).json(); const c=d.current; const em=(WX[c.weather_code]||["🌡"])[0]; $("boshWx").innerHTML=`<span style="font-size:30px">${em}</span> <b style="font-size:22px;color:var(--txt)">${Math.round(c.temperature_2m)}°</b><br><span>${wxDesc(c.weather_code)} · ${CITY.name}</span>`; }catch(e){} })(); }
+function renderContact(){ const ai={uz:"tez orada — 3 tilda savol-javob",ru:"скоро — вопрос-ответ на 3 языках",en:"coming soon — Q&A in 3 languages"}; $("contact").innerHTML=`<p style="font-size:14px;margin-bottom:6px">💬 Telegram: <a href="https://t.me/shaxzoddiyorov" target="_blank" style="color:var(--accent);font-weight:700">@shaxzoddiyorov</a></p><div class="fact" style="margin-top:12px">🤖 <b>AI yordamchi</b> — ${ai[lang]||ai.uz}</div>`; }
 const NUMS=[["112",{uz:"Yagona favqulodda xizmat",ru:"Единая экстренная служба",en:"Single emergency service"}],["101",{uz:"Yong'in xavfsizligi",ru:"Пожарная служба",en:"Fire service"}],["102",{uz:"Ichki ishlar (militsiya)",ru:"Полиция",en:"Police"}],["103",{uz:"Tez tibbiy yordam",ru:"Скорая помощь",en:"Ambulance"}],["104",{uz:"Gaz avariya xizmati",ru:"Аварийная газовая служба",en:"Gas emergency"}],["1050",{uz:"FVV — qutqaruv xizmati",ru:"МЧС — спасатели",en:"Emergency rescue"}],["1000",{uz:"Prezident Xalq qabulxonasi",ru:"Народная приёмная Президента",en:"President's public reception"}]];
 function renderNums(){ $("nums").innerHTML=NUMS.map(([n,d])=>`<a class="govlink" href="tel:${n}"><span class="gi" style="font-weight:900;color:var(--accent);font-size:15px">${n}</span><span><div class="gn">${d[lang]||d.uz}</div></span></a>`).join(""); }
 const TRANS=[["🚆","Temir yo'l","https://railway.uz",{uz:"Poyezd chiptalari",ru:"Ж/д билеты",en:"Train tickets"}],["✈️","Uzbekistan Airways","https://uzairways.com",{uz:"Aviachiptalar",ru:"Авиабилеты",en:"Flights"}],["✈️","Silk Avia","https://silkavia.uz",{uz:"Ichki reyslar",ru:"Внутренние рейсы",en:"Domestic flights"}],["✈️","Qanot Sharq","https://qanotsharq.com",{uz:"Aviakompaniya",ru:"Авиакомпания",en:"Airline"}],["✈️","Centrum Air","https://centrum-air.com",{uz:"Aviakompaniya",ru:"Авиакомпания",en:"Airline"}],["🚌","Avtovokzal","https://avtovokzal.uz",{uz:"Avtobus / bekatlar",ru:"Автобусы / вокзалы",en:"Buses / stations"}],["🚕","MyTaxi","https://mytaxi.uz",{uz:"Taksi chaqirish",ru:"Вызов такси",en:"Taxi"}],["🛬","Aeroportlar","https://uzairports.com",{uz:"Reyslar jadvali",ru:"Расписание рейсов",en:"Flight schedule"}]];
@@ -370,7 +380,7 @@ function onCityChange(){ loaded={}; loadTab(activeTab); $("updated").textContent
 
 applyStatic(); buildSelectors(); buildNav(); loadTab("bosh");
 $("updated").textContent=t("updated")+": "+new Date().toLocaleTimeString(locale(),{timeZone:"Asia/Tashkent"});
-setInterval(()=>{ if(activeTab==="bosh") updateNextPrayer(); }, 30000);
+setInterval(()=>{ if(activeTab==="bosh") boshClock(); if(activeTab==="namoz") updateNextPrayer(); }, 1000);
 </script>
 </body>
 </html>
