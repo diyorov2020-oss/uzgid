@@ -1,0 +1,9 @@
+{
+  "name": "uzgid",
+  "version": "0.1.0",
+  "description": "O'zGid — real-time Uzbekistan info site",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": { "start": "node server.js" },
+  "dependencies": { "cheerio": "^1.0.0" }
+}

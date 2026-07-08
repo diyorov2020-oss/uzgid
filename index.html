@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>O'zGid — Real-time Uzbekistan</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root{
+    --bg:#0f1220; --bg2:#171a2e; --card:#1c2038; --card2:#232848;
+    --txt:#eef1ff; --muted:#9aa3c7; --line:#2b3157;
+    --accent:#5b8cff; --accent2:#7c5cff; --good:#37d39b; --warn:#ffcf5c; --bad:#ff6b7d;
+    --radius:18px; --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#eef1fb; --bg2:#e6ebf9; --card:#ffffff; --card2:#f4f6ff;
+      --txt:#161a2e; --muted:#5c6690; --line:#e2e6f5; --shadow:0 10px 28px rgba(40,60,120,.12);}
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,system-ui,sans-serif;
+    background:radial-gradient(1200px 600px at 80% -10%,var(--bg2),var(--bg)) fixed;
+    color:var(--txt); min-height:100vh; padding:20px; line-height:1.4;
+  }
+  .wrap{max-width:1100px;margin:0 auto}
+  header{
+    display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;
+    margin-bottom:22px;
+  }
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{
+    width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:24px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:var(--shadow);
+  }
+  .brand h1{font-size:20px;font-weight:800;letter-spacing:.2px}
+  .brand p{font-size:12px;color:var(--muted)}
+  .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  select,button{
+    font:inherit;color:var(--txt);background:var(--card);border:1px solid var(--line);
+    border-radius:12px;padding:10px 14px;cursor:pointer;transition:.15s;
+  }
+  select:hover,button:hover{border-color:var(--accent)}
+  .clock{font-variant-numeric:tabular-nums;font-weight:700;font-size:15px;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .card h2{font-size:14px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);
+    margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .soon{opacity:.6}
+  .badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;
+    background:var(--card2);border:1px solid var(--line);color:var(--muted);margin-left:auto}
+  /* Weather */
+  .wx-top{display:flex;align-items:center;gap:16px}
+  .wx-emoji{font-size:58px;line-height:1}
+  .wx-temp{font-size:46px;font-weight:800}
+  .wx-desc{color:var(--muted);font-size:14px}
+  .wx-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+  .wx-meta div{background:var(--card2);border-radius:12px;padding:10px 12px;font-size:13px}
+  .wx-meta b{display:block;font-size:16px;margin-top:2px}
+  /* Currency */
+  .cur-row{display:flex;align-items:center;justify-content:space-between;
+    padding:12px 0;border-bottom:1px solid var(--line)}
+  .cur-row:last-child{border-bottom:none}
+  .cur-left{display:flex;align-items:center;gap:10px;font-weight:600}
+  .flag{font-size:22px}
+  .cur-val{font-weight:800;font-variant-numeric:tabular-nums}
+  .cur-sub{font-size:11px;color:var(--muted)}
+  /* Prayer */
+  .next-prayer{background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#fff;border-radius:14px;padding:14px 16px;margin-bottom:14px}
+  .next-prayer .lbl{font-size:12px;opacity:.85}
+  .next-prayer .nm{font-size:22px;font-weight:800}
+  .next-prayer .cd{font-variant-numeric:tabular-nums;font-weight:700}
+  .pr-row{display:flex;justify-content:space-between;padding:9px 0;font-size:14px;
+    border-bottom:1px solid var(--line)}
+  .pr-row:last-child{border-bottom:none}
+  .pr-row.active{color:var(--accent);font-weight:800}
+  .pr-row .t{font-variant-numeric:tabular-nums;font-weight:600}
+  /* Tourism */
+  .poi{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
+  .poi:last-child{border-bottom:none}
+  .poi .ico{font-size:22px}
+  .poi .nm{font-weight:700;font-size:14px}
+  .poi .ds{font-size:12px;color:var(--muted)}
+  .poi a{margin-left:auto;font-size:12px;color:var(--accent);text-decoration:none;white-space:nowrap}
+  /* soon list */
+  .soon-list{font-size:13px;color:var(--muted)}
+  .soon-list li{margin:8px 0;list-style:none;display:flex;gap:8px;align-items:center}
+  /* Fuel map */
+  .full{grid-column:1/-1}
+  #fuelMap{height:360px;border-radius:14px;margin-bottom:14px;border:1px solid var(--line);z-index:0}
+  .fuel-list{max-height:260px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+  .fuel-item{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+  .fuel-item .fn{font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px}
+  .fuel-item .ft{margin-top:6px;display:flex;flex-wrap:wrap;gap:5px}
+  .chip{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--card);border:1px solid var(--line);color:var(--muted)}
+  .fuel-item a{font-size:12px;color:var(--accent);text-decoration:none;display:inline-block;margin-top:7px}
+  .loading{color:var(--muted);font-size:13px}
+  .err{color:var(--bad);font-size:13px}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
+  .pulse{animation:pulse 1.2s infinite}
+  @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">🧭</div>
+      <div>
+        <h1>O'zGid</h1>
+        <p>Real-time Uzbekistan — shahar va turizm paneli</p>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="clock" id="clock">--:--:--</div>
+      <select id="citySel" aria-label="Shahar"></select>
+      <button id="refreshBtn" title="Yangilash">↻ Yangilash</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- WEATHER -->
+    <div class="card">
+      <h2>🌤 Ob-havo <span class="badge" id="wxCity">—</span></h2>
+      <div id="wx"><div class="loading pulse">Yuklanmoqda…</div></div>
+    </div>
+
+    <!-- CURRENCY -->
+    <div class="card">
+      <h2>💵 Valyuta kursi <span class="badge">UZS</span></h2>
+      <div id="cur"><div class="loading pulse">Yuklanmoqda…</div></div>
+    </div>
+
+    <!-- PRAYER -->
+    <div class="card">
+      <h2>🕌 Namoz vaqtlari</h2>
+      <div id="pr"><div class="loading pulse">Yuklanmoqda…</div></div>
+    </div>
+
+    <!-- TOURISM -->
+    <div class="card">
+      <h2>🏛 Turistik joylar <span class="badge" id="poiCity">—</span></h2>
+      <div id="poi"><div class="loading">—</div></div>
+    </div>
+
+    <!-- FUEL MAP -->
+    <div class="card full">
+      <h2>⛽ Yoqilg'i shaxobchalari <span class="badge" id="fuelCity">—</span></h2>
+      <div id="fuelMap"></div>
+      <div id="fuelList" class="fuel-list"><div class="loading pulse">Shaxobchalar yuklanmoqda…</div></div>
+    </div>
+
+    <!-- EV (soon) -->
+    <div class="card soon">
+      <h2>🔌 Zaryadlash stansiyalari <span class="badge">tez orada</span></h2>
+      <ul class="soon-list">
+        <li>📍 EV stansiyalar xaritasi</li>
+        <li>⚡ Quvvat va konnektor turi</li>
+        <li>🟢 Bo'sh / band holati</li>
+      </ul>
+    </div>
+
+    <!-- TRAFFIC (soon) -->
+    <div class="card soon">
+      <h2>🚦 Tirbandlik <span class="badge">tez orada</span></h2>
+      <ul class="soon-list">
+        <li>🗺 Shaharlar kesimida yo'l holati</li>
+        <li>⏱ Yo'lda o'rtacha vaqt</li>
+        <li>🚧 To'siqlar va ta'mir ishlari</li>
+      </ul>
+    </div>
+
+    <!-- FLIGHTS (soon) -->
+    <div class="card soon">
+      <h2>✈️ Aeroport reyslari <span class="badge">tez orada</span></h2>
+      <ul class="soon-list">
+        <li>🛫 Uchish jadvali (TAS, SKD, BHK…)</li>
+        <li>🛬 Qo'nish jadvali</li>
+        <li>⏰ Kechikishlar va gate</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    O'zGid • Ma'lumotlar: Open-Meteo, ER-API, Aladhan • <span id="updated">—</span>
+  </footer>
+</div>
+
+<script>
+// ====== SHAHARLAR ======
+const CITIES = [
+  {id:"tashkent", name:"Toshkent", lat:41.311, lon:69.279, aladhan:"Tashkent",
+    poi:[["🕌","Xast Imom majmuasi","Eng qadimiy Qur'on saqlanadigan joy"],
+         ["🏛","Amir Temur xiyoboni","Shahar markazi, muzey"],
+         ["🛍","Chorsu bozori","An'anaviy gumbazli bozor"]]},
+  {id:"samarkand", name:"Samarqand", lat:39.654, lon:66.976, aladhan:"Samarkand",
+    poi:[["🕌","Registon maydoni","3 ta madrasa — jahon mo'jizasi"],
+         ["🏛","Go'ri Amir maqbarasi","Amir Temur maqbarasi"],
+         ["🕌","Bibi-Xonim masjidi","Ulkan tarixiy masjid"],
+         ["⭐","Shohi Zinda","Maqbaralar ko'chasi"]]},
+  {id:"bukhara", name:"Buxoro", lat:39.767, lon:64.421, aladhan:"Bukhara",
+    poi:[["🕌","Poi Kalon majmuasi","Minora, masjid, madrasa"],
+         ["🏰","Ark qal'asi","Qadimiy amir qarorgohi"],
+         ["🕌","Chor Minor","4 minorali noyob bino"],
+         ["💧","Lyabi Hovuz","Tarixiy hovuz atrofi"]]},
+  {id:"khiva", name:"Xiva", lat:41.378, lon:60.363, aladhan:"Khiva",
+    poi:[["🏰","Ichan Qal'a","Ochiq osmon ostidagi muzey-shahar"],
+         ["🕌","Kalta Minor","Ko'k rangli tugallanmagan minora"],
+         ["🏛","Tosh-Hovli saroyi","Xon saroyi"]]},
+  {id:"shahrisabz", name:"Shahrisabz", lat:39.057, lon:66.834, aladhan:"Shahrisabz",
+    poi:[["🏛","Oqsaroy","Amir Temur saroyi qoldiqlari"],
+         ["🕌","Ko'k Gumbaz masjidi","Tarixiy masjid"]]},
+  {id:"andijan", name:"Andijon", lat:40.783, lon:72.344, aladhan:"Andijan", poi:[]},
+  {id:"namangan", name:"Namangan", lat:40.998, lon:71.672, aladhan:"Namangan", poi:[]},
+  {id:"fergana", name:"Farg'ona", lat:40.386, lon:71.787, aladhan:"Fergana", poi:[]},
+  {id:"nukus", name:"Nukus", lat:42.461, lon:59.617, aladhan:"Nukus",
+    poi:[["🖼","Savitskiy muzeyi","Jahon miqyosidagi rassomlik to'plami"]]},
+  {id:"qarshi", name:"Qarshi", lat:38.860, lon:65.789, aladhan:"Karshi", poi:[]},
+  {id:"termez", name:"Termiz", lat:37.224, lon:67.278, aladhan:"Termez",
+    poi:[["🛕","Buddaviylik yodgorliklari","Qadimiy Baqtriya izlari"]]},
+  {id:"navoi", name:"Navoiy", lat:40.104, lon:65.373, aladhan:"Navoi", poi:[]},
+  {id:"jizzakh", name:"Jizzax", lat:40.116, lon:67.842, aladhan:"Jizzakh", poi:[]},
+  {id:"urgench", name:"Urganch", lat:41.550, lon:60.631, aladhan:"Urgench", poi:[]},
+];
+
+// ====== OB-HAVO KODLARI ======
+const WX = {
+  0:["☀️","Ochiq havo"],1:["🌤","Asosan ochiq"],2:["⛅","Bulutli oralab"],3:["☁️","Bulutli"],
+  45:["🌫","Tuman"],48:["🌫","Qirovli tuman"],
+  51:["🌦","Mayda yomg'ir"],53:["🌦","Yomg'ir"],55:["🌧","Kuchli yomg'ir"],
+  61:["🌧","Yomg'ir"],63:["🌧","Yomg'ir"],65:["🌧","Kuchli yomg'ir"],
+  66:["🌧","Muzli yomg'ir"],67:["🌧","Muzli yomg'ir"],
+  71:["🌨","Qor"],73:["🌨","Qor"],75:["❄️","Kuchli qor"],77:["❄️","Qor donalari"],
+  80:["🌦","Jala"],81:["🌧","Jala"],82:["⛈","Kuchli jala"],
+  85:["🌨","Qor jalasi"],86:["❄️","Qor jalasi"],
+  95:["⛈","Momaqaldiroq"],96:["⛈","Do'l bilan"],99:["⛈","Kuchli do'l"]
+};
+
+const $ = id => document.getElementById(id);
+let CITY = CITIES.find(c=>c.id===(localStorage.getItem("ozgid_city")||"tashkent")) || CITIES[0];
+let prayerTimings = null;
+
+// ====== SOAT ======
+function tick(){
+  const now = new Date();
+  const t = new Intl.DateTimeFormat("uz",{hour:"2-digit",minute:"2-digit",second:"2-digit",
+    timeZone:"Asia/Tashkent",hour12:false}).format(now);
+  $("clock").textContent = "🕐 " + t;
+  if(prayerTimings) updateNextPrayer();
+}
+setInterval(tick,1000);
+
+// ====== OB-HAVO ======
+async function loadWeather(){
+  $("wxCity").textContent = CITY.name;
+  const box = $("wx"); box.innerHTML = '<div class="loading pulse">Yuklanmoqda…</div>';
+  try{
+    const u = `https://api.open-meteo.com/v1/forecast?latitude=${CITY.lat}&longitude=${CITY.lon}`
+      +`&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code`
+      +`&daily=temperature_2m_max,temperature_2m_min&timezone=Asia%2FTashkent`;
+    const r = await fetch(u); const d = await r.json();
+    const c = d.current; const [emoji,desc] = WX[c.weather_code]||["🌡","—"];
+    box.innerHTML = `
+      <div class="wx-top">
+        <div class="wx-emoji">${emoji}</div>
+        <div>
+          <div class="wx-temp">${Math.round(c.temperature_2m)}°</div>
+          <div class="wx-desc">${desc} • his ${Math.round(c.apparent_temperature)}°</div>
+        </div>
+      </div>
+      <div class="wx-meta">
+        <div>Namlik<b>${c.relative_humidity_2m}%</b></div>
+        <div>Shamol<b>${Math.round(c.wind_speed_10m)} km/s</b></div>
+        <div>Bugun max<b>${Math.round(d.daily.temperature_2m_max[0])}°</b></div>
+        <div>Bugun min<b>${Math.round(d.daily.temperature_2m_min[0])}°</b></div>
+      </div>`;
+  }catch(e){ box.innerHTML = '<div class="err">Ob-havo yuklanmadi. Internetni tekshiring.</div>'; }
+}
+
+// ====== VALYUTA ======
+async function loadCurrency(){
+  const box = $("cur"); box.innerHTML = '<div class="loading pulse">Yuklanmoqda…</div>';
+  try{
+    const r = await fetch("https://open.er-api.com/v6/latest/USD"); const d = await r.json();
+    const uzs = d.rates.UZS;
+    const rows = [
+      ["🇺🇸","USD","1 dollar", uzs],
+      ["🇪🇺","EUR","1 yevro", uzs/d.rates.EUR],
+      ["🇷🇺","RUB","1 rubl", uzs/d.rates.RUB],
+      ["🇰🇿","KZT","1 tenge", uzs/d.rates.KZT],
+    ];
+    box.innerHTML = rows.map(([f,code,sub,val])=>`
+      <div class="cur-row">
+        <div class="cur-left"><span class="flag">${f}</span>
+          <span>${code}<div class="cur-sub">${sub}</div></span></div>
+        <div class="cur-val">${Math.round(val).toLocaleString("ru-RU")} <span class="cur-sub">so'm</span></div>
+      </div>`).join("");
+  }catch(e){ box.innerHTML = '<div class="err">Kurs yuklanmadi.</div>'; }
+}
+
+// ====== NAMOZ ======
+async function loadPrayer(){
+  const box = $("pr"); box.innerHTML = '<div class="loading pulse">Yuklanmoqda…</div>';
+  try{
+    // Toshkent vaqti bo'yicha bugungi sana (DD-MM-YYYY)
+    const p = new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Tashkent",
+      day:"2-digit",month:"2-digit",year:"numeric"}).formatToParts(new Date());
+    const g = t=>p.find(x=>x.type===t).value;
+    const date = `${g("day")}-${g("month")}-${g("year")}`;
+    const u = `https://api.aladhan.com/v1/timings/${date}?latitude=${CITY.lat}&longitude=${CITY.lon}&method=2`;
+    const r = await fetch(u); const d = await r.json();
+    const t = d.data.timings;
+    prayerTimings = {
+      Bomdod:t.Fajr, Quyosh:t.Sunrise, Peshin:t.Dhuhr, Asr:t.Asr, Shom:t.Maghrib, Xufton:t.Isha
+    };
+    renderPrayer();
+  }catch(e){ box.innerHTML = '<div class="err">Namoz vaqtlari yuklanmadi.</div>'; prayerTimings=null; }
+}
+function renderPrayer(){
+  const box = $("pr");
+  const rows = Object.entries(prayerTimings).map(([k,v])=>
+    `<div class="pr-row" data-nm="${k}"><span>${k}</span><span class="t">${v}</span></div>`).join("");
+  box.innerHTML = `<div class="next-prayer" id="nextPrayer"></div>${rows}`;
+  updateNextPrayer();
+}
+function updateNextPrayer(){
+  if(!prayerTimings) return;
+  const np = $("nextPrayer"); if(!np) return;
+  const now = new Date();
+  const nowMin = now.getHours()*60 + now.getMinutes();
+  const order = ["Bomdod","Quyosh","Peshin","Asr","Shom","Xufton"];
+  let next=null, nextMin=Infinity;
+  for(const k of order){
+    const [h,m] = prayerTimings[k].split(":").map(Number);
+    const mm = h*60+m;
+    if(mm > nowMin && mm < nextMin){ nextMin=mm; next=k; }
+  }
+  document.querySelectorAll(".pr-row").forEach(el=>el.classList.remove("active"));
+  if(!next){ next="Bomdod (ertaga)"; nextMin = prayerTimings.Bomdod.split(":").map(Number).reduce((a,b,i)=>i?a+b:a*60) + 1440; }
+  else { const el=document.querySelector(`.pr-row[data-nm="${next}"]`); if(el) el.classList.add("active"); }
+  const left = nextMin - nowMin;
+  const hh = Math.floor(left/60), mm = left%60;
+  np.innerHTML = `<div class="lbl">Keyingi namoz</div>
+    <div class="nm">${next}</div>
+    <div class="cd">${hh>0?hh+" soat ":""}${mm} daqiqa qoldi</div>`;
+}
+
+// ====== TURIZM ======
+function loadPOI(){
+  $("poiCity").textContent = CITY.name;
+  const box = $("poi");
+  if(!CITY.poi.length){
+    box.innerHTML = `<div class="loading">Bu shahar uchun tavsiya tez orada qo'shiladi.
+      <br><a href="https://www.google.com/maps/search/${encodeURIComponent(CITY.name+' diqqatga sazovor joylar')}"
+      target="_blank" style="color:var(--accent)">Xaritada ko'rish →</a></div>`;
+    return;
+  }
+  box.innerHTML = CITY.poi.map(([ico,nm,ds])=>`
+    <div class="poi"><span class="ico">${ico}</span>
+      <div><div class="nm">${nm}</div><div class="ds">${ds}</div></div>
+      <a href="https://www.google.com/maps/search/${encodeURIComponent(nm+' '+CITY.name)}" target="_blank">Xarita →</a>
+    </div>`).join("");
+}
+
+// ====== YOQILG'I SHAXOBCHALARI ======
+const FUEL_TYPES = {
+  "fuel:octane_80":"AI-80","fuel:octane_91":"AI-91","fuel:octane_92":"AI-92",
+  "fuel:octane_95":"AI-95","fuel:octane_98":"AI-98","fuel:e10":"AI-92",
+  "fuel:diesel":"Dizel","fuel:lpg":"Propan","fuel:cng":"Metan"
+};
+let fuelMap=null, fuelLayer=null;
+function initFuelMap(){
+  if(fuelMap) return;
+  fuelMap = L.map('fuelMap',{scrollWheelZoom:false}).setView([CITY.lat,CITY.lon],12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {maxZoom:19, attribution:'© OpenStreetMap'}).addTo(fuelMap);
+  fuelLayer = L.layerGroup().addTo(fuelMap);
+}
+async function loadFuel(){
+  $("fuelCity").textContent = CITY.name;
+  const list = $("fuelList");
+  list.innerHTML = '<div class="loading pulse">Shaxobchalar yuklanmoqda…</div>';
+  try{
+    initFuelMap();
+    fuelMap.setView([CITY.lat,CITY.lon],12);
+    setTimeout(()=>fuelMap.invalidateSize(),200);
+    const q = `[out:json][timeout:25];node["amenity"="fuel"](around:9000,${CITY.lat},${CITY.lon});out body;`;
+    const r = await fetch("https://overpass-api.de/api/interpreter",
+      {method:"POST", body:"data="+encodeURIComponent(q)});
+    if(!r.ok) throw new Error("overpass "+r.status);
+    const d = await r.json();
+    const els = (d.elements||[]).filter(e=>e.lat && e.lon);
+    fuelLayer.clearLayers();
+    if(!els.length){ list.innerHTML='<div class="loading">Yaqin atrofda shaxobcha topilmadi.</div>'; return; }
+    const items = els.map(e=>{
+      const t = e.tags||{};
+      const name = t.brand || t.name || t.operator || "Shaxobcha";
+      const types = [...new Set(Object.keys(FUEL_TYPES).filter(k=>t[k]==="yes").map(k=>FUEL_TYPES[k]))];
+      L.marker([e.lat,e.lon]).addTo(fuelLayer)
+        .bindPopup(`<b>${name}</b>${types.length? "<br>"+types.join(", "):""}`);
+      return {name, types, lat:e.lat, lon:e.lon};
+    });
+    items.sort((a,b)=>(b.name!=="Shaxobcha")-(a.name!=="Shaxobcha")); // brendlilar oldinda
+    list.innerHTML = items.map(f=>`
+      <div class="fuel-item">
+        <div class="fn">⛽ ${f.name}</div>
+        <div class="ft">${f.types.length? f.types.map(x=>`<span class="chip">${x}</span>`).join("")
+          : '<span class="chip">turi ko\'rsatilmagan</span>'}</div>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=${f.lat},${f.lon}" target="_blank">🧭 Yo'l ko'rsat</a>
+      </div>`).join("");
+  }catch(e){
+    list.innerHTML = '<div class="err">Shaxobchalar yuklanmadi (server band bo\'lishi mumkin). Yangilashni bosing.</div>';
+  }
+}
+
+// ====== BOSHQARUV ======
+function refreshLight(){
+  loadWeather(); loadCurrency(); loadPrayer();
+  $("updated").textContent = "yangilandi: " + new Date().toLocaleTimeString("uz",{timeZone:"Asia/Tashkent"});
+}
+function refreshAll(){ refreshLight(); loadPOI(); loadFuel(); }
+function buildCitySelect(){
+  const s = $("citySel");
+  s.innerHTML = CITIES.map(c=>`<option value="${c.id}" ${c.id===CITY.id?"selected":""}>${c.name}</option>`).join("");
+  s.onchange = ()=>{ CITY = CITIES.find(c=>c.id===s.value); localStorage.setItem("ozgid_city",CITY.id); refreshAll(); };
+}
+$("refreshBtn").onclick = refreshAll;
+
+// ====== ISHGA TUSHIRISH ======
+buildCitySelect();
+tick();
+refreshAll();
+setInterval(refreshLight, 10*60*1000); // ob-havo/valyuta/namoz har 10 daqiqada avtomatik
+</script>
+</body>
+</html>

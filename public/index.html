@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+<meta name="theme-color" content="#1f6fe5" />
+<title>UZGID</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%231f6fe5'/%3E%3Cpath d='M32 13c-7 0-12 5-12 12 0 9 12 22 12 22s12-13 12-22c0-7-5-12-12-12z' fill='white'/%3E%3Ccircle cx='32' cy='25' r='5' fill='%231f6fe5'/%3E%3C/svg%3E" />
+<script src="https://api-maps.yandex.ru/2.1/?apikey=95c03d4c-fd17-40c5-a893-c7cbaba66bb7&lang=ru_RU"></script>
+<style>
+  :root{ --bg:#eef2f9; --card:#ffffff; --card2:#f4f7fc; --txt:#152238; --muted:#64708a; --line:#e3e9f3;
+    --accent:#1f6fe5; --good:#16a34a; --bad:#dc2626; --radius:16px; --shadow:0 4px 16px rgba(30,60,120,.08),0 1px 3px rgba(30,60,120,.05);}
+  :root[data-theme="dark"]{ --bg:#0b1220; --card:#141d30; --card2:#1c2740; --txt:#eef3fc; --muted:#8b97b0; --line:#253248; --shadow:0 6px 20px rgba(0,0,0,.42);}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,system-ui,sans-serif;color:var(--txt);min-height:100vh;line-height:1.45;padding-bottom:30px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cg fill='none' stroke='%231f6fe5' stroke-width='1.1' opacity='0.09'%3E%3Crect x='14' y='14' width='20' height='20'/%3E%3Crect x='14' y='14' width='20' height='20' transform='rotate(45 24 24)'/%3E%3Ccircle cx='24' cy='24' r='2.5'/%3E%3C/g%3E%3C/svg%3E") var(--bg)}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 16px}
+  .testbar{padding:6px 12px;text-align:center;background:#141d30;color:#fbbf24;font-weight:700;font-size:11px;letter-spacing:.3px}
+  .topbar{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:60;box-shadow:0 1px 4px rgba(30,60,120,.05)}
+  header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 0}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:16px;font-weight:900;background:linear-gradient(140deg,var(--accent),#0ea5e9);color:#fff;letter-spacing:.5px}
+  .brand h1{font-size:21px;font-weight:800} .brand p{font-size:11px;color:var(--muted)}
+  .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  select,button,.iconbtn{font:inherit;color:var(--txt);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px;cursor:pointer;transition:.15s;max-width:100%}
+  select:hover,button:hover,.iconbtn:hover{border-color:var(--accent)} .iconbtn{padding:9px 11px;font-size:15px}
+  .langs{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .langs span{padding:8px 10px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer} .langs span.on{background:var(--accent);color:#fff}
+  .nav{display:flex;gap:6px;overflow-x:auto;padding:10px 0;scrollbar-width:none} .nav::-webkit-scrollbar{display:none}
+  .navi{flex:0 0 auto;display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;padding:9px 16px;border-radius:10px;background:var(--card);border:1px solid var(--line);color:var(--muted);cursor:pointer;white-space:nowrap}
+  .navi:hover{border-color:var(--accent)} .navi.on{background:var(--accent);color:#fff;border-color:transparent}
+  .panel{display:none} .panel.on{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;grid-auto-flow:row dense}
+  .full{grid-column:1/-1} .w2{grid-column:span 2}
+  @media (max-width:680px){ .w2{grid-column:span 1} }
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);transition:.18s}
+  .card:hover{box-shadow:0 8px 26px rgba(30,60,120,.12);border-color:#cfd9ec}
+  .card h2{font-size:13px;font-weight:800;margin-bottom:13px;display:flex;align-items:center;gap:8px}
+  .card h2 .ic{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--card2);font-size:15px}
+  .badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:16px;background:var(--card2);border:1px solid var(--line);color:var(--muted);margin-left:auto}
+  .big{font-size:20px;font-weight:800} .sub{font-size:12px;color:var(--muted)}
+  .fact{font-size:13px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:11px 13px;line-height:1.5}
+  .wx-top{display:flex;align-items:center;gap:16px} .wx-emoji{font-size:52px} .wx-temp{font-size:42px;font-weight:800} .wx-desc{color:var(--muted);font-size:14px}
+  .wx-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(78px,1fr));gap:9px;margin-top:14px}
+  .wx-meta div{background:var(--card2);border-radius:10px;padding:9px 11px;font-size:13px} .wx-meta b{display:block;font-size:16px;margin-top:2px}
+  .aqi{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:5px 10px;border-radius:16px;margin-top:12px}
+  .fc{display:flex;gap:8px;overflow-x:auto;margin-top:12px;padding-bottom:4px}
+  .fc-day{flex:0 0 auto;text-align:center;background:var(--card2);border-radius:10px;padding:8px 10px;min-width:60px}
+  .fc-day .d{font-size:11px;color:var(--muted)} .fc-day .e{font-size:21px} .fc-day .t{font-size:12px;font-weight:700}
+  .tip{background:linear-gradient(135deg,rgba(31,111,229,.10),rgba(14,165,233,.10));border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-top:12px;font-size:13px;font-weight:600;display:flex;gap:9px;align-items:center} .tip .i{font-size:22px}
+  .off-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .off{flex:1;min-width:66px;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+  .off .c{font-size:11px;color:var(--muted);font-weight:700} .off .v{font-weight:800;font-size:15px}
+  .calc{display:flex;gap:8px;margin:6px 0 12px;flex-wrap:wrap;align-items:center}
+  .calc input,.calc select{padding:9px 11px;border-radius:9px;border:1px solid var(--line);background:var(--card2);color:var(--txt);font:inherit}
+  .calc input{flex:1;min-width:80px} .calc-res{font-weight:800;font-size:14px}
+  .ctabs{display:flex;gap:6px;margin-bottom:10px}
+  .ctab{font-size:12px;font-weight:700;padding:6px 12px;border-radius:16px;background:var(--card2);border:1px solid var(--line);cursor:pointer} .ctab.on{background:var(--accent);color:#fff;border-color:transparent}
+  .bank-tbl{width:100%;font-size:13px;border-collapse:collapse}
+  .bank-tbl th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;padding:6px 4px}
+  .bank-tbl td{padding:8px 4px;border-top:1px solid var(--line)} .bank-tbl .b{font-weight:700}
+  .best{color:var(--good);font-weight:800} .scrollbox{max-height:300px;overflow-y:auto} .hint{font-size:11px;color:var(--muted);margin-top:8px}
+  .next-prayer{background:linear-gradient(135deg,var(--accent),#0ea5e9);color:#fff;border-radius:12px;padding:13px 15px;margin-bottom:12px}
+  .next-prayer .lbl{font-size:12px;opacity:.9} .next-prayer .nm{font-size:20px;font-weight:800} .next-prayer .cd{font-weight:700}
+  .pr-row{display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px solid var(--line)} .pr-row:last-child{border-bottom:none} .pr-row.active{color:var(--accent);font-weight:800} .pr-row .t{font-weight:600}
+  .compass{width:128px;height:128px;border-radius:50%;margin:8px auto 10px;position:relative;background:radial-gradient(circle at 50% 38%,var(--card2),var(--card));border:1px solid var(--line)}
+  .compass .c{position:absolute;font-size:11px;font-weight:800;color:var(--muted)}
+  .compass .cn{top:7px;left:50%;transform:translateX(-50%);color:var(--bad)} .compass .cs{bottom:7px;left:50%;transform:translateX(-50%)} .compass .ce{right:9px;top:50%;transform:translateY(-50%)} .compass .cw{left:9px;top:50%;transform:translateY(-50%)}
+  .compass .needle{position:absolute;top:50%;left:50%;height:50px;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(var(--qibla));transition:transform .7s}
+  .compass .stick{display:block;width:4px;height:100%;border-radius:3px;background:linear-gradient(var(--accent),#0ea5e9)} .compass .kaaba{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:17px}
+  .compass .dot{position:absolute;top:50%;left:50%;width:10px;height:10px;border-radius:50%;background:var(--accent);transform:translate(-50%,-50%);box-shadow:0 0 0 4px rgba(31,111,229,.2)}
+  .poi{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)} .poi:last-child{border-bottom:none}
+  .poi img{width:64px;height:64px;border-radius:10px;object-fit:cover;flex:0 0 auto;background:var(--card2)}
+  .poi .ico{font-size:22px;width:64px;height:64px;display:grid;place-items:center;background:var(--card2);border-radius:10px;flex:0 0 auto}
+  .poi .nm{font-weight:700;font-size:14px} .poi .ds{font-size:12px;color:var(--muted)} .poi a{margin-left:auto;font-size:12px;color:var(--accent);text-decoration:none}
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:9px;margin-bottom:12px}
+  .stat-grid div{background:var(--card2);border-radius:10px;padding:9px 11px;font-size:12px;color:var(--muted)} .stat-grid b{display:block;font-size:16px;margin-top:2px;color:var(--txt)}
+  .wiki{font-size:13px;color:var(--muted);line-height:1.55}
+  .phrase{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px} .phrase:last-child{border-bottom:none} .phrase .en{color:var(--muted);text-align:right}
+  .hol{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px} .hol:last-child{border-bottom:none} .hol .dt{color:var(--muted)} .hol.next{color:var(--accent);font-weight:800}
+  .cats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .cat{font-size:12px;font-weight:700;padding:7px 11px;border-radius:16px;background:var(--card2);border:1px solid var(--line);color:var(--txt);cursor:pointer} .cat:hover{border-color:var(--accent)} .cat.on{background:var(--accent);color:#fff;border-color:transparent}
+  #placeMap{height:380px;border-radius:12px;margin-bottom:12px;border:1px solid var(--line);z-index:0}
+  .fuel-list{max-height:280px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+  .fuel-item{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .fuel-item .fn{font-weight:700;font-size:14px} .fuel-item .ds{font-size:12px;color:var(--muted);margin-top:4px} .fuel-item a{font-size:12px;color:var(--accent);text-decoration:none;display:inline-block;margin-top:7px}
+  .news-item{display:block;padding:11px 0;border-bottom:1px solid var(--line);text-decoration:none;color:var(--txt);font-size:13px} .news-item:last-child{border-bottom:none} .news-item:hover{color:var(--accent)}
+  .near-item{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-decoration:none;color:var(--txt);font-size:13px}
+  .near-item:hover{border-color:var(--accent)} .near-d{color:var(--accent);font-weight:800;font-size:12px;white-space:nowrap}
+  .govgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+  .govlink{display:flex;align-items:center;gap:12px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-decoration:none;color:var(--txt);transition:.15s}
+  .govlink:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .govlink .gi{font-size:22px;width:44px;height:44px;display:grid;place-items:center;background:var(--card);border-radius:10px;border:1px solid var(--line);flex:0 0 auto}
+  .govlink .gn{font-weight:700;font-size:14px} .govlink .gd{font-size:12px;color:var(--muted)}
+  .loading{color:var(--muted);font-size:13px} .err{color:var(--bad);font-size:13px}
+  .contact-fab{position:fixed;right:14px;bottom:14px;z-index:80;background:var(--accent);color:#fff;padding:10px 14px;border-radius:30px;text-decoration:none;font-weight:700;font-size:13px;box-shadow:0 6px 18px rgba(31,111,229,.4)}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px;padding:18px;border-top:1px solid var(--line)} footer a{color:var(--accent);text-decoration:none;font-weight:700}
+  .pulse{animation:pulse 1.2s infinite} @keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
+</style>
+</head>
+<body>
+<div class="testbar" data-i="test">🧪 TEST versiya — sinov bosqichida</div>
+<div class="topbar"><div class="wrap"><header>
+  <div class="brand"><div class="logo"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z" fill="#fff"/><circle cx="12" cy="9" r="2.6" fill="#1f6fe5"/></svg></div><div><h1>UZGID</h1><p data-i="tagline">O'zbekiston axborot portali</p></div></div>
+  <div class="controls">
+    <div class="langs" id="langs"><span data-l="uz">🇺🇿 O'z</span><span data-l="ru">🇷🇺 Ru</span><span data-l="en">🇬🇧 En</span></div>
+    <button class="iconbtn" id="themeBtn">🌙</button><button class="iconbtn" id="gpsBtn">📍</button>
+    <select id="regionSel"></select><select id="citySel"></select>
+  </div>
+</header></div></div>
+<div class="wrap">
+  <nav class="nav" id="nav"></nav>
+  <section class="panel on" id="p-bosh">
+    <div style="font-size:13px;color:var(--muted);margin:2px 0 14px" id="boshDate">—</div>
+    <div class="grid">
+      <div class="card w2"><h2><span class="ic">🌤</span> <span data-i="w_weather"></span> <span class="badge" id="wxCity">—</span></h2><div id="wx"><div class="loading pulse"></div></div></div>
+      <div class="card"><h2><span class="ic">💵</span> <span data-i="w_currency"></span> <span class="badge" data-i="official_banks"></span></h2><div id="cur"><div class="loading pulse"></div></div></div>
+      <div class="card"><h2><span class="ic">🕌</span> <span data-i="w_prayer"></span> <span class="badge" id="prCity">—</span></h2><div id="pr"><div class="loading pulse"></div></div></div>
+      <div class="card w2"><h2><span class="ic">📅</span> <span data-i="w_today"></span></h2><div id="today"><div class="loading pulse"></div></div></div>
+      <div class="card w2"><h2><span class="ic">📍</span> <span data-i="w_near"></span></h2><div class="cats" id="nearCats"></div><div id="nearList" class="fuel-list"><div class="loading" data-i="near_hint"></div></div></div>
+    </div>
+  </section>
+  <section class="panel" id="p-joylar">
+    <div class="grid"><div class="card full"><h2><span class="ic">🗺</span> <span data-i="w_places"></span> <span class="badge" id="placeCity">—</span></h2>
+      <div class="cats" id="cats"></div><div id="placeMap"></div><div id="placeList" class="fuel-list"><div class="loading" data-i="select_cat"></div></div></div></div>
+  </section>
+  <section class="panel" id="p-turizm">
+    <div class="grid">
+      <div class="card"><h2><span class="ic">🏛</span> <span data-i="w_poi"></span> <span class="badge" id="poiCity">—</span></h2><div id="poi"><div class="loading pulse"></div></div></div>
+      <div class="card"><h2><span class="ic">📊</span> <span data-i="w_city"></span> <span class="badge" id="statCity">—</span></h2><div id="stats"><div class="loading pulse"></div></div></div>
+      <div class="card"><h2><span class="ic">🗣</span> <span data-i="w_phrase"></span></h2><div id="phrase"></div></div>
+      <div class="card"><h2><span class="ic">🎉</span> <span data-i="w_holidays"></span></h2><div id="holidays"></div></div>
+    </div>
+  </section>
+  <section class="panel" id="p-yangiliklar">
+    <div class="grid"><div class="card full"><h2><span class="ic">📰</span> <span data-i="w_news"></span> <span class="badge">gazeta.uz</span></h2><div id="news"><div class="loading pulse"></div></div></div></div>
+  </section>
+  <section class="panel" id="p-koshar">
+    <div class="grid">
+      <div class="card"><h2><span class="ic">🎬</span> <span data-i="w_kino"></span></h2><div class="govgrid" id="kino"></div></div>
+      <div class="card"><h2><span class="ic">🎭</span> <span data-i="w_teatr"></span></h2><div class="govgrid" id="teatr"></div></div>
+      <div class="card"><h2><span class="ic">🎫</span> <span data-i="w_afisha"></span></h2><div class="govgrid" id="afisha"></div></div>
+      <div class="card"><h2><span class="ic">⚽</span> <span data-i="w_sport"></span></h2><div class="govgrid" id="sport"></div></div>
+      <div class="card"><h2><span class="ic">📚</span> <span data-i="w_ebook"></span></h2><div class="govgrid" id="ebook"></div></div>
+    </div>
+  </section>
+  <section class="panel" id="p-foydali">
+    <div class="grid">
+      <div class="card full"><h2><span class="ic">📞</span> <span data-i="w_nums"></span> <span class="badge">24/7</span></h2><div class="govgrid" id="nums"></div></div>
+      <div class="card full"><h2><span class="ic">🏛</span> <span data-i="w_gov"></span> <span class="badge">rasmiy</span></h2><div class="govgrid" id="gov"></div></div>
+      <div class="card"><h2><span class="ic">🚆</span> <span data-i="w_transport"></span></h2><div class="govgrid" id="trans"></div></div>
+      <div class="card"><h2><span class="ic">💳</span> <span data-i="w_pay"></span></h2><div class="govgrid" id="pay"></div></div>
+      <div class="card"><h2><span class="ic">🎓</span> <span data-i="w_edu"></span></h2><div class="govgrid" id="edu"></div></div>
+    </div>
+  </section>
+  <footer><b>UZGID</b> · <span data-i="tagline"></span> · <span id="updated">—</span><br><span data-i="sources"></span>: Open-Meteo, CBU, bank.uz, Aladhan, OpenStreetMap, Wikipedia</footer>
+</div>
+<a class="contact-fab" href="https://t.me/shaxzoddiyorov" target="_blank">💬 <span data-i="contact"></span></a>
+
+<script>
+// ============ TARJIMA ============
+const T={
+ uz:{test:"⚙️ Sinov rejimi (beta) — ma'lumotlar tekshirilmoqda",tagline:"O'zbekiston axborot portali",contact:"Aloqa",sources:"Manbalar",official_banks:"rasmiy + banklar",select_cat:"Kategoriya tanlang…",loading:"Yuklanmoqda…",
+   n_bosh:"Bosh",n_joylar:"Joylar",n_turizm:"Turizm",n_yangiliklar:"Yangiliklar",n_foydali:"Foydali",w_gov:"Davlat xizmatlari",w_nums:"Foydali raqamlar",w_transport:"Transport",w_pay:"To'lov tizimlari",w_edu:"Ta'lim va ish",n_koshar:"Ko'ngil ochar",w_kino:"Kino",w_teatr:"Teatr",w_afisha:"Afisha / chiptalar",w_sport:"Sport",w_tvradio:"TV va radio",w_ebook:"Kitoblar / e-kutubxona",w_near:"Menga eng yaqin",near_hint:"Kategoriya tanlang — joylashuvingiz bo'yicha topamiz",near_locating:"Joylashuv aniqlanmoqda…",near_nogps:"Joylashuvni aniqlab bo'lmadi. Ruxsat bering.",asof:"holatiga",cur_src:"Kurslar bank.uz'dan (~10 daq). Banklar CBU rasmiy kursi asosida — talab, naqd pul zaxirasi va raqobatga qarab — o'z olish/sotish narxini belgilaydi. Aniq kurs uchun bank bilan tasdiqlang.",
+   w_weather:"Ob-havo",w_currency:"Valyuta",w_prayer:"Namoz vaqtlari",w_qibla:"Qibla",w_today:"Bugun · qiziq fakt",w_places:"Joylar va xizmatlar",w_poi:"Turistik joylar",w_city:"Shahar haqida",w_phrase:"So'zlashgich",w_holidays:"Bayramlar",w_news:"Yangiliklar",
+   humidity:"Namlik",wind:"Shamol",sunrise:"Tong",sunset:"Botish",airq:"Havo sifati",feels:"his",today:"Bugun",
+   cbu_note:"Yuqorida — CBU rasmiy kursi",buy:"Olish",sell:"Sotish",bank:"Bank",no_data:"Ma'lumot yo'q",hint_green:"🟢 yashil — eng foydali kurs.",
+   next_prayer:"Keyingi namoz",left:"qoldi",hour:"soat",min:"daqiqa",qibla_to:"Makkatullohga yo'nalish",funfact:"Qiziq fakt",dayof:"Yilning",dayof2:"-kuni",
+   dirs:["Shimol","Shimoli-sharq","Sharq","Janubi-sharq","Janub","Janubi-g'arb","G'arb","Shimoli-g'arb"],
+   seasons:["❄️ Qish","🌸 Bahor","☀️ Yoz","🍂 Kuz"],prayers:["Bomdod","Quyosh","Peshin","Asr","Shom","Xufton"],
+   notfound:"Bu shaharda topilmadi.",loaderr:"Yuklashda xatolik. Qayta bosing.",route:"Yo'l ko'rsat",updated:"yangilandi",
+   cats:["Turistik joylar","Tarixiy","Masjidlar","Mehmonxona","Restoran","Kafe","Shaxobcha","Zaryadlash","Bankomat","Bank","Dorixona","Shifoxona","Do'kon","Davlat idorasi"],
+   tips:{mask:"Havo ifloslangan — imkon bo'lsa niqob taqing.",rain:"Yomg'ir kutilmoqda — soyabon oling.",snow:"Qor — ehtiyot bo'ling, issiq kiyining.",hot:"Issiq — ko'proq suv iching, oftobdan saqlaning.",cold:"Sovuq — issiq kiyining.",good:"Ob-havo yaxshi — sayr uchun ajoyib kun!"}},
+ ru:{test:"⚙️ Тестовый режим (бета) — данные проверяются",tagline:"Информационный портал Узбекистана",contact:"Связь",sources:"Источники",official_banks:"офиц. + банки",select_cat:"Выберите категорию…",loading:"Загрузка…",
+   n_bosh:"Главная",n_joylar:"Места",n_turizm:"Туризм",n_yangiliklar:"Новости",n_foydali:"Полезное",w_gov:"Госуслуги",w_nums:"Полезные номера",w_transport:"Транспорт",w_pay:"Платёжные системы",w_edu:"Образование и работа",n_koshar:"Досуг",w_kino:"Кино",w_teatr:"Театр",w_afisha:"Афиша / билеты",w_sport:"Спорт",w_tvradio:"ТВ и радио",w_ebook:"Книги / э-библиотека",w_near:"Рядом со мной",near_hint:"Выберите категорию — найдём рядом с вами",near_locating:"Определяем местоположение…",near_nogps:"Не удалось определить местоположение. Разрешите доступ.",asof:"на",cur_src:"Курсы с bank.uz (~10 мин). Банки устанавливают цены покупки/продажи на основе курса ЦБ — с учётом спроса, наличных и конкуренции. Уточняйте точный курс в банке.",
+   w_weather:"Погода",w_currency:"Валюта",w_prayer:"Время намаза",w_qibla:"Кибла",w_today:"Сегодня · факт",w_places:"Места и услуги",w_poi:"Достопримечательности",w_city:"О городе",w_phrase:"Разговорник",w_holidays:"Праздники",w_news:"Новости",
+   humidity:"Влажность",wind:"Ветер",sunrise:"Восход",sunset:"Закат",airq:"Качество воздуха",feels:"ощущ.",today:"Сегодня",
+   cbu_note:"Выше — офиц. курс ЦБ",buy:"Покупка",sell:"Продажа",bank:"Банк",no_data:"Нет данных",hint_green:"🟢 зелёный — лучший курс.",
+   next_prayer:"Следующий намаз",left:"осталось",hour:"ч",min:"мин",qibla_to:"Направление на Мекку",funfact:"Интересный факт",dayof:"",dayof2:"-й день года",
+   dirs:["Север","Северо-восток","Восток","Юго-восток","Юг","Юго-запад","Запад","Северо-запад"],
+   seasons:["❄️ Зима","🌸 Весна","☀️ Лето","🍂 Осень"],prayers:["Фаджр","Восход","Зухр","Аср","Магриб","Иша"],
+   notfound:"В этом городе не найдено.",loaderr:"Ошибка загрузки. Нажмите ещё раз.",route:"Маршрут",updated:"обновлено",
+   cats:["Достопримечательности","Историч.","Мечети","Отели","Рестораны","Кафе","АЗС","Зарядка","Банкоматы","Банки","Аптеки","Больницы","Магазины","Госучреждения"],
+   tips:{mask:"Воздух загрязнён — по возможности наденьте маску.",rain:"Ожидается дождь — возьмите зонт.",snow:"Снег — будьте осторожны, оденьтесь теплее.",hot:"Жарко — пейте больше воды, избегайте солнца.",cold:"Холодно — оденьтесь теплее.",good:"Погода хорошая — отличный день для прогулки!"}},
+ en:{test:"⚙️ Beta — data under testing",tagline:"Uzbekistan information portal",contact:"Contact",sources:"Sources",official_banks:"official + banks",select_cat:"Choose a category…",loading:"Loading…",
+   n_bosh:"Home",n_joylar:"Places",n_turizm:"Tourism",n_yangiliklar:"News",n_foydali:"Useful",w_gov:"Government services",w_nums:"Useful numbers",w_transport:"Transport",w_pay:"Payment systems",w_edu:"Education & jobs",n_koshar:"Leisure",w_kino:"Cinema",w_teatr:"Theatre",w_afisha:"Events / tickets",w_sport:"Sport",w_tvradio:"TV & radio",w_ebook:"Books / e-library",w_near:"Near me",near_hint:"Pick a category — we'll find the nearest",near_locating:"Locating…",near_nogps:"Couldn't get location. Please allow access.",asof:"as of",cur_src:"Rates from bank.uz (~10 min). Banks set buy/sell prices based on the official CBU rate — adjusting for demand, cash reserves and competition. Confirm the exact rate with the bank.",
+   w_weather:"Weather",w_currency:"Currency",w_prayer:"Prayer times",w_qibla:"Qibla",w_today:"Today · fun fact",w_places:"Places & services",w_poi:"Tourist sites",w_city:"About the city",w_phrase:"Phrasebook",w_holidays:"Holidays",w_news:"News",
+   humidity:"Humidity",wind:"Wind",sunrise:"Sunrise",sunset:"Sunset",airq:"Air quality",feels:"feels",today:"Today",
+   cbu_note:"Above — official CBU rate",buy:"Buy",sell:"Sell",bank:"Bank",no_data:"No data",hint_green:"🟢 green — best rate.",
+   next_prayer:"Next prayer",left:"left",hour:"h",min:"min",qibla_to:"Direction to Mecca",funfact:"Fun fact",dayof:"Day",dayof2:"of the year",
+   dirs:["North","Northeast","East","Southeast","South","Southwest","West","Northwest"],
+   seasons:["❄️ Winter","🌸 Spring","☀️ Summer","🍂 Autumn"],prayers:["Fajr","Sunrise","Dhuhr","Asr","Maghrib","Isha"],
+   notfound:"Nothing found in this city.",loaderr:"Loading error. Tap again.",route:"Directions",updated:"updated",
+   cats:["Tourist sites","Historic","Mosques","Hotels","Restaurants","Cafes","Fuel","Charging","ATMs","Banks","Pharmacies","Hospitals","Shops","Government"],
+   tips:{mask:"Air is polluted — wear a mask if possible.",rain:"Rain expected — take an umbrella.",snow:"Snow — be careful, dress warm.",hot:"Hot — drink more water, avoid the sun.",cold:"Cold — dress warmly.",good:"Nice weather — a great day for a walk!"}}
+};
+let lang=localStorage.getItem("uzgid_lang")||"uz";
+function t(k){ return (T[lang]&&T[lang][k])!=null?T[lang][k]:T.uz[k]; }
+function locale(){ return lang==="ru"?"ru-RU":lang==="en"?"en-GB":"uz"; }
+function applyStatic(){ document.querySelectorAll("[data-i]").forEach(el=>{ const v=t(el.dataset.i); if(v!=null) el.textContent=v; });
+  document.documentElement.setAttribute("lang",lang);
+  document.querySelectorAll("#langs span").forEach(s=>s.classList.toggle("on",s.dataset.l===lang)); }
+
+// ============ MA'LUMOTLAR ============
+const REGIONS=[{name:"Toshkent shahri",cities:[["Toshkent",41.311,69.279]]},{name:"Toshkent viloyati",cities:[["Nurafshon",41.037,69.343],["Angren",41.017,70.144],["Olmaliq",40.844,69.598],["Chirchiq",41.469,69.582],["Bekobod",40.221,69.269],["Ohangaron",40.909,69.639],["Yangiyo'l",41.113,69.048],["Parkent",41.294,69.676]]},{name:"Sirdaryo",cities:[["Guliston",40.489,68.791],["Yangiyer",40.269,68.821],["Shirin",40.232,68.990],["Sirdaryo",40.842,68.660]]},{name:"Jizzax",cities:[["Jizzax",40.116,67.842],["Zomin",39.960,68.398],["Do'stlik",40.478,67.997],["Paxtakor",40.313,67.957]]},{name:"Samarqand",cities:[["Samarqand",39.654,66.976],["Kattaqo'rg'on",39.899,66.256],["Urgut",39.402,67.242],["Bulung'ur",39.771,67.276],["Oqtosh",39.910,66.148]]},{name:"Buxoro",cities:[["Buxoro",39.767,64.421],["Kogon",39.722,64.552],["G'ijduvon",40.101,64.680],["Vobkent",40.023,64.514],["Qorako'l",39.499,63.844]]},{name:"Navoiy",cities:[["Navoiy",40.084,65.379],["Zarafshon",41.573,64.204],["Uchquduq",42.156,63.556],["Nurota",40.564,65.688],["Karmana",40.140,65.362]]},{name:"Qashqadaryo",cities:[["Qarshi",38.860,65.789],["Shahrisabz",39.057,66.834],["Kitob",39.115,66.881],["G'uzor",38.621,66.247],["Koson",39.041,65.590],["Muborak",39.253,65.153]]},{name:"Surxondaryo",cities:[["Termiz",37.224,67.278],["Denov",38.276,67.892],["Sho'rchi",37.986,67.789],["Boysun",38.207,67.199],["Sherobod",37.674,67.006]]},{name:"Xorazm",cities:[["Urganch",41.550,60.631],["Xiva",41.378,60.363],["Hazorasp",41.320,61.074],["Gurlan",41.848,60.386],["Pitnak",41.180,61.379]]},{name:"Andijon",cities:[["Andijon",40.783,72.344],["Asaka",40.639,72.235],["Xonobod",40.809,72.973],["Shahrixon",40.712,72.058],["Marhamat",40.472,72.315]]},{name:"Namangan",cities:[["Namangan",40.998,71.672],["Chust",41.000,71.239],["Pop",40.873,71.109],["Uchqo'rg'on",41.113,72.070],["Chortoq",41.070,71.821],["Kosonsoy",41.244,71.549]]},{name:"Farg'ona",cities:[["Farg'ona",40.386,71.787],["Marg'ilon",40.471,71.716],["Qo'qon",40.529,70.942],["Quva",40.520,72.070],["Rishton",40.354,71.283],["Quvasoy",40.286,71.976]]},{name:"Qoraqalpog'iston",cities:[["Nukus",42.461,59.617],["Xo'jayli",42.404,59.451],["Beruniy",41.692,60.752],["To'rtko'l",41.550,61.001],["Chimboy",42.936,59.774],["Mo'ynoq",43.766,59.021],["Qo'ng'irot",43.077,58.898]]}];
+const POI={"Toshkent":[["🕌","Xast Imom","Qadimiy Qur'on"],["🏛","Amir Temur xiyoboni","Shahar markazi"],["🛍","Chorsu bozori","Gumbazli bozor"]],"Samarqand":[["🕌","Registon maydoni","3 madrasa"],["🏛","Go'ri Amir","Amir Temur maqbarasi"],["🕌","Bibi-Xonim","Ulkan masjid"],["⭐","Shohi Zinda","Maqbaralar"]],"Buxoro":[["🕌","Poi Kalon","Minora, masjid"],["🏰","Ark qal'asi","Amir qarorgohi"],["🕌","Chor Minor","4 minorali bino"],["💧","Lyabi Hovuz","Tarixiy hovuz"]],"Xiva":[["🏰","Ichan Qal'a","Muzey-shahar"],["🕌","Kalta Minor","Ko'k minora"],["🏛","Tosh-Hovli","Xon saroyi"]],"Shahrisabz":[["🏛","Oqsaroy","Amir Temur saroyi"],["🕌","Ko'k Gumbaz","Tarixiy masjid"]],"Termiz":[["🛕","Buddaviylik yodgorliklari","Qadimiy Baqtriya"]],"Nukus":[["🖼","Savitskiy muzeyi","Rassomlik to'plami"],["🏛","Amir Temur bog'i","Markaziy bog'"]],"Qo'qon":[["🏛","Xudoyorxon o'rdasi","Qo'qon xonligi saroyi"],["🕌","Jome masjidi","Tarixiy masjid"]],"Andijon":[["🌳","Bobur bog'i","Bobur xotira majmuasi"],["🏛","O'lkashunoslik muzeyi","Vodiy tarixi"]],"Marg'ilon":[["🧵","Yodgorlik ipak fabrikasi","An'anaviy atlas-adras"]],"Nurota":[["🕌","Chashma majmuasi","Muqaddas buloq"],["🏰","Nur qal'a","Qadimiy qal'a"]],"Farg'ona":[["🌳","Al-Farg'oniy bog'i","Markaziy istirohat bog'i"]],"Urganch":[["🕌","Ichan Qal'aga darvoza","Xivaga yaqin"]]};
+const STATS={"Toshkent":["~2.9 mln","Mil.av. III asr","455 m"],"Nurafshon":["~55 ming","2017","270 m"],"Samarqand":["~560 ming","~2750 yil","700 m"],"Buxoro":["~280 ming","~2500 yil","225 m"],"Xiva":["~90 ming","~2500 yil","100 m"],"Shahrisabz":["~140 ming","~2700 yil","620 m"],"Nukus":["~330 ming","1932","75 m"],"Termiz":["~180 ming","~2500 yil","310 m"],"Andijon":["~450 ming","~2500 yil","450 m"],"Namangan":["~650 ming","1610","475 m"],"Farg'ona":["~370 ming","1876","580 m"],"Qo'qon":["~260 ming","~10-asr","409 m"],"Qarshi":["~280 ming","~2700 yil","374 m"]};
+const FACTS={uz:["Samarqand — dunyodagi eng qadimiy shaharlardan biri, 2750 yildan oshgan.","O'zbekiston — ikki marta o'ralgan kam davlatlardan biri.","Toshkent metrosi 1977-yilda ochilgan — Markaziy Osiyoda birinchi.","Al-Xorazmiy 'algoritm' va 'algebra' atamalariga asos solgan.","Ibn Sino Buxoro yaqinida tug'ilgan buyuk tabib.","Bobur — Boburiylar imperiyasi asoschisi — Andijonda tug'ilgan.","O'zbekistonda 4 ta YuNESKO jahon merosi obyekti bor.","Xiva Ichan Qal'asi butunlay saqlangan qadimiy shahar."],
+ ru:["Самарканд — один из древнейших городов мира, ему более 2750 лет.","Узбекистан — одна из двух стран с двойной изоляцией от моря.","Ташкентское метро открыто в 1977 — первое в Центральной Азии.","Аль-Хорезми заложил основы слов «алгоритм» и «алгебра».","Ибн Сина (Авиценна) родился близ Бухары.","Бабур — основатель империи Великих Моголов — родился в Андижане.","В Узбекистане 4 объекта Всемирного наследия ЮНЕСКО.","Ичан-Кала в Хиве — полностью сохранившийся древний город."],
+ en:["Samarkand is one of the world's oldest cities, over 2750 years old.","Uzbekistan is one of only two doubly landlocked countries.","Tashkent metro opened in 1977 — the first in Central Asia.","Al-Khwarizmi gave rise to the words 'algorithm' and 'algebra'.","Ibn Sina (Avicenna) was born near Bukhara.","Babur, founder of the Mughal Empire, was born in Andijan.","Uzbekistan has 4 UNESCO World Heritage sites.","Khiva's Ichan-Kala is a fully preserved ancient walled city."]};
+const WX={0:["☀️"],1:["🌤"],2:["⛅"],3:["☁️"],45:["🌫"],48:["🌫"],51:["🌦"],53:["🌦"],55:["🌧"],61:["🌧"],63:["🌧"],65:["🌧"],66:["🌧"],67:["🌧"],71:["🌨"],73:["🌨"],75:["❄️"],77:["❄️"],80:["🌦"],81:["🌧"],82:["⛈"],85:["🌨"],86:["❄️"],95:["⛈"],96:["⛈"],99:["⛈"]};
+const WXD={uz:{0:"Ochiq",1:"Asosan ochiq",2:"Bulutli oralab",3:"Bulutli",45:"Tuman",48:"Tuman",51:"Yomg'ir",53:"Yomg'ir",55:"Kuchli yomg'ir",61:"Yomg'ir",63:"Yomg'ir",65:"Kuchli yomg'ir",71:"Qor",73:"Qor",75:"Kuchli qor",80:"Jala",81:"Jala",82:"Kuchli jala",95:"Momaqaldiroq"},ru:{0:"Ясно",1:"В основном ясно",2:"Переменная облачность",3:"Облачно",45:"Туман",48:"Туман",51:"Дождь",53:"Дождь",55:"Сильный дождь",61:"Дождь",63:"Дождь",65:"Сильный дождь",71:"Снег",73:"Снег",75:"Сильный снег",80:"Ливень",81:"Ливень",82:"Сильный ливень",95:"Гроза"},en:{0:"Clear",1:"Mostly clear",2:"Partly cloudy",3:"Cloudy",45:"Fog",48:"Fog",51:"Drizzle",53:"Rain",55:"Heavy rain",61:"Rain",63:"Rain",65:"Heavy rain",71:"Snow",73:"Snow",75:"Heavy snow",80:"Showers",81:"Showers",82:"Heavy showers",95:"Thunderstorm"}};
+function wxDesc(c){ return (WXD[lang]&&WXD[lang][c])||WXD.uz[c]||"—"; }
+const CATSEL=[['nwr["tourism"~"attraction|museum|viewpoint|artwork|theme_park|zoo|gallery"]'],['nwr["historic"]'],['nwr["amenity"="place_of_worship"]["religion"="muslim"]'],['nwr["tourism"~"hotel|guest_house|hostel|motel"]'],['nwr["amenity"="restaurant"]'],['nwr["amenity"="cafe"]'],['nwr["amenity"="fuel"]'],['nwr["amenity"="charging_station"]'],['nwr["amenity"="atm"]'],['nwr["amenity"="bank"]'],['nwr["amenity"="pharmacy"]'],['nwr["amenity"~"hospital|clinic|doctors"]'],['nwr["shop"="supermarket"]','nwr["amenity"="marketplace"]'],['nwr["office"="government"]','nwr["amenity"="townhall"]']];
+const CATICO=["🏛","🏰","🕌","🏨","🍽","☕","⛽","🔌","🏧","🏦","💊","🏥","🛒","🏛"];
+const NAVID=["bosh","joylar","turizm","koshar","yangiliklar","foydali"]; const NAVIC=["🏠","🗺","🧭","🎭","📰","🏛"];
+const GOV=[["🏛","My Gov UZ","https://my.gov.uz",{uz:"Davlat xizmatlari",ru:"Госуслуги",en:"Government services"}],["💰","Soliq.uz","https://soliq.uz",{uz:"Soliq qo'mitasi",ru:"Налоговый комитет",en:"Tax committee"}],["🏦","Markaziy bank","https://cbu.uz",{uz:"Valyuta kurslari",ru:"Курсы валют",en:"Exchange rates"}],["✍️","E-Imzo","https://e-imzo.uz",{uz:"Elektron imzo",ru:"Электронная подпись",en:"Digital signature"}],["🆔","OneID","https://id.egov.uz",{uz:"Yagona identifikatsiya",ru:"Единый вход",en:"Single sign-on"}],["📄","Kadastr","https://kadastr.uz",{uz:"Ko'chmas mulk",ru:"Недвижимость",en:"Real estate"}],["🛂","Bojxona","https://customs.uz",{uz:"Bojxona qo'mitasi",ru:"Таможенный комитет",en:"Customs committee"}],["👷","Mehnat","https://mehnat.uz",{uz:"Bandlik va mehnat",ru:"Труд и занятость",en:"Labor & employment"}],["🏥","Sog'liqni saqlash","https://ssv.uz",{uz:"Sog'liqni saqlash vazirligi",ru:"Минздрав",en:"Ministry of Health"}],["📊","Open Data","https://data.egov.uz",{uz:"Ochiq ma'lumotlar",ru:"Открытые данные",en:"Open data"}],["🏙","gov.uz","https://gov.uz",{uz:"Hukumat portali",ru:"Портал правительства",en:"Government portal"}]];
+
+const $=id=>document.getElementById(id);
+let CITY={name:"Toshkent",lat:41.311,lon:69.279};
+let prayerTimings=null,curData=null,curTab="USD",calcState={amt:1,cur:"USD"},loaded={},activeTab="bosh";
+
+// THEME
+function applyTheme(x){ if(x==="dark") document.documentElement.setAttribute("data-theme","dark"); else document.documentElement.removeAttribute("data-theme"); $("themeBtn").textContent=(x==="dark")?"☀️":"🌙"; }
+applyTheme(localStorage.getItem("uzgid_theme")||"light");
+$("themeBtn").onclick=()=>{ const c=document.documentElement.getAttribute("data-theme")==="dark"?"dark":"light"; const n=c==="dark"?"light":"dark"; localStorage.setItem("uzgid_theme",n); applyTheme(n); };
+// LANG
+$("langs").querySelectorAll("span").forEach(s=>s.onclick=()=>{ lang=s.dataset.l; localStorage.setItem("uzgid_lang",lang); applyStatic(); buildNav(); loaded={}; loadTab(activeTab); });
+
+// NAV
+function buildNav(){ $("nav").innerHTML=NAVID.map((id,i)=>`<div class="navi ${id===activeTab?'on':''}" data-t="${id}">${NAVIC[i]} ${t("n_"+id)}</div>`).join("");
+  document.querySelectorAll(".navi").forEach(x=>x.onclick=()=>openTab(x.dataset.t)); }
+function openTab(id){ activeTab=id; document.querySelectorAll(".navi").forEach(x=>x.classList.toggle("on",x.dataset.t===id)); document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+id)); loadTab(id); window.scrollTo({top:0,behavior:"smooth"}); }
+function loadTab(id){ if(loaded[id]) return; loaded[id]=true;
+  if(id==="bosh"){ loadWeather(); loadCurrency(); loadPrayer(); loadToday(); renderNear(); }
+  else if(id==="joylar"){ buildCats(); loadPlaces(); } else if(id==="turizm"){ loadPOI(); loadStats(); renderPhrasebook(); renderHolidays(); } else if(id==="yangiliklar") loadNews(); else if(id==="koshar"){ renderLinks("kino",KINO); renderLinks("teatr",TEATR); renderLinks("afisha",AFISHA); renderLinks("sport",SPORT); renderLinks("ebook",EBOOK); } else if(id==="foydali"){ renderNums(); renderLinks("gov",GOV); renderLinks("trans",TRANS); renderLinks("pay",PAY); renderLinks("edu",EDU); } }
+const NUMS=[["112",{uz:"Yagona favqulodda xizmat",ru:"Единая экстренная служба",en:"Single emergency service"}],["101",{uz:"Yong'in xavfsizligi",ru:"Пожарная служба",en:"Fire service"}],["102",{uz:"Ichki ishlar (militsiya)",ru:"Полиция",en:"Police"}],["103",{uz:"Tez tibbiy yordam",ru:"Скорая помощь",en:"Ambulance"}],["104",{uz:"Gaz avariya xizmati",ru:"Аварийная газовая служба",en:"Gas emergency"}],["1050",{uz:"FVV — qutqaruv xizmati",ru:"МЧС — спасатели",en:"Emergency rescue"}],["1000",{uz:"Prezident Xalq qabulxonasi",ru:"Народная приёмная Президента",en:"President's public reception"}]];
+function renderNums(){ $("nums").innerHTML=NUMS.map(([n,d])=>`<a class="govlink" href="tel:${n}"><span class="gi" style="font-weight:900;color:var(--accent);font-size:15px">${n}</span><span><div class="gn">${d[lang]||d.uz}</div></span></a>`).join(""); }
+const TRANS=[["🚆","Temir yo'l","https://railway.uz",{uz:"Poyezd chiptalari",ru:"Ж/д билеты",en:"Train tickets"}],["✈️","Uzbekistan Airways","https://uzairways.com",{uz:"Aviachiptalar",ru:"Авиабилеты",en:"Flights"}],["✈️","Silk Avia","https://silkavia.uz",{uz:"Ichki reyslar",ru:"Внутренние рейсы",en:"Domestic flights"}],["✈️","Qanot Sharq","https://qanotsharq.com",{uz:"Aviakompaniya",ru:"Авиакомпания",en:"Airline"}],["✈️","Centrum Air","https://centrum-air.com",{uz:"Aviakompaniya",ru:"Авиакомпания",en:"Airline"}],["🚌","Avtovokzal","https://avtovokzal.uz",{uz:"Avtobus / bekatlar",ru:"Автобусы / вокзалы",en:"Buses / stations"}],["🚕","MyTaxi","https://mytaxi.uz",{uz:"Taksi chaqirish",ru:"Вызов такси",en:"Taxi"}],["🛬","Aeroportlar","https://uzairports.com",{uz:"Reyslar jadvali",ru:"Расписание рейсов",en:"Flight schedule"}]];
+const EDU=[["💼","Ish topish","https://ish.mehnat.uz",{uz:"Bo'sh ish o'rinlari",ru:"Вакансии",en:"Jobs"}],["🎓","HEMIS","https://hemis.uz",{uz:"Oliy ta'lim tizimi",ru:"Высшее образование",en:"Higher education"}],["📝","DTM / UZBMB","https://my.uzbmb.uz",{uz:"Test va qabul",ru:"Тесты и приём",en:"Exams & admission"}]];
+const PAY=[["🅾️","Click","https://click.uz",{uz:"To'lov tizimi",ru:"Платёжная система",en:"Payment system"}],["💜","Payme","https://payme.uz",{uz:"To'lov tizimi",ru:"Платёжная система",en:"Payment system"}],["🟣","Uzum","https://uzum.uz",{uz:"Marketplace / to'lov",ru:"Маркетплейс / оплата",en:"Marketplace / pay"}],["🔵","Paynet","https://paynet.uz",{uz:"To'lovlar",ru:"Платежи",en:"Payments"}]];
+const KINO=[["🎬","Kino.uz","https://kino.uz",{uz:"Kino afishasi",ru:"Афиша кино",en:"Cinema listings"}],["🎬","Cinema.uz","https://cinema.uz",{uz:"Kino seanslari",ru:"Киносеансы",en:"Showtimes"}]];
+const TEATR=[["🎭","Teatr.uz","https://teatr.uz",{uz:"Teatr afishasi",ru:"Афиша театров",en:"Theatre listings"}]];
+const AFISHA=[["🎫","Afisha.uz","https://afisha.uz",{uz:"Tadbirlar afishasi",ru:"Афиша событий",en:"Events"}],["🎟","Ticket.uz","https://ticket.uz",{uz:"Chiptalar",ru:"Билеты",en:"Tickets"}]];
+const SPORT=[["⚽","PFL","https://pfl.uz",{uz:"Futbol chempionati",ru:"Футбольный чемпионат",en:"Football league"}],["🏆","Championat","https://championat.uz",{uz:"Sport yangiliklari",ru:"Спортивные новости",en:"Sports news"}]];
+const EBOOK=[["📚","Ziyouz","https://ziyouz.uz",{uz:"O'zbek adabiyoti kutubxonasi",ru:"Библиотека узб. литературы",en:"Uzbek literature library"}],["📖","Ziyonet kutubxona","https://library.ziyonet.uz",{uz:"Ta'lim e-kutubxonasi",ru:"Образоват. э-библиотека",en:"Educational e-library"}],["📕","Kitob.uz","https://kitob.uz",{uz:"Onlayn kitoblar",ru:"Онлайн-книги",en:"Online books"}],["🏛","Milliy kutubxona","https://natlib.uz",{uz:"A.Navoiy nomidagi kutubxona",ru:"Нац. библиотека",en:"National Library"}]];
+const NEARCATS=[["💊","Dorixona",'nwr["amenity"="pharmacy"]'],["🏧","Bankomat",'nwr["amenity"="atm"]'],["🏥","Shifoxona",'nwr["amenity"~"hospital|clinic"]'],["⛽","Shaxobcha",'nwr["amenity"="fuel"]'],["🍽","Restoran",'nwr["amenity"="restaurant"]']];
+function favicon(url){ const dom=url.replace(/^https?:\/\//,'').replace(/\/.*$/,''); return `https://www.google.com/s2/favicons?sz=64&domain=${dom}`; }
+const BANKDOM=[["kapital","kapitalbank.uz"],["hamkor","hamkorbank.uz"],["ipoteka","ipotekabank.uz"],["aloqa","aloqabank.uz"],["asaka","asakabank.uz"],["agro","agrobank.uz"],["infin","infinbank.uz"],["milliy","nbu.uz"],["nbu","nbu.uz"],["xalq","xb.uz"],["trast","trastbank.uz"],["turon","turonbank.uz"],["ipak","ipakyulibank.uz"],["orient","ofb.uz"],["anor","anorbank.uz"],["tbc","tbcbank.uz"],["tenge","tengebank.uz"],["davr","davrbank.uz"],["universal","universalbank.uz"],["hayot","hayotbank.uz"],["kdb","kdb.uz"],["poytaxt","poytaxtbank.uz"],["garant","garantbank.uz"],["uzum","uzumbank.uz"],["octo","octobank.uz"],["open","openbank.uz"],["brb","brb.uz"],["asia alliance","aab.uz"],["mkbank","mkbank.uz"],["ravnaq","ravnaqbank.uz"]];
+function bankIcon(name){ const l=(name||"").toLowerCase(); const m=BANKDOM.find(([k])=>l.includes(k)); return m?`https://www.google.com/s2/favicons?sz=64&domain=${m[1]}`:null; }
+function renderLinks(id,arr){ $(id).innerHTML=arr.map(([ic,nm,url,d])=>`<a class="govlink" href="${url}" target="_blank"><span class="gi"><img src="${favicon(url)}" alt="" style="width:26px;height:26px;border-radius:6px" onerror="this.parentNode.textContent='${ic}'"></span><span><div class="gn">${nm}</div><div class="gd">${d[lang]||d.uz}</div></span></a>`).join(""); }
+
+function aqiInfo(v){ if(v==null) return ["—","#64708a"]; if(v<=20) return ["✓","#16a34a"]; if(v<=40) return ["✓","#65a30d"]; if(v<=60) return ["~","#d97706"]; if(v<=80) return ["!","#ea580c"]; if(v<=100) return ["!!","#dc2626"]; return ["✕","#9f1239"]; }
+function dailyTip(temp,code,aqi){ const T2=t("tips"); if(aqi!=null&&aqi>80) return ["😷",T2.mask]; if([61,63,65,80,81,82,95,96,99].includes(code)) return ["☔",T2.rain]; if([71,73,75,77,85,86].includes(code)) return ["❄️",T2.snow]; if(temp>=34) return ["🥵",T2.hot]; if(temp<=2) return ["🧥",T2.cold]; return ["😊",T2.good]; }
+function loadToday(){ const now=new Date();
+  $("boshDate").textContent="📅 "+new Intl.DateTimeFormat(locale(),{weekday:"long",day:"numeric",month:"long",year:"numeric",timeZone:"Asia/Tashkent"}).format(now)+" · "+CITY.name;
+  const wd=new Intl.DateTimeFormat(locale(),{weekday:"long",timeZone:"Asia/Tashkent"}).format(now);
+  const start=new Date(now.getFullYear(),0,0),doy=Math.floor((now-start)/86400000),mo=now.getMonth()+1;
+  const season=t("seasons")[[12,1,2].includes(mo)?0:[3,4,5].includes(mo)?1:[6,7,8].includes(mo)?2:3];
+  const fa=(FACTS[lang]||FACTS.uz); const fact=fa[doy%fa.length];
+  const dline=lang==="ru"?`${doy}${t("dayof2")}`:lang==="en"?`${t("dayof")} ${doy} ${t("dayof2")}`:`${t("dayof")} ${doy}${t("dayof2")}`;
+  $("today").innerHTML=`<div class="big" style="text-transform:capitalize">${wd}</div><div class="sub" style="margin:2px 0 12px">${dline} · ${season}</div><div class="fact">💡 <b>${t("funfact")}:</b> ${fact}</div>`; }
+
+async function loadWeather(){ $("wxCity").textContent=CITY.name; const box=$("wx"); box.innerHTML=`<div class="loading pulse">${t("loading")}</div>`;
+  try{ const u=`https://api.open-meteo.com/v1/forecast?latitude=${CITY.lat}&longitude=${CITY.lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&forecast_days=10&timezone=Asia%2FTashkent`;
+    const d=await (await fetch(u)).json(); const c=d.current; const em=(WX[c.weather_code]||["🌡"])[0]; let aqiV=null,aqiHtml="";
+    try{ aqiV=(await (await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${CITY.lat}&longitude=${CITY.lon}&current=european_aqi&timezone=Asia%2FTashkent`)).json()).current.european_aqi;
+      const [lb,co]=aqiInfo(aqiV); aqiHtml=`<div class="aqi" style="background:${co}22;color:${co};border:1px solid ${co}66">🌫 ${t("airq")}: ${aqiV} ${lb}</div>`; }catch(_){}
+    let fc='<div class="fc">'; for(let i=0;i<Math.min(10,d.daily.time.length);i++){ const dd=new Date(d.daily.time[i]); const e2=(WX[d.daily.weather_code[i]]||["🌡"])[0]; const dn=i===0?t("today"):new Intl.DateTimeFormat(locale(),{weekday:"short",timeZone:"Asia/Tashkent"}).format(dd);
+      fc+=`<div class="fc-day"><div class="d">${dn}</div><div class="e">${e2}</div><div class="t">${Math.round(d.daily.temperature_2m_max[i])}°/${Math.round(d.daily.temperature_2m_min[i])}°</div></div>`; } fc+='</div>';
+    const [ti,tt]=dailyTip(Math.round(c.temperature_2m),c.weather_code,aqiV);
+    box.innerHTML=`<div class="wx-top"><div class="wx-emoji">${em}</div><div><div class="wx-temp">${Math.round(c.temperature_2m)}°</div><div class="wx-desc">${wxDesc(c.weather_code)} • ${t("feels")} ${Math.round(c.apparent_temperature)}°</div></div></div>
+      <div class="wx-meta"><div>${t("humidity")}<b>${c.relative_humidity_2m}%</b></div><div>${t("wind")}<b>${Math.round(c.wind_speed_10m)} km/s</b></div><div>🌅 ${t("sunrise")}<b>${d.daily.sunrise[0].slice(11)}</b></div><div>🌇 ${t("sunset")}<b>${d.daily.sunset[0].slice(11)}</b></div></div>${aqiHtml}${fc}<div class="tip"><span class="i">${ti}</span><span>${tt}</span></div>`;
+  }catch(e){ box.innerHTML=`<div class="err">${t("loaderr")}</div>`; } }
+
+async function loadCurrency(){ const box=$("cur"); box.innerHTML=`<div class="loading pulse">${t("loading")}</div>`; try{ curData=await (await fetch("/api/currency")).json(); renderCurrency(); }catch(e){ box.innerHTML=`<div class="err">${t("loaderr")}</div>`; } }
+function renderCurrency(){ if(!curData) return; const off=curData.official||[]; const offHtml=off.map(o=>`<div class="off"><div class="c">${o.code}</div><div class="v">${Math.round(o.rate).toLocaleString("ru-RU")}</div></div>`).join("");
+  const banks=(curData.banks&&curData.banks[curTab])||[]; const bB=Math.max(0,...banks.map(b=>b.buy||0)); const ss=banks.filter(b=>b.sell).map(b=>b.sell); const bS=ss.length?Math.min(...ss):0;
+  const rows=banks.map(b=>{ const bi=bankIcon(b.bank); const icoHtml=bi?`<img src="${bi}" style="width:16px;height:16px;border-radius:3px;vertical-align:-3px;margin-right:6px" onerror="this.style.display='none'">`:"";
+    return `<tr><td class="b">${icoHtml}${b.bank}</td><td class="${b.buy===bB?'best':''}">${b.buy?b.buy.toLocaleString("ru-RU"):"—"}</td><td class="${b.sell===bS?'best':''}">${b.sell?b.sell.toLocaleString("ru-RU"):"—"}</td></tr>`; }).join("");
+  const tb=["USD","EUR","RUB"].map(c=>`<div class="ctab ${c===curTab?'on':''}" data-cur="${c}">${c}</div>`).join("");
+  const cbuDate=(off[0]&&off[0].date)||""; const upd=curData.updated?new Date(curData.updated).toLocaleTimeString(locale(),{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Tashkent"}):"";
+  $("cur").innerHTML=`<div class="off-row">${offHtml}</div><div style="font-size:11px;color:var(--muted);margin-bottom:6px">${t("cbu_note")}${cbuDate?` · 🏦 ${cbuDate} ${t("asof")}`:""}${upd?` · 🕐 ${t("updated")}: ${upd}`:""}</div>
+    <div class="calc"><input id="calcAmt" type="number" min="0" value="${calcState.amt}"><select id="calcCur">${["USD","EUR","RUB","KZT"].map(c=>`<option ${c===calcState.cur?'selected':''}>${c}</option>`).join("")}</select><span>=</span><span class="calc-res" id="calcRes">—</span></div>
+    <div class="ctabs">${tb}</div><div class="scrollbox"><table class="bank-tbl"><thead><tr><th>${t("bank")}</th><th>${t("buy")}</th><th>${t("sell")}</th></tr></thead><tbody>${rows||`<tr><td colspan="3" class="loading">${t("no_data")}</td></tr>`}</tbody></table></div><div class="hint">${t("hint_green")}<br>ℹ️ ${t("cur_src")}</div>`;
+  document.querySelectorAll(".ctab").forEach(x=>x.onclick=()=>{curTab=x.dataset.cur;renderCurrency();}); $("calcAmt").oninput=updateCalc; $("calcCur").onchange=updateCalc; updateCalc(); }
+function updateCalc(){ if(!curData) return; const amt=parseFloat($("calcAmt").value)||0,cur=$("calcCur").value; calcState={amt,cur}; const o=(curData.official||[]).find(x=>x.code===cur); $("calcRes").textContent=o?Math.round(amt*o.rate).toLocaleString("ru-RU")+" so'm":"—"; }
+
+async function loadPrayer(){ $("prCity").textContent=CITY.name; const box=$("pr"); box.innerHTML=`<div class="loading pulse">${t("loading")}</div>`;
+  try{ const p=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Tashkent",day:"2-digit",month:"2-digit",year:"numeric"}).formatToParts(new Date()); const g=x=>p.find(y=>y.type===x).value; const date=`${g("day")}-${g("month")}-${g("year")}`;
+    const d=await (await fetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${CITY.lat}&longitude=${CITY.lon}&method=2`)).json(); const x=d.data.timings;
+    prayerTimings=[x.Fajr,x.Sunrise,x.Dhuhr,x.Asr,x.Maghrib,x.Isha]; renderPrayer();
+  }catch(e){ box.innerHTML=`<div class="err">${t("loaderr")}</div>`; prayerTimings=null; } }
+function renderPrayer(){ const nm=t("prayers"); const rows=prayerTimings.map((v,i)=>`<div class="pr-row" data-i="${i}"><span>${nm[i]}</span><span class="t">${v}</span></div>`).join("");
+  const b=qiblaBearing(CITY.lat,CITY.lon); const dir=t("dirs")[Math.round(b/45)%8];
+  $("pr").innerHTML=`<div class="next-prayer" id="nextPrayer"></div>${rows}<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);text-align:center">🧭 Qibla: <b style="color:var(--txt)">${Math.round(b)}°</b> (${dir})</div>`; updateNextPrayer(); }
+function updateNextPrayer(){ const np=$("nextPrayer"); if(!np||!prayerTimings) return; const nm=t("prayers"); const now=new Date(); const cur=now.getHours()*60+now.getMinutes(); let idx=-1,nmin=Infinity;
+  prayerTimings.forEach((v,i)=>{ const [h,m]=v.split(":").map(Number); const mm=h*60+m; if(mm>cur&&mm<nmin){nmin=mm;idx=i;} });
+  document.querySelectorAll(".pr-row").forEach(el=>el.classList.remove("active")); let label;
+  if(idx<0){ idx=0; const [h,m]=prayerTimings[0].split(":").map(Number); nmin=h*60+m+1440; label=nm[0]; } else { const el=document.querySelector(`.pr-row[data-i="${idx}"]`); if(el) el.classList.add("active"); label=nm[idx]; }
+  const left=nmin-cur,hh=Math.floor(left/60),mm=left%60; np.innerHTML=`<div class="lbl">${t("next_prayer")}</div><div class="nm">${label}</div><div class="cd">${hh>0?hh+" "+t("hour")+" ":""}${mm} ${t("min")} ${t("left")}</div>`; }
+const MECCA=[21.4225,39.8262];
+function qiblaBearing(lat,lon){ const φ1=lat*Math.PI/180,φ2=MECCA[0]*Math.PI/180,Δλ=(MECCA[1]-lon)*Math.PI/180; const y=Math.sin(Δλ)*Math.cos(φ2),x=Math.cos(φ1)*Math.sin(φ2)-Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ); return (Math.atan2(y,x)*180/Math.PI+360)%360; }
+function loadReligion(){ $("relCity").textContent=CITY.name; const b=qiblaBearing(CITY.lat,CITY.lon); const dir=t("dirs")[Math.round(b/45)%8];
+  $("religion").innerHTML=`<div class="compass" style="--qibla:${b}deg"><span class="c cn">N</span><span class="c ce">E</span><span class="c cs">S</span><span class="c cw">W</span><div class="needle"><span class="kaaba">🕋</span><span class="stick"></span></div><div class="dot"></div></div><div style="text-align:center;font-size:15px;font-weight:800">Qibla: ${Math.round(b)}° <span style="color:var(--muted);font-weight:500;font-size:13px">(${dir})</span></div><div style="text-align:center;font-size:12px;color:var(--muted);margin-top:6px">🕋 ${t("qibla_to")}</div>`; }
+
+async function loadPOI(){ $("poiCity").textContent=CITY.name; const box=$("poi"); const list=POI[CITY.name];
+  if(!list){ box.innerHTML=`<div class="loading"><a href="https://www.google.com/maps/search/${encodeURIComponent(CITY.name)}" target="_blank" style="color:var(--accent)">Google Maps →</a></div>`; return; }
+  box.innerHTML=list.map(([ico,nm,ds])=>`<div class="poi" data-nm="${encodeURIComponent(nm)}"><div class="ico">${ico}</div><div><div class="nm">${nm}</div><div class="ds">${ds}</div></div><a href="https://www.google.com/maps/search/${encodeURIComponent(nm+' '+CITY.name)}" target="_blank">🗺</a></div>`).join("");
+  const wl=lang==="ru"?"ru":lang==="en"?"en":"uz";
+  list.forEach(async([ico,nm])=>{ try{ const d=await (await fetch(`https://${wl}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(nm)}`)).json(); const src=d.thumbnail&&d.thumbnail.source; if(src){ const el=box.querySelector(`.poi[data-nm="${encodeURIComponent(nm)}"] .ico`); if(el){ const img=document.createElement("img"); img.src=src; img.alt=nm; el.replaceWith(img); } } }catch(e){} }); }
+async function loadStats(){ $("statCity").textContent=CITY.name; const box=$("stats"); const s=STATS[CITY.name]; let head="";
+  const L=lang==="ru"?["Население","Основан","Высота"]:lang==="en"?["Population","Founded","Elevation"]:["Aholi","Tashkil topgan","Balandlik"];
+  if(s){ head=`<div class="stat-grid"><div>👥 ${L[0]}<b>${s[0]}</b></div><div>📅 ${L[1]}<b>${s[1]}</b></div><div>⛰ ${L[2]}<b>${s[2]}</b></div></div>`; }
+  box.innerHTML=head+`<div class="wiki loading pulse">${t("loading")}</div>`;
+  const wl=lang==="ru"?"ru":lang==="en"?"en":"uz";
+  try{ const d=await (await fetch(`https://${wl}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(CITY.name)}`)).json(); const ex=d.extract||""; const url=(d.content_urls&&d.content_urls.desktop&&d.content_urls.desktop.page)||"";
+    box.innerHTML=head+(ex?`<div class="wiki">${ex}${url?` <a href="${url}" target="_blank" style="color:var(--accent)">→</a>`:""}</div>`:(s?"":`<div class="loading">—</div>`));
+  }catch(e){ box.innerHTML=head||`<div class="err">${t("loaderr")}</div>`; } }
+const PHRASES=[["Assalomu alaykum","Hello / Здравствуйте"],["Rahmat","Thank you / Спасибо"],["Kechirasiz","Excuse me / Извините"],["Bu qancha turadi?","How much? / Сколько"],["Yordam bering!","Help! / Помогите!"],["Men tushunmadim","I don't understand"],["Ha / Yo'q","Yes/No / Да/Нет"],["Xayr","Goodbye / До свидания"]];
+function renderPhrasebook(){ $("phrase").innerHTML=PHRASES.map(([u,e])=>`<div class="phrase"><b>${u}</b><span class="en">${e}</span></div>`).join(""); }
+const HOLIDAYS=[["01-01",{uz:"🎊 Yangi yil",ru:"🎊 Новый год",en:"🎊 New Year"}],["03-08",{uz:"🌷 Xotin-qizlar kuni",ru:"🌷 8 Марта",en:"🌷 Women's Day"}],["03-21",{uz:"🌸 Navro'z",ru:"🌸 Навруз",en:"🌸 Navruz"}],["05-09",{uz:"🕊 Xotira kuni",ru:"🕊 День памяти",en:"🕊 Memorial Day"}],["09-01",{uz:"🇺🇿 Mustaqillik kuni",ru:"🇺🇿 День независимости",en:"🇺🇿 Independence Day"}],["10-01",{uz:"📚 O'qituvchilar kuni",ru:"📚 День учителя",en:"📚 Teachers' Day"}],["12-08",{uz:"📜 Konstitutsiya kuni",ru:"📜 День Конституции",en:"📜 Constitution Day"}]];
+function renderHolidays(){ const now=new Date(),y=now.getFullYear(); const items=HOLIDAYS.map(([md,nm])=>{const [mo,da]=md.split("-").map(Number);let dt=new Date(y,mo-1,da);if(dt<new Date(now.getFullYear(),now.getMonth(),now.getDate()))dt=new Date(y+1,mo-1,da);return {nm:nm[lang]||nm.uz,dt};});
+  const nx=Math.min(...items.map(x=>+x.dt)); $("holidays").innerHTML=items.sort((a,b)=>a.dt-b.dt).map(x=>{const iN=+x.dt===nx,dd=String(x.dt.getDate()).padStart(2,"0"),mm=String(x.dt.getMonth()+1).padStart(2,"0");return `<div class="hol ${iN?'next':''}"><span>${x.nm}</span><span class="dt">${dd}.${mm}</span></div>`;}).join(""); }
+
+let placeMap=null,curCat=0;
+function ensurePlaceMap(cb){ if(placeMap){cb();return;} if(typeof ymaps==="undefined"){ setTimeout(()=>ensurePlaceMap(cb),400); return; } ymaps.ready(()=>{ if(!placeMap) placeMap=new ymaps.Map('placeMap',{center:[CITY.lat,CITY.lon],zoom:12,controls:['zoomControl','geolocationControl','typeSelector']},{suppressMapOpenBlock:true}); cb(); }); }
+function buildCats(){ const nm=t("cats"); $("cats").innerHTML=CATSEL.map((c,i)=>`<button class="cat ${i===curCat?'on':''}" data-i="${i}">${CATICO[i]} ${nm[i]}</button>`).join(""); document.querySelectorAll(".cat").forEach(b=>b.onclick=()=>searchCategory(+b.dataset.i)); }
+async function overpass(q){ const eps=["https://overpass-api.de/api/interpreter","https://overpass.private.coffee/api/interpreter","https://overpass.kumi.systems/api/interpreter"]; for(const ep of eps){ try{ const r=await fetch(ep,{method:"POST",body:"data="+encodeURIComponent(q)}); if(r.ok) return (await r.json()).elements||[]; }catch(e){} } throw new Error("band"); }
+async function searchCategory(i){ curCat=i; const label=t("cats")[i],ico=CATICO[i],sels=CATSEL[i]; const list=$("placeList"); list.innerHTML=`<div class="loading pulse">${t("loading")}</div>`; document.querySelectorAll(".cat").forEach((b,j)=>b.classList.toggle("on",j===i));
+  ensurePlaceMap(()=>{ placeMap.setCenter([CITY.lat,CITY.lon],12); placeMap.geoObjects.removeAll(); });
+  try{ const body=sels.map(s=>`${s}(around:18000,${CITY.lat},${CITY.lon});`).join(""); const q=`[out:json][timeout:30];(${body});out center 150;`;
+    const els=(await overpass(q)).map(e=>{ const lat=e.lat||(e.center&&e.center.lat),lon=e.lon||(e.center&&e.center.lon); if(!lat||!lon) return null; const tg=e.tags||{}; return {name:tg.name||tg["name:"+lang]||tg["name:uz"]||tg.brand||tg.operator||label,tags:tg,lat,lon}; }).filter(Boolean);
+    if(!els.length){ list.innerHTML=`<div class="loading">${t("notfound")}</div>`; return; } els.sort((a,b)=>(b.name!==label)-(a.name!==label));
+    ensurePlaceMap(()=>{ placeMap.geoObjects.removeAll(); els.forEach(f=>placeMap.geoObjects.add(new ymaps.Placemark([f.lat,f.lon],{balloonContentHeader:f.name,hintContent:f.name},{preset:'islands#blueDotIcon'}))); });
+    list.innerHTML=els.slice(0,120).map(f=>{ const ad=f.tags["addr:street"]?(f.tags["addr:street"]+" "+(f.tags["addr:housenumber"]||"")):""; return `<div class="fuel-item"><div class="fn">${ico} ${f.name}</div>${ad?`<div class="ds">${ad}</div>`:""}<a href="https://yandex.uz/maps/?rtext=~${f.lat},${f.lon}&rtt=auto" target="_blank">🧭 ${t("route")}</a></div>`; }).join("");
+  }catch(e){ list.innerHTML=`<div class="err">${t("loaderr")}</div>`; } }
+function loadPlaces(){ $("placeCity").textContent=CITY.name; searchCategory(curCat); }
+// ===== MENGA ENG YAQIN =====
+let myPos=null, nearCat=-1;
+function haversine(a,b,c,d){ const R=6371000,r=x=>x*Math.PI/180; const dLat=r(c-a),dLon=r(d-b); const s=Math.sin(dLat/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dLon/2)**2; return 2*R*Math.asin(Math.sqrt(s)); }
+function renderNear(){ $("nearCats").innerHTML=NEARCATS.map((c,i)=>`<button class="cat" data-i="${i}">${c[0]} ${c[1]}</button>`).join("");
+  document.querySelectorAll("#nearCats .cat").forEach(b=>b.onclick=()=>nearMe(+b.dataset.i));
+  if(nearCat<0) $("nearList").innerHTML=`<div class="loading">${t("near_hint")}</div>`; }
+function nearMe(i){ nearCat=i; const list=$("nearList"); document.querySelectorAll("#nearCats .cat").forEach((b,j)=>b.classList.toggle("on",j===i));
+  if(myPos){ runNear(i,myPos.lat,myPos.lon); return; }
+  if(!navigator.geolocation){ list.innerHTML=`<div class="err">${t("near_nogps")}</div>`; return; }
+  list.innerHTML=`<div class="loading pulse">${t("near_locating")}</div>`;
+  navigator.geolocation.getCurrentPosition(p=>{ myPos={lat:p.coords.latitude,lon:p.coords.longitude}; runNear(i,myPos.lat,myPos.lon); },()=>{ list.innerHTML=`<div class="err">${t("near_nogps")}</div>`; }); }
+async function runNear(i,lat,lon){ const [ico,label,sel]=NEARCATS[i]; const list=$("nearList"); list.innerHTML=`<div class="loading pulse">${t("loading")}</div>`;
+  try{ const q=`[out:json][timeout:25];(${sel}(around:4000,${lat},${lon}););out center 60;`;
+    const els=(await overpass(q)).map(e=>{ const la=e.lat||(e.center&&e.center.lat),lo=e.lon||(e.center&&e.center.lon); if(!la||!lo) return null; const tg=e.tags||{}; return {name:tg.name||tg["name:"+lang]||tg.brand||label,lat:la,lon:lo,dist:haversine(lat,lon,la,lo)}; }).filter(Boolean);
+    els.sort((a,b)=>a.dist-b.dist);
+    if(!els.length){ list.innerHTML=`<div class="loading">${t("notfound")}</div>`; return; }
+    list.innerHTML=els.slice(0,10).map(f=>{ const dd=f.dist<1000?Math.round(f.dist)+" m":(f.dist/1000).toFixed(1)+" km";
+      return `<a class="near-item" href="https://yandex.uz/maps/?rtext=${lat},${lon}~${f.lat},${f.lon}&rtt=pd" target="_blank"><span>${ico} ${f.name}</span><span class="near-d">${dd}</span></a>`; }).join("");
+  }catch(e){ list.innerHTML=`<div class="err">${t("loaderr")}</div>`; } }
+async function loadNews(){ const box=$("news"); box.innerHTML=`<div class="loading pulse">${t("loading")}</div>`; try{ const d=await (await fetch("/api/news")).json(); box.innerHTML=(d.items||[]).map(n=>`<a class="news-item" href="${n.link}" target="_blank">📰 ${n.title}</a>`).join("")||`<div class="loading">—</div>`; }catch(e){ box.innerHTML=`<div class="err">${t("loaderr")}</div>`; } }
+
+function buildSelectors(){ const rs=$("regionSel"),cs=$("citySel"); rs.innerHTML=REGIONS.map((r,i)=>`<option value="${i}">${r.name}</option>`).join("");
+  function fill(ri,ci=0){ cs.innerHTML=REGIONS[ri].cities.map((c,j)=>`<option value="${j}">${c[0]}</option>`).join(""); cs.value=ci; apply(ri,ci); }
+  function apply(ri,ci){ const c=REGIONS[ri].cities[ci]; CITY={name:c[0],lat:c[1],lon:c[2]}; localStorage.setItem("uzgid_loc",ri+","+ci); }
+  rs.onchange=()=>{ fill(+rs.value,0); onCityChange(); }; cs.onchange=()=>{ apply(+rs.value,+cs.value); onCityChange(); };
+  const sv=(localStorage.getItem("uzgid_loc")||"0,0").split(",").map(Number); const ri=REGIONS[sv[0]]?sv[0]:0; const ci=REGIONS[ri].cities[sv[1]]?sv[1]:0; rs.value=ri; fill(ri,ci); }
+function nearestCity(lat,lon){ let bd=Infinity,bi=0,bj=0,best=null; REGIONS.forEach((r,i)=>r.cities.forEach((c,j)=>{ const d=Math.hypot(c[1]-lat,c[2]-lon); if(d<bd){bd=d;best=c;bi=i;bj=j;} })); return {best,bi,bj}; }
+$("gpsBtn").onclick=()=>{ if(!navigator.geolocation) return; $("gpsBtn").textContent="⏳"; navigator.geolocation.getCurrentPosition(p=>{ const {bi,bj,best}=nearestCity(p.coords.latitude,p.coords.longitude); $("regionSel").value=bi; $("citySel").innerHTML=REGIONS[bi].cities.map((c,j)=>`<option value="${j}">${c[0]}</option>`).join(""); $("citySel").value=bj; CITY={name:best[0],lat:best[1],lon:best[2]}; localStorage.setItem("uzgid_loc",bi+","+bj); $("gpsBtn").textContent="📍"; onCityChange(); },()=>{ $("gpsBtn").textContent="📍"; }); };
+function onCityChange(){ loaded={}; loadTab(activeTab); $("updated").textContent=t("updated")+": "+new Date().toLocaleTimeString(locale(),{timeZone:"Asia/Tashkent"}); }
+
+applyStatic(); buildSelectors(); buildNav(); loadTab("bosh");
+$("updated").textContent=t("updated")+": "+new Date().toLocaleTimeString(locale(),{timeZone:"Asia/Tashkent"});
+setInterval(()=>{ if(activeTab==="bosh") updateNextPrayer(); }, 30000);
+</script>
+</body>
+</html>
