@@ -225,7 +225,8 @@
   .cal-nav{background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:3px 13px;cursor:pointer;color:var(--txt);font-size:16px} .cal-nav:hover{border-color:var(--accent);color:var(--accent)}
   .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
   .cal-dow{text-align:center;font-size:11px;color:var(--muted);font-weight:700;padding:2px 0}
-  .cal-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:9px;font-size:13px;background:var(--card2);position:relative}
+  .cal-grid{max-width:360px}
+  .cal-cell{height:34px;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:13px;background:var(--card2);position:relative}
   .cal-cell.empty{background:transparent} .cal-cell.we{color:var(--bad)}
   .cal-cell.hol{outline:2px solid var(--good)} .cal-cell.hol::after{content:"";position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--good)}
   .cal-cell.today{background:var(--accent);color:#fff;font-weight:800;outline:none}
@@ -301,7 +302,7 @@
       <div class="card"><h2><span class="ic">🏖️</span> <span data-i="w_kurort"></span> <span class="soon" data-i="soon"></span></h2><div class="soonbox"><span class="si2">🏖️</span><span data-i="soon_desc"></span></div></div>
     </div></section>
   <section class="panel" id="p-turizm"><div class="grid">
-      <div class="card w2"><h2><span class="ic">📅</span> <span data-i="w_calendar"></span></h2><div id="calWrap"></div></div>
+      <div class="card"><h2><span class="ic">📅</span> <span data-i="w_calendar"></span></h2><div id="calWrap"></div></div>
       <div class="card"><h2><span class="ic">🏛</span> <span data-i="w_poi"></span> <span class="badge" id="poiCity">—</span></h2><div id="poi"><div class="loading pulse"></div></div></div>
       <div class="card"><h2><span class="ic">📊</span> <span data-i="w_city"></span> <span class="badge" id="statCity">—</span></h2><div id="stats"><div class="loading pulse"></div></div></div>
       <div class="card"><h2><span class="ic">🗣</span> <span data-i="w_phrase"></span></h2><div id="phrase"></div></div>
