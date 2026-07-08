@@ -81,7 +81,7 @@
   .phrase{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px} .phrase:last-child{border-bottom:none} .phrase .en{color:var(--muted);text-align:right}
   .hol{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px} .hol:last-child{border-bottom:none} .hol .dt{color:var(--muted)} .hol.next{color:var(--accent);font-weight:800}
   .cats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-  .cat{font-size:12px;font-weight:700;padding:7px 11px;border-radius:16px;background:var(--card2);border:1px solid var(--line);color:var(--txt);cursor:pointer} .cat:hover{border-color:var(--accent)} .cat.on{background:var(--accent);color:#fff;border-color:transparent}
+  .cat{font-size:13px;font-weight:700;padding:10px 14px;border-radius:16px;background:var(--card2);border:1px solid var(--line);color:var(--txt);cursor:pointer;-webkit-tap-highlight-color:transparent} .cat:hover{border-color:var(--accent)} .cat.on{background:var(--accent);color:#fff;border-color:transparent}
   #placeMap{height:380px;border-radius:12px;margin-bottom:12px;border:1px solid var(--line);z-index:0}
   .fuel-list{max-height:280px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
   .fuel-item{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
@@ -331,11 +331,11 @@ function buildCats(){ const nm=t("cats"); $("cats").innerHTML=CATSEL.map((c,i)=>
 async function overpass(q){ const eps=["https://overpass-api.de/api/interpreter","https://overpass.private.coffee/api/interpreter","https://overpass.kumi.systems/api/interpreter"]; for(const ep of eps){ try{ const r=await fetch(ep,{method:"POST",body:"data="+encodeURIComponent(q)}); if(r.ok) return (await r.json()).elements||[]; }catch(e){} } throw new Error("band"); }
 async function searchCategory(i){ curCat=i; const label=t("cats")[i],ico=CATICO[i],sels=CATSEL[i]; const list=$("placeList"); list.innerHTML=`<div class="loading pulse">${t("loading")}</div>`; document.querySelectorAll(".cat").forEach((b,j)=>b.classList.toggle("on",j===i));
   ensurePlaceMap(()=>{ placeMap.setCenter([CITY.lat,CITY.lon],12); placeMap.geoObjects.removeAll(); });
-  try{ const body=sels.map(s=>`${s}(around:18000,${CITY.lat},${CITY.lon});`).join(""); const q=`[out:json][timeout:30];(${body});out center 150;`;
+  try{ const body=sels.map(s=>`${s}(around:11000,${CITY.lat},${CITY.lon});`).join(""); const q=`[out:json][timeout:25];(${body});out center 70;`;
     const els=(await overpass(q)).map(e=>{ const lat=e.lat||(e.center&&e.center.lat),lon=e.lon||(e.center&&e.center.lon); if(!lat||!lon) return null; const tg=e.tags||{}; return {name:tg.name||tg["name:"+lang]||tg["name:uz"]||tg.brand||tg.operator||label,tags:tg,lat,lon}; }).filter(Boolean);
     if(!els.length){ list.innerHTML=`<div class="loading">${t("notfound")}</div>`; return; } els.sort((a,b)=>(b.name!==label)-(a.name!==label));
     ensurePlaceMap(()=>{ placeMap.geoObjects.removeAll(); els.forEach(f=>placeMap.geoObjects.add(new ymaps.Placemark([f.lat,f.lon],{balloonContentHeader:f.name,hintContent:f.name},{preset:'islands#blueDotIcon'}))); });
-    list.innerHTML=els.slice(0,120).map(f=>{ const ad=f.tags["addr:street"]?(f.tags["addr:street"]+" "+(f.tags["addr:housenumber"]||"")):""; return `<div class="fuel-item"><div class="fn">${ico} ${f.name}</div>${ad?`<div class="ds">${ad}</div>`:""}<a href="https://yandex.uz/maps/?rtext=~${f.lat},${f.lon}&rtt=auto" target="_blank">🧭 ${t("route")}</a></div>`; }).join("");
+    list.innerHTML=els.slice(0,70).map(f=>{ const ad=f.tags["addr:street"]?(f.tags["addr:street"]+" "+(f.tags["addr:housenumber"]||"")):""; return `<div class="fuel-item"><div class="fn">${ico} ${f.name}</div>${ad?`<div class="ds">${ad}</div>`:""}<a href="https://yandex.uz/maps/?rtext=~${f.lat},${f.lon}&rtt=auto" target="_blank">🧭 ${t("route")}</a></div>`; }).join("");
   }catch(e){ list.innerHTML=`<div class="err">${t("loaderr")}</div>`; } }
 function loadPlaces(){ $("placeCity").textContent=CITY.name; searchCategory(curCat); }
 // ===== MENGA ENG YAQIN =====
