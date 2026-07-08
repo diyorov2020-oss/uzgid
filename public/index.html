@@ -128,12 +128,20 @@
   .bignum{display:flex;flex-direction:column;align-items:center;gap:2px;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-decoration:none;color:var(--txt);transition:.15s}
   .bignum:hover{border-color:var(--bad)}
   .bignum .bn-n{font-size:16px;font-weight:900;color:var(--bad);line-height:1} .bignum .bn-i{font-size:14px}
+  #quicknums{display:flex;flex-wrap:wrap;gap:8px}
+  .qnum{display:inline-flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:7px 13px;text-decoration:none;color:var(--txt);font-size:13px;transition:.13s}
+  .qnum b{color:var(--bad);font-weight:800;font-variant-numeric:tabular-nums} .qnum:hover{border-color:var(--bad)}
+  .mtog{margin-left:auto;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:3px 10px;font-size:12px;color:var(--muted);cursor:pointer;line-height:1.4}
+  .mtog:hover{border-color:var(--accent);color:var(--accent)}
+  .mtog + .badge{margin-left:8px}
   .loading{color:var(--muted);font-size:13px} .err{color:var(--bad);font-size:13px}
   .contact-fab{position:fixed;right:14px;bottom:14px;z-index:80;background:var(--accent);color:#fff;padding:10px 14px;border-radius:30px;text-decoration:none;font-weight:700;font-size:13px;box-shadow:0 6px 18px rgba(31,111,229,.4)}
   footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px;padding:18px;border-top:1px solid var(--line)} footer a{color:var(--accent);text-decoration:none;font-weight:700}
   .pulse{animation:pulse 1.2s infinite} @keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
   /* ==== Chap menyu (my.gov.uz uslubi) ==== */
-  .side{position:fixed;top:0;left:0;bottom:0;width:66px;background:var(--card);border-right:1px solid var(--line);z-index:70;overflow-x:hidden;overflow-y:auto;transition:width .22s cubic-bezier(.4,0,.2,1);scrollbar-width:none}
+  .side{position:fixed;top:0;left:0;bottom:0;width:66px;background:var(--card);border-right:1px solid var(--line);z-index:70;overflow-x:hidden;overflow-y:auto;transition:width .22s cubic-bezier(.4,0,.2,1);scrollbar-width:none;display:flex;flex-direction:column}
+  .side-ver{margin-top:auto;padding:13px 20px 15px;font-size:11px;color:var(--muted);white-space:nowrap;opacity:0;transition:opacity .18s;border-top:1px solid var(--line)}
+  .side:hover .side-ver{opacity:1}
   .side::-webkit-scrollbar{display:none}
   .side:hover{width:238px;box-shadow:3px 0 26px rgba(30,60,120,.12)}
   .side-head{display:flex;align-items:center;gap:12px;padding:14px 16px 12px;cursor:pointer;border-bottom:1px solid var(--line);margin-bottom:6px}
@@ -176,12 +184,32 @@
   /* ==== Reklama joylari (kelajakda yoqiladi: body.classList.add('ads-on')) ==== */
   .adslot{display:none;margin:16px 0;min-height:100px;border:1px dashed var(--line);border-radius:14px;background:var(--card2);align-items:center;justify-content:center;color:var(--muted);font-size:12px;font-weight:600;overflow:hidden}
   body.ads-on .adslot{display:flex}
+  /* ==== Tez orada belgisi + bo'lim ==== */
+  .soon{font-size:9.5px;font-weight:800;padding:3px 9px;border-radius:16px;background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;margin-left:auto;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap}
+  .soonbox{text-align:center;color:var(--muted);font-size:13px;padding:26px 14px;background:var(--card2);border:1px dashed var(--line);border-radius:12px}
+  .soonbox .si2{font-size:32px;display:block;margin-bottom:8px;opacity:.8}
+  /* ==== FAQ ==== */
+  .faq{border:1px solid var(--line);border-radius:12px;margin-bottom:8px;overflow:hidden;background:var(--card2)}
+  .faq summary{padding:13px 15px;font-weight:700;font-size:14px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .faq summary::-webkit-details-marker{display:none} .faq summary::after{content:'+';font-size:21px;color:var(--accent);font-weight:400} .faq[open] summary::after{content:'\2212'}
+  .faq .fa{padding:0 15px 14px;font-size:13px;color:var(--muted);line-height:1.6}
+  /* ==== Ilova yuklab olish tugmalari ==== */
+  .appbtns{display:flex;gap:10px;flex-wrap:wrap}
+  .appbtn{display:flex;align-items:center;gap:11px;background:#0f1830;color:#fff;border-radius:13px;padding:10px 18px;text-decoration:none;position:relative;flex:1;min-width:150px}
+  .appbtn .ab-i{font-size:26px;flex:0 0 auto} .appbtn .ab-s{font-size:10px;opacity:.85} .appbtn .ab-n{font-size:16px;font-weight:800;line-height:1.1}
+  .appbtn.dis{opacity:.55}
+  .appbtn .ab-tag{position:absolute;top:-8px;right:8px;font-size:8.5px;font-weight:800;background:#f97316;color:#fff;padding:2px 7px;border-radius:10px;text-transform:uppercase}
+  /* ==== AI suhbat (namuna) ==== */
+  .aiwrap{display:flex;gap:8px;margin-top:10px;opacity:.65;pointer-events:none}
+  .aiwrap input{flex:1;padding:11px 14px;border-radius:11px;border:1px solid var(--line);background:var(--card2);color:var(--txt);font:inherit}
+  .aiwrap button{background:var(--accent);color:#fff;border:none;border-radius:11px;padding:0 16px;font-weight:700}
 </style>
 </head>
 <body>
 <aside class="side" id="side">
   <div class="side-head" onclick="openTab('bosh')"><div class="logo"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z" fill="#fff"/><circle cx="12" cy="9" r="2.6" fill="#1f6fe5"/></svg></div><span class="st">UZGID</span></div>
   <div id="sidemenu"></div>
+  <div class="side-ver">© 2026 UZGID · V1.0</div>
 </aside>
 <div class="side-backdrop" id="sideBackdrop"></div>
 <div class="appmain">
@@ -210,22 +238,22 @@
       <div><div id="boshDate" style="font-size:13px;color:var(--muted)">—</div><div id="boshTime" style="font-size:26px;font-weight:800;font-variant-numeric:tabular-nums">--:--</div></div>
     </div>
     <div class="grid">
-      <div class="card full"><h2><span class="ic">📍</span> <span data-i="w_near"></span></h2><div class="cats" id="nearCats"></div><div id="nearList" class="fuel-list" style="max-height:230px"><div class="loading" data-i="near_hint"></div></div></div>
+      <div class="card full"><h2><span class="ic">📍</span> <span data-i="w_near"></span><button class="mtog" id="nearToggle" onclick="toggleNear()" title="Yig'ish">▲</button></h2><div class="cats" id="nearCats"></div><div id="nearList" class="fuel-list" style="max-height:230px"><div class="loading" data-i="near_hint"></div></div></div>
       <div class="card w2"><h2><span class="ic">🌤</span> <span data-i="w_weather"></span> <span class="badge" id="wxCity">—</span></h2><div id="wx"><div class="loading pulse"></div></div></div>
       <div class="card"><h2><span class="ic">💵</span> <span data-i="w_currency"></span></h2><div id="cur"><div class="loading pulse"></div></div></div>
       <div class="card"><h2><span class="ic">💡</span> <span data-i="w_today"></span></h2><div id="today"><div class="loading pulse"></div></div></div>
-      <div class="card full"><h2><span class="ic">🚨</span> <span data-i="w_emergency"></span></h2><div class="numbig" id="quicknums"></div></div>
+      <div class="card full"><h2><span class="ic">🚨</span> <span data-i="w_emergency"></span></h2><div id="quicknums"></div></div>
     </div>
   </section>
   <section class="panel" id="p-namoz"><div class="grid"><div class="card full"><h2><span class="ic">🕕</span> <span data-i="w_prayer"></span> <span class="badge" id="prCity">—</span></h2><div id="pr"><div class="loading pulse"></div></div></div></div></section>
-  <section class="panel" id="p-joylar"><div class="grid"><div class="card full"><h2><span class="ic">🗺</span> <span data-i="w_places"></span> <span class="badge" id="placeCity">—</span></h2>
+  <section class="panel" id="p-joylar"><div class="grid"><div class="card full"><h2><span class="ic">🗺</span> <span data-i="w_places"></span> <button class="mtog" onclick="toggleBox('placeList',this)" title="Yig'ish">▲</button> <span class="badge" id="placeCity">—</span></h2>
       <div class="cats" id="cats"></div><div id="placeMap"></div><div id="placeList" class="fuel-list"><div class="loading" data-i="select_cat"></div></div></div></div></section>
   <section class="panel" id="p-transport"><div class="grid"><div class="card full"><h2><span class="ic">🚆</span> <span data-i="w_transport"></span></h2><div class="govgrid" id="trans"></div></div></div></section>
   <section class="panel" id="p-xizmatlar"><div class="grid">
       <div class="card"><h2><span class="ic">🏛</span> <span data-i="w_gov"></span></h2><div class="govgrid" id="gov"></div></div>
       <div class="card"><h2><span class="ic">💳</span> <span data-i="w_pay"></span></h2><div class="govgrid" id="pay"></div></div>
       <div class="card"><h2><span class="ic">🎓</span> <span data-i="w_edu"></span></h2><div class="govgrid" id="edu"></div></div>
-      <div class="card"><h2><span class="ic">🏠</span> <span data-i="w_kommunal"></span></h2><div class="govgrid" id="kommunal"></div></div>
+      <div class="card"><h2><span class="ic">🏠</span> <span data-i="w_kommunal"></span></h2><div class="govgrid" id="kommunal"></div><div class="hint" style="margin-top:10px">🏷️ <span data-i="kommunal_soon"></span></div></div>
     </div></section>
   <section class="panel" id="p-raqamlar"><div class="grid"><div class="card full"><h2><span class="ic">📞</span> <span data-i="w_nums"></span> <span class="badge">24/7</span></h2><div class="govgrid" id="nums"></div></div></div></section>
   <section class="panel" id="p-media"><div class="grid">
@@ -234,6 +262,9 @@
       <div class="card"><h2><span class="ic">🎫</span> <span data-i="w_afisha"></span></h2><div class="govgrid" id="afisha"></div></div>
       <div class="card"><h2><span class="ic">⚽</span> <span data-i="w_sport"></span></h2><div class="govgrid" id="sport"></div></div>
       <div class="card"><h2><span class="ic">📚</span> <span data-i="w_ebook"></span></h2><div class="govgrid" id="ebook"></div></div>
+      <div class="card"><h2><span class="ic">📺</span> <span data-i="w_tv"></span></h2><div class="govgrid" id="tv"></div></div>
+      <div class="card"><h2><span class="ic">🏋️</span> <span data-i="w_sportzal"></span> <span class="soon" data-i="soon"></span></h2><div class="soonbox"><span class="si2">🏋️</span><span data-i="soon_desc"></span></div></div>
+      <div class="card"><h2><span class="ic">🏖️</span> <span data-i="w_kurort"></span> <span class="soon" data-i="soon"></span></h2><div class="soonbox"><span class="si2">🏖️</span><span data-i="soon_desc"></span></div></div>
     </div></section>
   <section class="panel" id="p-turizm"><div class="grid">
       <div class="card"><h2><span class="ic">🏛</span> <span data-i="w_poi"></span> <span class="badge" id="poiCity">—</span></h2><div id="poi"><div class="loading pulse"></div></div></div>
@@ -241,10 +272,13 @@
       <div class="card"><h2><span class="ic">🗣</span> <span data-i="w_phrase"></span></h2><div id="phrase"></div></div>
       <div class="card"><h2><span class="ic">🎉</span> <span data-i="w_holidays"></span></h2><div id="holidays"></div></div>
     </div></section>
-  <section class="panel" id="p-yangiliklar"><div class="grid"><div class="card full"><h2><span class="ic">📰</span> <span data-i="w_news"></span> <span class="badge">gazeta.uz</span></h2><div id="news"><div class="loading pulse"></div></div></div></div></section>
-  <section class="panel" id="p-aloqa"><div class="grid"><div class="card full"><h2><span class="ic">💬</span> <span data-i="n_aloqa"></span></h2><div id="contact"></div></div></div></section>
+  <section class="panel" id="p-yangiliklar"><div class="grid">
+      <div class="card full"><h2><span class="ic">🏛</span> <span data-i="w_offnews"></span> <span class="badge">rasmiy</span></h2><div class="govgrid" id="offnews"></div></div>
+      <div class="card full"><h2><span class="ic">📰</span> <span data-i="w_news"></span> <button class="mtog" onclick="toggleBox('news',this)" title="Yig'ish">▲</button> <span class="badge">gazeta.uz</span></h2><div id="news"><div class="loading pulse"></div></div></div>
+    </div></section>
+  <section class="panel" id="p-aloqa"><div class="grid" id="aloqaGrid"></div></section>
   <div class="adslot" id="ad-bottom" data-ad="banner">Reklama</div>
-  <footer><b>UZGID</b> · <span data-i="tagline"></span> · <span id="updated">—</span><br><span data-i="sources"></span>: Open-Meteo, CBU, bank.uz, Aladhan, OpenStreetMap, Wikipedia<br><span style="opacity:.8">© 2026 UZGID · V1.0</span></footer>
+  <footer><b>UZGID</b> · <span data-i="tagline"></span> · <span id="updated">—</span><br><span data-i="sources"></span>: Open-Meteo, CBU, bank.uz, Aladhan, OpenStreetMap, Wikipedia</footer>
 </div>
 </div>
 <a class="contact-fab" href="https://t.me/shaxzoddiyorov" target="_blank">💬 <span data-i="contact"></span></a>
@@ -253,7 +287,7 @@
 // ============ TARJIMA ============
 const T={
  uz:{test:"⚙️ Sinov rejimi (beta) — ma'lumotlar tekshirilmoqda",tagline:"O'zbekiston axborot portali",contact:"Aloqa",sources:"Manbalar",official_banks:"rasmiy + banklar",select_cat:"Kategoriya tanlang…",loading:"Yuklanmoqda…",
-   n_bosh:"Bosh",n_joylar:"Joylar",n_turizm:"Turizm",n_yangiliklar:"Yangiliklar",n_foydali:"Foydali",n_namoz:"Namoz",n_valyuta:"Valyuta",n_transport:"Transport",n_xizmatlar:"Xizmatlar",n_raqamlar:"Raqamlar",n_media:"Multimedia",n_aloqa:"Aloqa",w_gov:"Davlat xizmatlari",w_nums:"Foydali raqamlar",w_transport:"Transport",w_pay:"To'lov tizimlari",w_edu:"Ta'lim va ish",w_kommunal:"Kommunal xizmatlar",hero_title:"Xush kelibsiz!",hero_sub:"O'zbekiston bir qarashda — barcha kerakli ma'lumot bir joyda",search_ph:"Izlash: ob havo, valyuta, namoz...",search_none:"Hech narsa topilmadi",n_koshar:"Ko'ngil ochar",w_kino:"Kino",w_teatr:"Teatr",w_afisha:"Afisha / chiptalar",w_sport:"Sport",w_tvradio:"TV va radio",w_ebook:"Kitoblar / e-kutubxona",w_near:"Menga eng yaqin",w_emergency:"Tezkor raqamlar",near_hint:"Kategoriya tanlang — joylashuvingiz bo'yicha topamiz",near_locating:"Joylashuv aniqlanmoqda…",near_nogps:"Joylashuvni aniqlab bo'lmadi. Ruxsat bering.",asof:"holatiga",cur_src:"Kurslar bank.uz'dan (~10 daq). Banklar CBU rasmiy kursi asosida — talab, naqd pul zaxirasi va raqobatga qarab — o'z olish/sotish narxini belgilaydi. Aniq kurs uchun bank bilan tasdiqlang.",
+   n_bosh:"Bosh",n_joylar:"Joylar",n_turizm:"Turizm",n_yangiliklar:"Yangiliklar",n_foydali:"Foydali",n_namoz:"Namoz",n_valyuta:"Valyuta",n_transport:"Transport",n_xizmatlar:"Xizmatlar",n_raqamlar:"Raqamlar",n_media:"Multimedia",n_aloqa:"Aloqa",w_gov:"Davlat xizmatlari",w_nums:"Foydali raqamlar",w_transport:"Transport",w_pay:"To'lov tizimlari",w_edu:"Ta'lim va ish",w_kommunal:"Kommunal xizmatlar",hero_title:"Xush kelibsiz!",hero_sub:"O'zbekiston bir qarashda — barcha kerakli ma'lumot bir joyda",search_ph:"Izlash: ob havo, valyuta, namoz...",search_none:"Hech narsa topilmadi",soon:"Tez orada",soon_desc:"Bu bo'lim ustida ishlanmoqda — tez orada tayyor bo'ladi.",w_tv:"Televidenie",w_sportzal:"Sport zallari",w_kurort:"Kurort va bassein",w_offnews:"Rasmiy yangiliklar",kommunal_soon:"Viloyatlar kesimida tasdiqlangan tariflar — tez orada.",w_app:"Ilovani yuklab olish",app_get:"Yuklab olish —",app_note:"Ayni vaqtda saytni brauzerda \"Bosh ekranga qo'shish\" orqali ilova sifatida o'rnatishingiz mumkin.",w_ai:"AI yordamchi",ai_desc:"Sun'iy intellekt yordamchisi — 3 tilda savol-javob. Tez orada ishga tushadi.",ai_ph:"Savolingizni yozing...",w_faq:"Ko'p so'raladigan savollar",w_contact:"Biz bilan bog'lanish",contact_note:"Taklif, xatolik yoki hamkorlik uchun yozing.",n_koshar:"Ko'ngil ochar",w_kino:"Kino",w_teatr:"Teatr",w_afisha:"Afisha / chiptalar",w_sport:"Sport",w_tvradio:"TV va radio",w_ebook:"Kitoblar / e-kutubxona",w_near:"Menga eng yaqin",w_emergency:"Tezkor raqamlar",near_hint:"Kategoriya tanlang — joylashuvingiz bo'yicha topamiz",near_locating:"Joylashuv aniqlanmoqda…",near_nogps:"Joylashuvni aniqlab bo'lmadi. Ruxsat bering.",asof:"holatiga",cur_src:"Kurslar bank.uz'dan (~10 daq). Banklar CBU rasmiy kursi asosida — talab, naqd pul zaxirasi va raqobatga qarab — o'z olish/sotish narxini belgilaydi. Aniq kurs uchun bank bilan tasdiqlang.",
    w_weather:"Ob-havo",w_currency:"Valyuta",w_prayer:"Namoz vaqtlari",w_qibla:"Qibla",w_today:"Bugun · qiziq fakt",w_places:"Joylar va xizmatlar",w_poi:"Turistik joylar",w_city:"Shahar haqida",w_phrase:"So'zlashgich",w_holidays:"Bayramlar",w_news:"Yangiliklar",
    humidity:"Namlik",wind:"Shamol",sunrise:"Tong",sunset:"Botish",airq:"Havo sifati",feels:"his",today:"Bugun",
    cbu_note:"Yuqorida — CBU rasmiy kursi",buy:"Olish",sell:"Sotish",bank:"Bank",no_data:"Ma'lumot yo'q",hint_green:"🟢 yashil — eng foydali kurs.",
@@ -264,7 +298,7 @@ const T={
    cats:["Turistik joylar","Tarixiy","Masjidlar","Mehmonxona","Restoran","Kafe","Shaxobcha","Zaryadlash","Bankomat","Bank","Dorixona","Shifoxona","Do'kon","Davlat idorasi"],
    tips:{mask:"Havo ifloslangan — imkon bo'lsa niqob taqing.",rain:"Yomg'ir kutilmoqda — soyabon oling.",snow:"Qor — ehtiyot bo'ling, issiq kiyining.",hot:"Issiq — ko'proq suv iching, oftobdan saqlaning.",cold:"Sovuq — issiq kiyining.",good:"Ob-havo yaxshi — sayr uchun ajoyib kun!"}},
  ru:{test:"⚙️ Тестовый режим (бета) — данные проверяются",tagline:"Информационный портал Узбекистана",contact:"Связь",sources:"Источники",official_banks:"офиц. + банки",select_cat:"Выберите категорию…",loading:"Загрузка…",
-   n_bosh:"Главная",n_joylar:"Места",n_turizm:"Туризм",n_yangiliklar:"Новости",n_foydali:"Полезное",n_namoz:"Намаз",n_valyuta:"Валюта",n_transport:"Транспорт",n_xizmatlar:"Услуги",n_raqamlar:"Номера",n_media:"Медиа",n_aloqa:"Связь",w_gov:"Госуслуги",w_nums:"Полезные номера",w_transport:"Транспорт",w_pay:"Платёжные системы",w_edu:"Образование и работа",w_kommunal:"Коммунальные услуги",hero_title:"Добро пожаловать!",hero_sub:"Узбекистан с первого взгляда — вся нужная информация в одном месте",search_ph:"Поиск: погода, валюта, намаз...",search_none:"Ничего не найдено",n_koshar:"Досуг",w_kino:"Кино",w_teatr:"Театр",w_afisha:"Афиша / билеты",w_sport:"Спорт",w_tvradio:"ТВ и радио",w_ebook:"Книги / э-библиотека",w_near:"Рядом со мной",w_emergency:"Экстренные номера",near_hint:"Выберите категорию — найдём рядом с вами",near_locating:"Определяем местоположение…",near_nogps:"Не удалось определить местоположение. Разрешите доступ.",asof:"на",cur_src:"Курсы с bank.uz (~10 мин). Банки устанавливают цены покупки/продажи на основе курса ЦБ — с учётом спроса, наличных и конкуренции. Уточняйте точный курс в банке.",
+   n_bosh:"Главная",n_joylar:"Места",n_turizm:"Туризм",n_yangiliklar:"Новости",n_foydali:"Полезное",n_namoz:"Намаз",n_valyuta:"Валюта",n_transport:"Транспорт",n_xizmatlar:"Услуги",n_raqamlar:"Номера",n_media:"Медиа",n_aloqa:"Связь",w_gov:"Госуслуги",w_nums:"Полезные номера",w_transport:"Транспорт",w_pay:"Платёжные системы",w_edu:"Образование и работа",w_kommunal:"Коммунальные услуги",hero_title:"Добро пожаловать!",hero_sub:"Узбекистан с первого взгляда — вся нужная информация в одном месте",search_ph:"Поиск: погода, валюта, намаз...",search_none:"Ничего не найдено",soon:"Скоро",soon_desc:"Раздел в разработке — скоро будет готов.",w_tv:"Телевидение",w_sportzal:"Спортзалы",w_kurort:"Курорты и бассейны",w_offnews:"Официальные новости",kommunal_soon:"Утверждённые тарифы по регионам — скоро.",w_app:"Скачать приложение",app_get:"Загрузить —",app_note:"Сейчас сайт можно установить как приложение через «Добавить на главный экран» в браузере.",w_ai:"AI-помощник",ai_desc:"Помощник с искусственным интеллектом — вопрос-ответ на 3 языках. Скоро заработает.",ai_ph:"Напишите ваш вопрос...",w_faq:"Частые вопросы",w_contact:"Связаться с нами",contact_note:"Пишите по предложениям, ошибкам или сотрудничеству.",n_koshar:"Досуг",w_kino:"Кино",w_teatr:"Театр",w_afisha:"Афиша / билеты",w_sport:"Спорт",w_tvradio:"ТВ и радио",w_ebook:"Книги / э-библиотека",w_near:"Рядом со мной",w_emergency:"Экстренные номера",near_hint:"Выберите категорию — найдём рядом с вами",near_locating:"Определяем местоположение…",near_nogps:"Не удалось определить местоположение. Разрешите доступ.",asof:"на",cur_src:"Курсы с bank.uz (~10 мин). Банки устанавливают цены покупки/продажи на основе курса ЦБ — с учётом спроса, наличных и конкуренции. Уточняйте точный курс в банке.",
    w_weather:"Погода",w_currency:"Валюта",w_prayer:"Время намаза",w_qibla:"Кибла",w_today:"Сегодня · факт",w_places:"Места и услуги",w_poi:"Достопримечательности",w_city:"О городе",w_phrase:"Разговорник",w_holidays:"Праздники",w_news:"Новости",
    humidity:"Влажность",wind:"Ветер",sunrise:"Восход",sunset:"Закат",airq:"Качество воздуха",feels:"ощущ.",today:"Сегодня",
    cbu_note:"Выше — офиц. курс ЦБ",buy:"Покупка",sell:"Продажа",bank:"Банк",no_data:"Нет данных",hint_green:"🟢 зелёный — лучший курс.",
@@ -275,7 +309,7 @@ const T={
    cats:["Достопримечательности","Историч.","Мечети","Отели","Рестораны","Кафе","АЗС","Зарядка","Банкоматы","Банки","Аптеки","Больницы","Магазины","Госучреждения"],
    tips:{mask:"Воздух загрязнён — по возможности наденьте маску.",rain:"Ожидается дождь — возьмите зонт.",snow:"Снег — будьте осторожны, оденьтесь теплее.",hot:"Жарко — пейте больше воды, избегайте солнца.",cold:"Холодно — оденьтесь теплее.",good:"Погода хорошая — отличный день для прогулки!"}},
  en:{test:"⚙️ Beta — data under testing",tagline:"Uzbekistan information portal",contact:"Contact",sources:"Sources",official_banks:"official + banks",select_cat:"Choose a category…",loading:"Loading…",
-   n_bosh:"Home",n_joylar:"Places",n_turizm:"Tourism",n_yangiliklar:"News",n_foydali:"Useful",n_namoz:"Prayer",n_valyuta:"Currency",n_transport:"Transport",n_xizmatlar:"Services",n_raqamlar:"Numbers",n_media:"Media",n_aloqa:"Contact",w_gov:"Government services",w_nums:"Useful numbers",w_transport:"Transport",w_pay:"Payment systems",w_edu:"Education & jobs",w_kommunal:"Utilities",hero_title:"Welcome!",hero_sub:"Uzbekistan at a glance — all essential info in one place",search_ph:"Search: weather, currency, prayer...",search_none:"Nothing found",n_koshar:"Leisure",w_kino:"Cinema",w_teatr:"Theatre",w_afisha:"Events / tickets",w_sport:"Sport",w_tvradio:"TV & radio",w_ebook:"Books / e-library",w_near:"Near me",w_emergency:"Emergency numbers",near_hint:"Pick a category — we'll find the nearest",near_locating:"Locating…",near_nogps:"Couldn't get location. Please allow access.",asof:"as of",cur_src:"Rates from bank.uz (~10 min). Banks set buy/sell prices based on the official CBU rate — adjusting for demand, cash reserves and competition. Confirm the exact rate with the bank.",
+   n_bosh:"Home",n_joylar:"Places",n_turizm:"Tourism",n_yangiliklar:"News",n_foydali:"Useful",n_namoz:"Prayer",n_valyuta:"Currency",n_transport:"Transport",n_xizmatlar:"Services",n_raqamlar:"Numbers",n_media:"Media",n_aloqa:"Contact",w_gov:"Government services",w_nums:"Useful numbers",w_transport:"Transport",w_pay:"Payment systems",w_edu:"Education & jobs",w_kommunal:"Utilities",hero_title:"Welcome!",hero_sub:"Uzbekistan at a glance — all essential info in one place",search_ph:"Search: weather, currency, prayer...",search_none:"Nothing found",soon:"Soon",soon_desc:"This section is under development — coming soon.",w_tv:"Television",w_sportzal:"Gyms",w_kurort:"Resorts & pools",w_offnews:"Official news",kommunal_soon:"Approved region-wise tariffs — coming soon.",w_app:"Download the app",app_get:"Download on",app_note:"For now you can install the site as an app via \"Add to Home Screen\" in your browser.",w_ai:"AI assistant",ai_desc:"AI-powered assistant — Q&A in 3 languages. Launching soon.",ai_ph:"Type your question...",w_faq:"Frequently asked questions",w_contact:"Contact us",contact_note:"Write to us with suggestions, bugs, or partnership.",n_koshar:"Leisure",w_kino:"Cinema",w_teatr:"Theatre",w_afisha:"Events / tickets",w_sport:"Sport",w_tvradio:"TV & radio",w_ebook:"Books / e-library",w_near:"Near me",w_emergency:"Emergency numbers",near_hint:"Pick a category — we'll find the nearest",near_locating:"Locating…",near_nogps:"Couldn't get location. Please allow access.",asof:"as of",cur_src:"Rates from bank.uz (~10 min). Banks set buy/sell prices based on the official CBU rate — adjusting for demand, cash reserves and competition. Confirm the exact rate with the bank.",
    w_weather:"Weather",w_currency:"Currency",w_prayer:"Prayer times",w_qibla:"Qibla",w_today:"Today · fun fact",w_places:"Places & services",w_poi:"Tourist sites",w_city:"About the city",w_phrase:"Phrasebook",w_holidays:"Holidays",w_news:"News",
    humidity:"Humidity",wind:"Wind",sunrise:"Sunrise",sunset:"Sunset",airq:"Air quality",feels:"feels",today:"Today",
    cbu_note:"Above — official CBU rate",buy:"Buy",sell:"Sell",bank:"Bank",no_data:"No data",hint_green:"🟢 green — best rate.",
@@ -351,15 +385,33 @@ function loadTab(id){ if(loaded[id]) return; loaded[id]=true;
   else if(id==="transport") renderLinks("trans",TRANS);
   else if(id==="xizmatlar"){ renderLinks("gov",GOV); renderLinks("pay",PAY); renderLinks("edu",EDU); renderLinks("kommunal",KOMMUNAL); }
   else if(id==="raqamlar") renderNums();
-  else if(id==="media"){ renderLinks("kino",KINO); renderLinks("teatr",TEATR); renderLinks("afisha",AFISHA); renderLinks("sport",SPORT); renderLinks("ebook",EBOOK); }
+  else if(id==="media"){ renderLinks("kino",KINO); renderLinks("teatr",TEATR); renderLinks("afisha",AFISHA); renderLinks("sport",SPORT); renderLinks("ebook",EBOOK); renderLinks("tv",TV); }
   else if(id==="turizm"){ loadPOI(); loadStats(); renderPhrasebook(); renderHolidays(); }
-  else if(id==="yangiliklar") loadNews();
+  else if(id==="yangiliklar"){ renderLinks("offnews",OFFNEWS); loadNews(); }
   else if(id==="aloqa") renderContact(); }
 function boshClock(){ const el=$("boshTime"); if(el) el.textContent=new Intl.DateTimeFormat(locale(),{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZone:"Asia/Tashkent",hour12:false}).format(new Date()); }
 function loadBoshWx(){ boshClock(); (async()=>{ try{ const d=await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${CITY.lat}&longitude=${CITY.lon}&current=temperature_2m,weather_code&timezone=Asia%2FTashkent`)).json(); const c=d.current; const em=(WX[c.weather_code]||["🌡"])[0]; $("boshWx").innerHTML=`<span style="font-size:30px">${em}</span> <b style="font-size:22px;color:var(--txt)">${Math.round(c.temperature_2m)}°</b><br><span>${wxDesc(c.weather_code)} · ${CITY.name}</span>`; }catch(e){} })(); }
-function renderContact(){ const ai={uz:"tez orada — 3 tilda savol-javob",ru:"скоро — вопрос-ответ на 3 языках",en:"coming soon — Q&A in 3 languages"}; $("contact").innerHTML=`<p style="font-size:14px;margin-bottom:6px">💬 Telegram: <a href="https://t.me/shaxzoddiyorov" target="_blank" style="color:var(--accent);font-weight:700">@shaxzoddiyorov</a></p><div class="fact" style="margin-top:12px">🤖 <b>AI yordamchi</b> — ${ai[lang]||ai.uz}</div>`; }
+const APPLE_SVG='<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M16.4 12.6c0-2 1.6-3 1.7-3-1-1.4-2.4-1.6-2.9-1.6-1.2-.1-2.4.7-3 .7-.6 0-1.6-.7-2.6-.7-1.3 0-2.6.8-3.2 2-1.4 2.4-.4 6 1 8 .6 1 1.4 2 2.4 2 .9 0 1.3-.6 2.4-.6s1.4.6 2.4.6 1.7-.9 2.3-1.9c.7-1 1-2 1-2-.1 0-2-.8-2-3zM14.5 6.3c.5-.6.9-1.5.8-2.3-.8 0-1.7.5-2.2 1.1-.5.5-.9 1.4-.8 2.2.9.1 1.8-.4 2.2-1z"/></svg>';
+function renderContact(){
+  const faq=FAQ_DATA.map(f=>`<details class="faq"><summary>${f.q[lang]||f.q.uz}</summary><div class="fa">${f.a[lang]||f.a.uz}</div></details>`).join("");
+  $("aloqaGrid").innerHTML=`
+  <div class="card"><h2><span class="ic">📱</span> ${t("w_app")}</h2>
+    <div class="appbtns">
+      <a class="appbtn dis" onclick="return false" href="#"><span class="ab-i">${APPLE_SVG}</span><span><div class="ab-s">${t("app_get")}</div><div class="ab-n">App Store</div></span><span class="ab-tag">${t("soon")}</span></a>
+      <a class="appbtn dis" onclick="return false" href="#"><span class="ab-i">🤖</span><span><div class="ab-s">${t("app_get")}</div><div class="ab-n">Android APK</div></span><span class="ab-tag">${t("soon")}</span></a>
+    </div>
+    <div class="hint" style="margin-top:10px">📲 ${t("app_note")}</div></div>
+  <div class="card"><h2><span class="ic">🤖</span> ${t("w_ai")} <span class="soon">${t("soon")}</span></h2>
+    <div class="fact">${t("ai_desc")}</div>
+    <div class="aiwrap"><input placeholder="${t("ai_ph")}" disabled><button>➤</button></div></div>
+  <div class="card full"><h2><span class="ic">❓</span> ${t("w_faq")}</h2>${faq}</div>
+  <div class="card full"><h2><span class="ic">💬</span> ${t("w_contact")}</h2>
+    <p style="font-size:14px">💬 Telegram: <a href="https://t.me/shaxzoddiyorov" target="_blank" style="color:var(--accent);font-weight:700">@shaxzoddiyorov</a></p>
+    <p style="font-size:13px;color:var(--muted);margin-top:8px">${t("contact_note")}</p></div>`; }
 const NUMS=[["112",{uz:"Yagona favqulodda xizmat",ru:"Единая экстренная служба",en:"Single emergency service"}],["101",{uz:"Yong'in xavfsizligi",ru:"Пожарная служба",en:"Fire service"}],["102",{uz:"Ichki ishlar (militsiya)",ru:"Полиция",en:"Police"}],["103",{uz:"Tez tibbiy yordam",ru:"Скорая помощь",en:"Ambulance"}],["104",{uz:"Gaz avariya xizmati",ru:"Аварийная газовая служба",en:"Gas emergency"}],["1050",{uz:"FVV — qutqaruv xizmati",ru:"МЧС — спасатели",en:"Emergency rescue"}],["1000",{uz:"Prezident Xalq qabulxonasi",ru:"Народная приёмная Президента",en:"President's public reception"}]];
-function renderQuickNums(){ const q=[["112","🆘"],["101","🚒"],["102","👮"],["103","🚑"]]; $("quicknums").innerHTML=q.map(([n,ic])=>`<a class="bignum" href="tel:${n}"><div class="bn-n">${n}</div><div class="bn-i">${ic}</div></a>`).join(""); }
+function renderQuickNums(){ const q=[["112","🆘"],["101","🚒"],["102","👮"],["103","🚑"],["1050","⛑"],["104","🔧"]]; $("quicknums").innerHTML=q.map(([n,ic])=>`<a class="qnum" href="tel:${n}">${ic} <b>${n}</b></a>`).join(""); }
+function toggleBox(id,btn){ const el=$(id); if(!el) return; const hide=el.style.display!=="none"; el.style.display=hide?"none":""; if(btn) btn.textContent=hide?"▼":"▲"; }
+function toggleNear(){ const b=$("nearToggle"); const hide=$("nearList").style.display!=="none"; $("nearList").style.display=hide?"none":""; $("nearCats").style.display=hide?"none":""; b.textContent=hide?"▼":"▲"; }
 function renderNums(){ $("nums").innerHTML=NUMS.map(([n,d])=>`<a class="govlink" href="tel:${n}"><span class="gi" style="font-weight:900;color:var(--accent);font-size:18px">${n}</span><span><div class="gn">${d[lang]||d.uz}</div></span></a>`).join(""); }
 const TRANS=[["🚆","Temir yo'l","https://railway.uz",{uz:"Poyezd chiptalari",ru:"Ж/д билеты",en:"Train tickets"}],["✈️","Uzbekistan Airways","https://uzairways.com",{uz:"Aviachiptalar",ru:"Авиабилеты",en:"Flights"}],["✈️","Silk Avia","https://silkavia.uz",{uz:"Ichki reyslar",ru:"Внутренние рейсы",en:"Domestic flights"}],["✈️","Qanot Sharq","https://qanotsharq.com",{uz:"Aviakompaniya",ru:"Авиакомпания",en:"Airline"}],["✈️","Centrum Air","https://centrum-air.com",{uz:"Aviakompaniya",ru:"Авиакомпания",en:"Airline"}],["🚌","Avtovokzal","https://avtovokzal.uz",{uz:"Avtobus / bekatlar",ru:"Автобусы / вокзалы",en:"Buses / stations"}],["🚕","Yandex Go","https://go.yandex",{uz:"Taksi (Yandex)",ru:"Такси (Яндекс)",en:"Taxi (Yandex)"}],["🚕","MyTaxi","https://mytaxi.uz",{uz:"Taksi chaqirish",ru:"Вызов такси",en:"Taxi"}],["🛬","Aeroportlar","https://uzairports.com",{uz:"Reyslar jadvali",ru:"Расписание рейсов",en:"Flight schedule"}]];
 const EDU=[["💼","Ish topish","https://ish.mehnat.uz",{uz:"Bo'sh ish o'rinlari",ru:"Вакансии",en:"Jobs"}],["🎓","HEMIS","https://hemis.uz",{uz:"Oliy ta'lim tizimi",ru:"Высшее образование",en:"Higher education"}],["📝","DTM / UZBMB","https://my.uzbmb.uz",{uz:"Test va qabul",ru:"Тесты и приём",en:"Exams & admission"}]];
@@ -370,6 +422,14 @@ const TEATR=[["🎭","Teatr.uz","https://teatr.uz",{uz:"Teatr afishasi",ru:"Аф
 const AFISHA=[["🎫","Afisha.uz","https://afisha.uz",{uz:"Tadbirlar afishasi",ru:"Афиша событий",en:"Events"}],["🎟","Ticket.uz","https://ticket.uz",{uz:"Chiptalar",ru:"Билеты",en:"Tickets"}]];
 const SPORT=[["⚽","PFL","https://pfl.uz",{uz:"Futbol chempionati",ru:"Футбольный чемпионат",en:"Football league"}],["🏆","Championat","https://championat.uz",{uz:"Sport yangiliklari",ru:"Спортивные новости",en:"Sports news"}]];
 const EBOOK=[["📚","Ziyouz","https://ziyouz.uz",{uz:"O'zbek adabiyoti kutubxonasi",ru:"Библиотека узб. литературы",en:"Uzbek literature library"}],["📖","Ziyonet kutubxona","https://library.ziyonet.uz",{uz:"Ta'lim e-kutubxonasi",ru:"Образоват. э-библиотека",en:"Educational e-library"}],["📕","Kitob.uz","https://kitob.uz",{uz:"Onlayn kitoblar",ru:"Онлайн-книги",en:"Online books"}],["🏛","Milliy kutubxona","https://natlib.uz",{uz:"A.Navoiy nomidagi kutubxona",ru:"Нац. библиотека",en:"National Library"}]];
+const TV=[["📺","O'zbekiston 24","https://uzbekistan24.uz",{uz:"Yangiliklar telekanali",ru:"Новостной телеканал",en:"News channel"}],["📡","MTRK","https://mtrk.uz",{uz:"Milliy teleradiokompaniya",ru:"Нац. телерадиокомпания",en:"National broadcaster"}],["🏆","Uzreport TV","https://uzreport.news",{uz:"Sport va biznes",ru:"Спорт и бизнес",en:"Sport & business"}],["🎬","Sevimli TV","https://sevimli.tv",{uz:"Ko'ngilochar kanal",ru:"Развлекательный канал",en:"Entertainment"}]];
+const OFFNEWS=[["🏛","Lex.uz","https://lex.uz",{uz:"Qonunchilik bazasi",ru:"База законодательства",en:"Legislation database"}],["🏦","Markaziy bank","https://cbu.uz/oz/press-center/news/",{uz:"MB rasmiy yangiliklari",ru:"Новости ЦБ",en:"Central Bank news"}],["💰","Soliq qo'mitasi","https://soliq.uz",{uz:"Soliq yangiliklari",ru:"Налоговые новости",en:"Tax news"}],["📰","UzA","https://uza.uz",{uz:"Milliy axborot agentligi",ru:"Нац. информагентство",en:"National news agency"}],["📋","Gov.uz","https://gov.uz",{uz:"Hukumat portali",ru:"Портал правительства",en:"Government portal"}],["📄","Norma.uz","https://norma.uz",{uz:"Huquqiy axborot",ru:"Правовая информация",en:"Legal information"}]];
+const FAQ_DATA=[
+ {q:{uz:"UZGID bepulmi?",ru:"UZGID бесплатный?",en:"Is UZGID free?"},a:{uz:"Ha, UZGID butunlay bepul. Barcha ma'lumotlardan hech qanday to'lovsiz foydalanishingiz mumkin.",ru:"Да, UZGID полностью бесплатен. Все данные доступны без какой-либо оплаты.",en:"Yes, UZGID is completely free. All information is available at no cost."}},
+ {q:{uz:"Ma'lumotlar qayerdan olinadi?",ru:"Откуда берутся данные?",en:"Where does the data come from?"},a:{uz:"Rasmiy va ochiq manbalardan: Markaziy bank, bank.uz, Open-Meteo, Aladhan, OpenStreetMap, Wikipedia va boshqalar.",ru:"Из официальных и открытых источников: ЦБ, bank.uz, Open-Meteo, Aladhan, OpenStreetMap, Wikipedia и др.",en:"From official and open sources: Central Bank, bank.uz, Open-Meteo, Aladhan, OpenStreetMap, Wikipedia and others."}},
+ {q:{uz:"Ma'lumotlar real vaqtdami?",ru:"Данные в реальном времени?",en:"Is the data real-time?"},a:{uz:"Ha, ob-havo, valyuta kurslari va namoz vaqtlari real vaqtda avtomatik yangilanadi.",ru:"Да, погода, курсы валют и время намаза обновляются автоматически в реальном времени.",en:"Yes, weather, currency rates and prayer times update automatically in real time."}},
+ {q:{uz:"Telefonga ilova sifatida o'rnatsa bo'ladimi?",ru:"Можно установить как приложение?",en:"Can I install it as an app?"},a:{uz:"Ha. Brauzerda \"Bosh ekranga qo'shish\" (Add to Home Screen) orqali ilova kabi o'rnatiladi.",ru:"Да. Через «Добавить на главный экран» в браузере он устанавливается как приложение.",en:"Yes. Use \"Add to Home Screen\" in your browser to install it like an app."}},
+ {q:{uz:"Xatolik topsam yoki taklifim bo'lsa?",ru:"Нашёл ошибку или есть предложение?",en:"Found a bug or have a suggestion?"},a:{uz:"Telegram orqali yozing: @shaxzoddiyorov. Har bir fikringizdan mamnun bo'lamiz.",ru:"Напишите в Telegram: @shaxzoddiyorov. Будем рады любому отзыву.",en:"Write to us on Telegram: @shaxzoddiyorov. We welcome any feedback."}}];
 const NEARCATS=[["💊","Dorixona",'nwr["amenity"="pharmacy"]'],["🏧","Bankomat",'nwr["amenity"="atm"]'],["🏥","Shifoxona",'nwr["amenity"~"hospital|clinic"]'],["⛽","Shaxobcha",'nwr["amenity"="fuel"]'],["🍽","Restoran",'nwr["amenity"="restaurant"]']];
 function favicon(url){ const dom=url.replace(/^https?:\/\//,'').replace(/\/.*$/,''); return `https://www.google.com/s2/favicons?sz=64&domain=${dom}`; }
 const BANKDOM=[["kapital","kapitalbank.uz"],["hamkor","hamkorbank.uz"],["ipoteka","ipotekabank.uz"],["aloqa","aloqabank.uz"],["asaka","asakabank.uz"],["agro","agrobank.uz"],["infin","infinbank.uz"],["milliy","nbu.uz"],["nbu","nbu.uz"],["xalq","xb.uz"],["trast","trastbank.uz"],["turon","turonbank.uz"],["ipak","ipakyulibank.uz"],["orient","ofb.uz"],["anor","anorbank.uz"],["tbc","tbcbank.uz"],["tenge","tengebank.uz"],["davr","davrbank.uz"],["universal","universalbank.uz"],["hayot","hayotbank.uz"],["kdb","kdb.uz"],["poytaxt","poytaxtbank.uz"],["garant","garantbank.uz"],["uzum","uzumbank.uz"],["octo","octobank.uz"],["open","openbank.uz"],["brb","brb.uz"],["asia alliance","aab.uz"],["mkbank","mkbank.uz"],["ravnaq","ravnaqbank.uz"],["ziraat","ziraatbank.uz"],["sqb","sqb.uz"],["sanoat","sqb.uz"],["qurilish","sqb.uz"]];
