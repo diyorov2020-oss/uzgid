@@ -680,13 +680,19 @@ const ALIAS={ bosh:["asosiy","главная","home","ob havo","obhavo","пог�
   yangiliklar:["yangilik","новости","news","xabar"],
   aloqa:["aloqa","связь","contact","yordam","помощь","support","ai","suhbat"] };
 function setCityByIndex(ri,ci){ const rs=$("regionSel"),cs=$("citySel"); if(rs) rs.value=ri; if(cs){ cs.innerHTML=REGIONS[ri].cities.map((c,j)=>`<option value="${j}">${c[0]}</option>`).join(""); cs.value=ci; } const c=REGIONS[ri].cities[ci]; CITY={name:c[0],lat:c[1],lon:c[2]}; localStorage.setItem("uzgid_loc",ri+","+ci); onCityChange(); }
-function doSearch(q){ q=q.toLowerCase(); const res=[]; const add=(ic,lab,act)=>res.push({ic,lab,act});
-  NAVID.forEach((id,i)=>{ if(t("n_"+id).toLowerCase().includes(q)||(ALIAS[id]||[]).some(k=>k.includes(q)||q.includes(k))) add(NAVIC[i],t("n_"+id),()=>openTab(id)); });
-  [[GOV,"xizmatlar"],[PAY,"xizmatlar"],[EDU,"xizmatlar"],[TRANS,"transport"],[KINO,"media"],[TEATR,"media"],[AFISHA,"media"],[SPORT,"media"],[EBOOK,"media"],[OFFNEWS,"yangiliklar"]].forEach(([arr,tab])=>arr.forEach(it=>{ if((it[1]||"").toLowerCase().includes(q)) add(it[0],it[1],()=>openTab(tab)); }));
-  [NUMS,ISHONCH].forEach(arr=>arr.forEach(it=>{ const nm=it[1][lang]||it[1].uz; if(nm.toLowerCase().includes(q)||String(it[0]).includes(q)) add("📞",nm+" · "+it[0],()=>openTab("raqamlar")); }));
-  (t("cats")||[]).forEach((c,i)=>{ if(c.toLowerCase().includes(q)) add(CATICO[i],c,()=>{ curCat=i; openTab("joylar"); }); });
-  REGIONS.forEach((r,ri)=>r.cities.forEach((c,ci)=>{ if(c[0].toLowerCase().includes(q)) add("📍",c[0]+" — "+t("n_joylar"),()=>{ setCityByIndex(ri,ci); openTab("joylar"); }); }));
-  const seen=new Set(); return res.filter(r=>{ const k=r.ic+r.lab.toLowerCase(); if(seen.has(k))return false; seen.add(k); return true; }).slice(0,14); }
+const CYR={а:"a",б:"b",в:"v",г:"g",д:"d",е:"e",ё:"yo",ж:"j",з:"z",и:"i",й:"y",к:"k",л:"l",м:"m",н:"n",о:"o",п:"p",р:"r",с:"s",т:"t",у:"u",ф:"f",х:"x",ц:"ts",ч:"ch",ш:"sh",щ:"sh",ъ:"",ы:"i",ь:"",э:"e",ю:"yu",я:"ya",ў:"o",қ:"q",ғ:"g",ҳ:"h"};
+function norm(s){ return (s||"").toLowerCase().replace(/[ʻʼ'`‘’]/g,"").split("").map(c=>CYR[c]!=null?CYR[c]:c).join("").replace(/[^a-z0-9]/g,""); }
+function lev(a,b){ const m=a.length,n=b.length; if(!m)return n; if(!n)return m; let p=Array.from({length:n+1},(_,j)=>j); for(let i=1;i<=m;i++){ let prev=p[0]; p[0]=i; for(let j=1;j<=n;j++){ const cur=p[j]; p[j]=Math.min(p[j]+1,p[j-1]+1,prev+(a[i-1]===b[j-1]?0:1)); prev=cur; } } return p[n]; }
+function smatch(target,q){ const T=norm(target),Q=norm(q); if(!Q) return false; if(T.includes(Q)) return true;
+  if(Q.length>=3){ return (target.toLowerCase().match(/[a-zа-яёўқғҳ0-9'ʻ]+/gi)||[]).map(norm).some(W=> W && (W.startsWith(Q) || (Math.abs(W.length-Q.length)<=2 && lev(W,Q)<=(Q.length<=5?1:2))) ); }
+  return false; }
+function doSearch(q){ const res=[]; const add=(ic,lab,act)=>res.push({ic,lab,act}); const m=s=>smatch(s,q); const nq=norm(q);
+  NAVID.forEach((id,i)=>{ if(m(t("n_"+id))||(ALIAS[id]||[]).some(k=>m(k))) add(NAVIC[i],t("n_"+id),()=>openTab(id)); });
+  [[GOV,"xizmatlar"],[PAY,"xizmatlar"],[EDU,"xizmatlar"],[TRANS,"transport"],[KINO,"media"],[TEATR,"media"],[AFISHA,"media"],[SPORT,"media"],[EBOOK,"media"],[OFFNEWS,"yangiliklar"]].forEach(([arr,tab])=>arr.forEach(it=>{ if(m(it[1]||"")) add(it[0],it[1],()=>openTab(tab)); }));
+  [NUMS,ISHONCH].forEach(arr=>arr.forEach(it=>{ const nm=it[1][lang]||it[1].uz; if(m(nm)||(nq&&String(it[0]).includes(nq))) add("📞",nm+" · "+it[0],()=>openTab("raqamlar")); }));
+  (t("cats")||[]).forEach((c,i)=>{ if(m(c)) add(CATICO[i],c,()=>{ curCat=i; openTab("joylar"); }); });
+  REGIONS.forEach((r,ri)=>r.cities.forEach((c,ci)=>{ if(m(c[0])) add("📍",c[0]+" — "+t("n_joylar"),()=>{ setCityByIndex(ri,ci); openTab("joylar"); }); }));
+  const seen=new Set(); return res.filter(r=>{ const k=r.ic+r.lab.toLowerCase(); if(seen.has(k))return false; seen.add(k); return true; }).slice(0,16); }
 (function(){ const inp=$("heroSearch"),box=$("heroSugg"); if(!inp) return; let cur=[];
   function place(){ const r=inp.getBoundingClientRect(); box.style.left=r.left+"px"; box.style.top=(r.bottom+6)+"px"; box.style.width=r.width+"px"; }
   function render(){ const q=inp.value.trim(); if(!q){ box.classList.remove("open"); box.innerHTML=""; cur=[]; return; }
