@@ -188,7 +188,7 @@
   .hero-app:hover::after{opacity:1}
   .hero-year{margin-top:14px;display:inline-block;font-size:12.5px;font-weight:700;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.32);padding:6px 13px;border-radius:20px;text-shadow:none}
   .hero h2{font-size:25px;font-weight:900;letter-spacing:.3px;text-shadow:0 1px 10px rgba(0,40,80,.28)} .hero p{font-size:14.5px;opacity:.95;margin-top:5px;text-shadow:0 1px 8px rgba(0,40,80,.22)}
-  @media (max-width:560px){ .hero-ctl{position:static;justify-content:flex-end;margin-bottom:10px} }
+  @media (max-width:560px){ .hero{padding-top:56px} .hero h2{font-size:22px} }
   .hero-search{position:relative;margin-top:18px;max-width:480px;z-index:40}
   .hero-search input{width:100%;padding:14px 18px 14px 44px;border-radius:13px;border:none;font:inherit;font-size:15px;color:#152238;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2364708a' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4-4'/%3E%3C/svg%3E") no-repeat 15px center;box-shadow:0 6px 20px rgba(0,0,0,.15)}
   .hero-search input{caret-color:var(--accent)} .hero-search input:focus{outline:2px solid #fff}
@@ -620,14 +620,15 @@ function renderCalendar(){ if(!$("calWrap")) return;
   const holList=Object.keys(hol).sort((a,b)=>a-b).map(d=>`<div class="cal-hol-item"><b>${String(d).padStart(2,"0")}.${String(m+1).padStart(2,"0")}</b> ${hol[d]}</div>`).join("")||`<div class="hint">${({uz:"Bu oyda rasmiy bayram yo'q",ru:"В этом месяце нет праздников",en:"No public holidays this month"})[lang]}</div>`;
   $("calWrap").innerHTML=`<div class="cal-head"><button class="cal-nav" onclick="calOffset--;renderCalendar()">‹</button><div class="cal-title">${monthName} ${y}</div><button class="cal-nav" onclick="calOffset++;renderCalendar()">›</button></div><div class="cal-grid">${wd.map(w=>`<div class="cal-dow">${w}</div>`).join("")}${cells}</div><div class="cal-hols">${holList}</div>`; }
 
-let placeMap=null,curCat=0;
+let placeMap=null,curCat=0,placeReq=0;
 function ensurePlaceMap(cb){ if(placeMap){cb();return;} if(typeof ymaps==="undefined"){ setTimeout(()=>ensurePlaceMap(cb),400); return; } ymaps.ready(()=>{ if(!placeMap) placeMap=new ymaps.Map('placeMap',{center:[CITY.lat,CITY.lon],zoom:12,controls:['zoomControl','geolocationControl','typeSelector']},{suppressMapOpenBlock:true}); cb(); }); }
 function buildCats(){ const nm=t("cats"); $("cats").innerHTML=CATSEL.map((c,i)=>`<button class="cat ${i===curCat?'on':''}" data-c="${i}">${CATICO[i]} ${nm[i]}</button>`).join(""); document.querySelectorAll("#cats .cat").forEach(b=>b.onclick=()=>searchCategory(+b.dataset.c)); }
 async function overpass(q){ const eps=["https://overpass-api.de/api/interpreter","https://overpass.private.coffee/api/interpreter","https://overpass.kumi.systems/api/interpreter"]; for(const ep of eps){ try{ const r=await fetch(ep,{method:"POST",body:"data="+encodeURIComponent(q)}); if(r.ok) return (await r.json()).elements||[]; }catch(e){} } throw new Error("band"); }
-async function searchCategory(i){ curCat=i; const label=t("cats")[i],ico=CATICO[i],sels=CATSEL[i]; const list=$("placeList"); list.innerHTML=`<div class="loading pulse">${t("loading")}</div>`; document.querySelectorAll("#cats .cat").forEach((b,j)=>b.classList.toggle("on",j===i));
+async function searchCategory(i){ curCat=i; const my=++placeReq; const label=t("cats")[i],ico=CATICO[i],sels=CATSEL[i]; const list=$("placeList"); list.innerHTML=`<div class="loading pulse">${t("loading")}</div>`; document.querySelectorAll("#cats .cat").forEach((b,j)=>b.classList.toggle("on",j===i));
   ensurePlaceMap(()=>{ placeMap.setCenter([CITY.lat,CITY.lon],12); placeMap.geoObjects.removeAll(); });
   try{ const body=sels.map(s=>`${s}(around:11000,${CITY.lat},${CITY.lon});`).join(""); const q=`[out:json][timeout:25];(${body});out center 70;`;
     const els=(await overpass(q)).map(e=>{ const lat=e.lat||(e.center&&e.center.lat),lon=e.lon||(e.center&&e.center.lon); if(!lat||!lon) return null; const tg=e.tags||{}; return {name:tg.name||tg["name:"+lang]||tg["name:uz"]||tg.brand||tg.operator||label,tags:tg,lat,lon}; }).filter(Boolean);
+    if(my!==placeReq) return; // eskirgan so'rov — e'tibormay
     if(!els.length){ list.innerHTML=`<div class="loading">${t("notfound")}</div>`; return; } els.sort((a,b)=>(b.name!==label)-(a.name!==label));
     ensurePlaceMap(()=>{ placeMap.geoObjects.removeAll(); els.forEach(f=>placeMap.geoObjects.add(new ymaps.Placemark([f.lat,f.lon],{balloonContentHeader:f.name,hintContent:f.name},{preset:'islands#blueDotIcon'}))); });
     list.innerHTML=els.slice(0,70).map(f=>{ const ad=f.tags["addr:street"]?(f.tags["addr:street"]+" "+(f.tags["addr:housenumber"]||"")):""; return `<div class="fuel-item"><div class="fn">${ico} ${f.name}</div>${ad?`<div class="ds">${ad}</div>`:""}<a href="https://yandex.uz/maps/?rtext=~${f.lat},${f.lon}&rtt=auto" target="_blank">🧭 ${t("route")}</a></div>`; }).join("");
@@ -644,9 +645,10 @@ function nearMe(i){ nearCat=i; const list=$("nearList"); document.querySelectorA
   if(!navigator.geolocation){ list.innerHTML=`<div class="err">${t("near_nogps")}</div>`; return; }
   list.innerHTML=`<div class="loading pulse">${t("near_locating")}</div>`;
   navigator.geolocation.getCurrentPosition(p=>{ myPos={lat:p.coords.latitude,lon:p.coords.longitude}; runNear(i,myPos.lat,myPos.lon); },()=>{ list.innerHTML=`<div class="err">${t("near_nogps")}</div>`; }); }
-async function runNear(i,lat,lon){ const [ico,label,sel]=NEARCATS[i]; const list=$("nearList"); list.innerHTML=`<div class="loading pulse">${t("loading")}</div>`;
+async function runNear(i,lat,lon){ const [ico,label,sel]=NEARCATS[i]; const my=++placeReq; const list=$("nearList"); list.innerHTML=`<div class="loading pulse">${t("loading")}</div>`;
   try{ const q=`[out:json][timeout:25];(${sel}(around:4000,${lat},${lon}););out center 60;`;
     const els=(await overpass(q)).map(e=>{ const la=e.lat||(e.center&&e.center.lat),lo=e.lon||(e.center&&e.center.lon); if(!la||!lo) return null; const tg=e.tags||{}; return {name:tg.name||tg["name:"+lang]||tg.brand||label,lat:la,lon:lo,dist:haversine(lat,lon,la,lo)}; }).filter(Boolean);
+    if(my!==placeReq) return;
     els.sort((a,b)=>a.dist-b.dist);
     if(!els.length){ list.innerHTML=`<div class="loading">${t("notfound")}</div>`; return; }
     list.innerHTML=els.slice(0,10).map(f=>{ const dd=f.dist<1000?Math.round(f.dist)+" m":(f.dist/1000).toFixed(1)+" km";
