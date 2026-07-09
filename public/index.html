@@ -179,11 +179,17 @@
   .hero::before{content:"";position:absolute;top:0;left:0;right:0;bottom:5px;opacity:.22;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cg fill='none' stroke='white' stroke-width='1.25'%3E%3Cpath d='M32 5 L38.5 25.5 L59 32 L38.5 38.5 L32 59 L25.5 38.5 L5 32 L25.5 25.5 Z'/%3E%3Crect x='22' y='22' width='20' height='20' transform='rotate(45 32 32)'/%3E%3Ccircle cx='32' cy='32' r='3.3'/%3E%3Ccircle cx='32' cy='5' r='1.5'/%3E%3Ccircle cx='32' cy='59' r='1.5'/%3E%3Ccircle cx='5' cy='32' r='1.5'/%3E%3Ccircle cx='59' cy='32' r='1.5'/%3E%3C/g%3E%3C/svg%3E");background-size:64px 64px;z-index:0}
   .hero::after{content:"";position:absolute;right:-44px;top:-54px;width:250px;height:250px;opacity:.15;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cg fill='none' stroke='white' stroke-width='2'%3E%3Ccircle cx='125' cy='125' r='120'/%3E%3Ccircle cx='125' cy='125' r='96'/%3E%3Cpath d='M125 12 L142 108 L238 125 L142 142 L125 238 L108 142 L12 125 L108 108 Z'/%3E%3Crect x='83' y='83' width='84' height='84' transform='rotate(45 125 125)'/%3E%3Ccircle cx='125' cy='125' r='15'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;z-index:0}
   .hero>*{position:relative;z-index:1}
-  .hero-ctl{position:absolute;top:14px;right:14px;display:flex;gap:8px;z-index:5}
+  .hero-ctl{position:absolute;top:14px;right:14px;display:flex;flex-direction:column;align-items:flex-end;gap:9px;z-index:5}
+  .hero-apps{display:flex;gap:7px}
+  .hero-app{width:34px;height:34px;border-radius:9px;background:#fff;color:#111;display:grid;place-items:center;box-shadow:0 3px 10px rgba(0,0,0,.2);cursor:pointer;transition:.15s;position:relative}
+  .hero-app:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(0,0,0,.28)}
+  .hero-app svg{width:20px;height:20px}
+  .hero-app::after{content:attr(data-tip);position:absolute;top:calc(100% + 5px);right:0;background:#0f1830;color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:.15s}
+  .hero-app:hover::after{opacity:1}
   .hero-year{margin-top:14px;display:inline-block;font-size:12.5px;font-weight:700;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.32);padding:6px 13px;border-radius:20px;text-shadow:none}
   .hero h2{font-size:25px;font-weight:900;letter-spacing:.3px;text-shadow:0 1px 10px rgba(0,40,80,.28)} .hero p{font-size:14.5px;opacity:.95;margin-top:5px;text-shadow:0 1px 8px rgba(0,40,80,.22)}
   @media (max-width:560px){ .hero-ctl{position:static;justify-content:flex-end;margin-bottom:10px} }
-  .hero-search{position:relative;margin-top:18px;max-width:480px}
+  .hero-search{position:relative;margin-top:18px;max-width:480px;z-index:40}
   .hero-search input{width:100%;padding:14px 18px 14px 44px;border-radius:13px;border:none;font:inherit;font-size:15px;color:#152238;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2364708a' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4-4'/%3E%3C/svg%3E") no-repeat 15px center;box-shadow:0 6px 20px rgba(0,0,0,.15)}
   .hero-search input{caret-color:var(--accent)} .hero-search input:focus{outline:2px solid #fff}
   .hero-sugg{position:fixed;background:var(--card);border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow);z-index:200;overflow-y:auto;max-height:min(60vh,420px);display:none}
@@ -272,7 +278,11 @@
 <div class="wrap">
   <section class="panel on" id="p-bosh">
     <div class="hero">
-      <div class="hero-ctl"><div class="langwrap"><button class="iconbtn" id="langBtn">🌐 <span id="langCur">O'z</span> ▾</button><div class="langmenu" id="langMenu"><span data-l="uz">🇺🇿 O'zbekcha</span><span data-l="ru">🇷🇺 Русский</span><span data-l="en">🇬🇧 English</span></div></div></div>
+      <div class="hero-ctl"><div class="langwrap"><button class="iconbtn" id="langBtn">🌐 <span id="langCur">O'z</span> ▾</button><div class="langmenu" id="langMenu"><span data-l="uz">🇺🇿 O'zbekcha</span><span data-l="ru">🇷🇺 Русский</span><span data-l="en">🇬🇧 English</span></div></div>
+        <div class="hero-apps">
+          <a class="hero-app" href="#" onclick="return false" data-tip="App Store · tez orada" title="App Store — tez orada"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.6c0-2 1.6-3 1.7-3-1-1.4-2.4-1.6-2.9-1.6-1.2-.1-2.4.7-3 .7-.6 0-1.6-.7-2.6-.7-1.3 0-2.6.8-3.2 2-1.4 2.4-.4 6 1 8 .6 1 1.4 2 2.4 2 .9 0 1.3-.6 2.4-.6s1.4.6 2.4.6 1.7-.9 2.3-1.9c.7-1 1-2 1-2-.1 0-2-.8-2-3zM14.5 6.3c.5-.6.9-1.5.8-2.3-.8 0-1.7.5-2.2 1.1-.5.5-.9 1.4-.8 2.2.9.1 1.8-.4 2.2-1z"/></svg></a>
+          <a class="hero-app" href="#" onclick="return false" data-tip="Google Play · tez orada" title="Google Play — tez orada"><svg viewBox="0 0 24 24"><path d="M3.6 2.3C3.4 2.5 3.3 2.8 3.3 3.2v17.6c0 .4.1.7.3.9l9.5-9.4L3.6 2.3z" fill="#00d0ff"/><path d="M16.9 8.6 3.9 1.2c-.1-.1-.3-.1-.3 0l9.5 9.5 3.8-2.1z" fill="#00e676"/><path d="M20.4 11.1 16.9 9l-3.9 3.3 3.9 3.3 3.5-2.1c.6-.4.6-1.6 0-2.4z" fill="#ffce00"/><path d="M3.6 21.7c.1.1.2.1.3 0l13-7.4-3.5-3-9.8 10.4z" fill="#ff3b30"/></svg></a>
+        </div></div>
       <h2 data-i="hero_title"></h2>
       <p data-i="hero_sub"></p>
       <div class="hero-search" onclick="document.getElementById('heroSearch').focus()">
@@ -454,18 +464,6 @@ const GOLD_SVG='<svg viewBox="0 0 24 24" width="20" height="20"><defs><linearGra
 function renderContact(){
   const faq=FAQ_DATA.map(f=>`<details class="faq"><summary>${f.q[lang]||f.q.uz}</summary><div class="fa">${f.a[lang]||f.a.uz}</div></details>`).join("");
   $("aloqaGrid").innerHTML=`
-  <div class="card full"><h2><span class="ic">📱</span> ${t("w_app")} <span class="soon">${t("soon")}</span></h2>
-    <div class="apppromo">
-      <div class="phone-mock"><div class="pm-screen"><div class="pm-logo"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z" fill="#1f6fe5"/><circle cx="12" cy="9" r="2.6" fill="#fff"/></svg></div><div class="pm-name">UZGID</div><div class="pm-tag">O'zbekiston bir qarashda</div><div class="pm-rows"><span></span><span></span><span></span></div></div></div>
-      <div class="app-right">
-        <p style="font-size:14px;margin-bottom:2px;font-weight:600">${t("app_promo")}</p>
-        <div class="badges">
-          <a class="appbadge" onclick="return false" href="#" title="${t("soon")}"><span class="ab-logo">${APPLE_SVG}</span><span class="ab-txt"><small>${t("app_dl_on")}</small><b>App Store</b></span></a>
-          <a class="appbadge" onclick="return false" href="#" title="${t("soon")}"><span class="ab-logo">${PLAY_SVG}</span><span class="ab-txt"><small>${t("app_get_on")}</small><b>Google Play</b></span></a>
-        </div>
-        <div class="hint">📲 ${t("app_note")}</div>
-      </div>
-    </div></div>
   <div class="card"><h2><span class="ic">🤖</span> ${t("w_ai")} <span class="soon">${t("soon")}</span></h2>
     <div class="fact">${t("ai_desc")}</div>
     <div class="aiwrap"><input placeholder="${t("ai_ph")}" disabled><button>➤</button></div></div>
