@@ -271,7 +271,7 @@
       <div class="card w2"><h2><span class="ic">🌤</span> <span data-i="w_weather"></span> <span class="badge" id="wxCity">—</span></h2><div id="wx"><div class="loading pulse"></div></div></div>
       <div class="card"><h2><span class="ic">💵</span> <span data-i="w_currency"></span></h2><div id="cur"><div class="loading pulse"></div></div></div>
       <div class="card"><h2><span class="ic">💡</span> <span data-i="w_today"></span></h2><div id="today"><div class="loading pulse"></div></div></div>
-      <div class="card"><h2><span class="ic">📅</span> <span data-i="w_calendar"></span></h2><div id="calWrap"></div></div>
+      <div class="card"><h2><span class="ic">💰</span> <span data-i="w_meyor"></span></h2><div id="meyorMini"></div></div>
       <div class="card full"><h2><span class="ic">🚨</span> <span data-i="w_emergency"></span></h2><div id="quicknums"></div></div>
     </div>
   </section>
@@ -413,7 +413,7 @@ function buildNav(){ $("sidemenu").innerHTML=NAVID.map((id,i)=>`<div class="side
 function closeSide(){ $("side").classList.remove("open"); $("sideBackdrop").classList.remove("open"); }
 function openTab(id){ activeTab=id; document.querySelectorAll(".side-item").forEach(x=>x.classList.toggle("on",x.dataset.t===id)); document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+id)); loadTab(id); closeSide(); window.scrollTo({top:0,behavior:"smooth"}); }
 function loadTab(id){ if(loaded[id]) return; loaded[id]=true;
-  if(id==="bosh"){ loadWeather(); loadCurrency(); renderNear(); loadToday(); renderQuickNums(); renderCalendar(); boshClock(); }
+  if(id==="bosh"){ loadWeather(); loadCurrency(); renderNear(); loadToday(); renderQuickNums(); renderMeyorMini(); boshClock(); }
   else if(id==="namoz") loadPrayer();
   else if(id==="joylar"){ buildCats(); loadPlaces(); }
   else if(id==="transport") renderLinks("trans",TRANS);
@@ -451,6 +451,9 @@ function renderMeyor(){ const L=lang, som=t("som");
    {l:{uz:"Yoshga doir eng kam pensiya",ru:"Мин. пенсия по возрасту",en:"Minimum old-age pension"},v:"918 000",n:{uz:"1-sen 2026 dan: 983 000",ru:"с 1 сен 2026: 983 000",en:"from Sep 1: 983,000"}},
    {l:{uz:"Eng kam iste'mol xarajati (MIX)",ru:"Мин. потреб. расходы (МПР)",en:"Min. consumption spend"},v:"715 000",n:{uz:"2026-yil",ru:"2026 год",en:"2026"}}];
   $("meyor").innerHTML=rows.map(r=>`<div class="trow"><span class="tl">${r.l[L]||r.l.uz}</span><span class="tv">${r.v} ${som}<small>${r.n[L]||r.n.uz}</small></span></div>`).join("")+`<div class="tsrc">${({uz:"Manba: rasmiy me'yoriy hujjatlar (buxgalter.uz, norma.uz) — iyul 2026 holatiga.",ru:"Источник: офиц. нормативы (buxgalter.uz, norma.uz) — на июль 2026.",en:"Source: official acts (buxgalter.uz, norma.uz) — as of Jul 2026."})[L]}</div>`; }
+function renderMeyorMini(){ if(!$("meyorMini")) return; const L=lang, som=t("som");
+  const rows=[{l:{uz:"Eng kam ish haqi",ru:"Мин. зарплата",en:"Min. wage"},v:"1 271 000"},{l:{uz:"Eng kam pensiya",ru:"Мин. пенсия",en:"Min. pension"},v:"918 000"},{l:{uz:"BHM",ru:"БРВ",en:"BHM"},v:"412 000"}];
+  $("meyorMini").innerHTML=rows.map(r=>`<div class="trow"><span class="tl">${r.l[L]||r.l.uz}</span><span class="tv">${r.v} ${som}</span></div>`).join("")+`<a class="hint" style="display:inline-block;margin-top:8px;color:var(--accent);cursor:pointer;font-weight:700" onclick="openTab('xizmatlar')">${({uz:"Batafsil →",ru:"Подробнее →",en:"Details →"})[L]}</a>`; }
 function renderTarif(){ const L=lang, som=t("som"); const r=(l,v)=>`<div class="trow"><span class="tl">${l}</span><span class="tv">${v}</span></div>`; const T2=s=>s[L]||s.uz;
   const elektr=[["≤200 kVt","650"],["201–500","900"],["501–1000","1 100"],["1001–5000","1 600"],["5001–10 000","1 900"],[">10 000","2 200"]].map(([a,b])=>r(a,b+" "+som)).join("");
   const gaz=[[{uz:"Ovqat / issiq suv",ru:"Готовка / гор. вода",en:"Cooking / hot water"},"2 000"],[{uz:"Uyni isitish",ru:"Отопление дома",en:"Home heating"},"1 550"],[{uz:"Isitish (me'yor ≤500 m³)",ru:"Отопление (норма ≤500 м³)",en:"Heating (norm ≤500 m³)"},"1 100"]].map(([l,v])=>r(T2(l),v+" "+som)).join("");
