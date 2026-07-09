@@ -53,7 +53,7 @@
   select,button,.iconbtn{font:inherit;color:var(--txt);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px;cursor:pointer;transition:.15s;max-width:100%}
   select:hover,button:hover,.iconbtn:hover{border-color:var(--accent)} .iconbtn{padding:9px 11px;font-size:15px}
   .langwrap{position:relative}
-  .langmenu{position:absolute;right:0;top:112%;background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);display:none;z-index:80;overflow:hidden;min-width:140px}
+  .langmenu{position:fixed;background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);display:none;z-index:210;overflow:hidden;min-width:150px}
   .langmenu.open{display:block}
   .langmenu span{display:block;padding:11px 15px;font-size:13px;font-weight:600;cursor:pointer;color:var(--txt)} .langmenu span:hover{background:var(--card2)}
   .boshhead{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px;box-shadow:var(--shadow)}
@@ -436,8 +436,9 @@ function applyTheme(x){ if(x==="dark") document.documentElement.setAttribute("da
 applyTheme(localStorage.getItem("uzgid_theme")||"light");
 $("themeBtn").onclick=()=>{ const c=document.documentElement.getAttribute("data-theme")==="dark"?"dark":"light"; const n=c==="dark"?"light":"dark"; localStorage.setItem("uzgid_theme",n); applyTheme(n); };
 // LANG
-$("langBtn").onclick=(e)=>{ e.stopPropagation(); $("langMenu").classList.toggle("open"); };
-document.addEventListener("click",(e)=>{ if(!e.target.closest(".langwrap")) $("langMenu").classList.remove("open"); });
+$("langBtn").onclick=(e)=>{ e.stopPropagation(); const m=$("langMenu"); const open=m.classList.toggle("open"); if(open){ const r=$("langBtn").getBoundingClientRect(); m.style.top=(r.bottom+6)+"px"; m.style.right=(window.innerWidth-r.right)+"px"; m.style.left="auto"; } };
+document.addEventListener("click",(e)=>{ if(!e.target.closest(".langwrap")&&!e.target.closest(".langmenu")) $("langMenu").classList.remove("open"); });
+window.addEventListener("scroll",()=>$("langMenu").classList.remove("open"),true);
 $("langMenu").querySelectorAll("span").forEach(s=>s.onclick=()=>{ lang=s.dataset.l; localStorage.setItem("uzgid_lang",lang); $("langMenu").classList.remove("open"); applyStatic(); buildNav(); loaded={}; loadTab(activeTab); });
 
 // NAV
