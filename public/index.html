@@ -271,6 +271,7 @@
       <div class="card w2"><h2><span class="ic">🌤</span> <span data-i="w_weather"></span> <span class="badge" id="wxCity">—</span></h2><div id="wx"><div class="loading pulse"></div></div></div>
       <div class="card"><h2><span class="ic">💵</span> <span data-i="w_currency"></span></h2><div id="cur"><div class="loading pulse"></div></div></div>
       <div class="card"><h2><span class="ic">💡</span> <span data-i="w_today"></span></h2><div id="today"><div class="loading pulse"></div></div></div>
+      <div class="card"><h2><span class="ic">📅</span> <span data-i="w_calendar"></span></h2><div id="calWrap"></div></div>
       <div class="card full"><h2><span class="ic">🚨</span> <span data-i="w_emergency"></span></h2><div id="quicknums"></div></div>
     </div>
   </section>
@@ -300,7 +301,6 @@
       <div class="card"><h2><span class="ic">🏖️</span> <span data-i="w_kurort"></span> <span class="soon" data-i="soon"></span></h2><div class="soonbox"><span class="si2">🏖️</span><span data-i="soon_desc"></span></div></div>
     </div></section>
   <section class="panel" id="p-turizm"><div class="grid">
-      <div class="card"><h2><span class="ic">📅</span> <span data-i="w_calendar"></span></h2><div id="calWrap"></div></div>
       <div class="card"><h2><span class="ic">🏛</span> <span data-i="w_poi"></span> <span class="badge" id="poiCity">—</span></h2><div id="poi"><div class="loading pulse"></div></div></div>
       <div class="card"><h2><span class="ic">📊</span> <span data-i="w_city"></span> <span class="badge" id="statCity">—</span></h2><div id="stats"><div class="loading pulse"></div></div></div>
       <div class="card"><h2><span class="ic">🗣</span> <span data-i="w_phrase"></span></h2><div id="phrase"></div></div>
@@ -413,14 +413,14 @@ function buildNav(){ $("sidemenu").innerHTML=NAVID.map((id,i)=>`<div class="side
 function closeSide(){ $("side").classList.remove("open"); $("sideBackdrop").classList.remove("open"); }
 function openTab(id){ activeTab=id; document.querySelectorAll(".side-item").forEach(x=>x.classList.toggle("on",x.dataset.t===id)); document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+id)); loadTab(id); closeSide(); window.scrollTo({top:0,behavior:"smooth"}); }
 function loadTab(id){ if(loaded[id]) return; loaded[id]=true;
-  if(id==="bosh"){ loadWeather(); loadCurrency(); renderNear(); loadToday(); renderQuickNums(); boshClock(); }
+  if(id==="bosh"){ loadWeather(); loadCurrency(); renderNear(); loadToday(); renderQuickNums(); renderCalendar(); boshClock(); }
   else if(id==="namoz") loadPrayer();
   else if(id==="joylar"){ buildCats(); loadPlaces(); }
   else if(id==="transport") renderLinks("trans",TRANS);
   else if(id==="xizmatlar"){ renderLinks("gov",GOV); renderLinks("pay",PAY); renderLinks("edu",EDU); renderTarif(); renderMeyor(); }
   else if(id==="raqamlar") renderNums();
   else if(id==="media"){ renderLinks("kino",KINO); renderLinks("teatr",TEATR); renderLinks("afisha",AFISHA); renderLinks("sport",SPORT); renderLinks("ebook",EBOOK); }
-  else if(id==="turizm"){ renderCalendar(); loadPOI(); loadStats(); renderPhrasebook(); renderHolidays(); }
+  else if(id==="turizm"){ loadPOI(); loadStats(); renderPhrasebook(); renderHolidays(); }
   else if(id==="yangiliklar"){ renderLinks("offnews",OFFNEWS); loadNews(); }
   else if(id==="aloqa") renderContact(); }
 function boshClock(){ const el=$("boshTime"); if(el) el.textContent=new Intl.DateTimeFormat(locale(),{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZone:"Asia/Tashkent",hour12:false}).format(new Date()); }
