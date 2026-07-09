@@ -161,7 +161,35 @@ DINIY SAVOLLAR (muhim): diniy hukm, fatvo, oyat/hadis talqini yoki e'tiqodga oid
   }catch(e){ return { error: String(e) }; }
 }
 
+// ---------------- Aloqa formasi -> Telegram bot ----------------
+const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "";
+const TG_CHAT = process.env.TELEGRAM_CHAT_ID || "";
+const cHits = new Map();
+function cRateOk(ip){ const now=Date.now(), win=10*60*1000, max=6; const arr=(cHits.get(ip)||[]).filter(t=>now-t<win); arr.push(now); cHits.set(ip,arr); return arr.length<=max; }
+async function sendContact(body){
+  if(!TG_TOKEN || !TG_CHAT) return { error: "Aloqa hozircha sozlanmagan." };
+  const name = String(body.name||"").slice(0,80).trim();
+  const contact = String(body.contact||"").slice(0,120).trim();
+  const msg = String(body.message||"").slice(0,2000).trim();
+  if(!msg) return { error: "Xabar bo'sh" };
+  const text = `📩 UZGID — yangi xabar\n\n👤 Ism: ${name||"—"}\n📞 Aloqa: ${contact||"—"}\n\n💬 ${msg}`;
+  try{
+    const r = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,{ method:"POST", headers:{"content-type":"application/json"}, body: JSON.stringify({ chat_id: TG_CHAT, text, disable_web_page_preview: true }) });
+    const j = await r.json();
+    if(!j.ok) return { error: j.description || "Yuborilmadi" };
+    return { ok: true };
+  }catch(e){ return { error: String(e) }; }
+}
+
 http.createServer(async (req,res)=>{
+  if(req.url.startsWith("/api/contact") && req.method==="POST"){
+    res.setHeader("Access-Control-Allow-Origin","*");
+    const ip=String(req.headers["x-forwarded-for"]||req.socket.remoteAddress||"").split(",")[0].trim();
+    if(!cRateOk(ip)){ res.writeHead(429,{"Content-Type":"application/json;charset=utf-8"}); return res.end(JSON.stringify({error:"Juda ko'p yuborildi. Biroz kuting."})); }
+    let data=""; req.on("data",c=>{ data+=c; if(data.length>12000){ req.destroy(); } });
+    req.on("end",async()=>{ try{ const out=await sendContact(JSON.parse(data||"{}")); res.writeHead(200,{"Content-Type":"application/json;charset=utf-8"}); res.end(JSON.stringify(out)); }catch(e){ res.writeHead(500,{"Content-Type":"application/json;charset=utf-8"}); res.end(JSON.stringify({error:String(e)})); } });
+    return;
+  }
   if(req.url.startsWith("/api/ai") && req.method==="POST"){
     res.setHeader("Access-Control-Allow-Origin","*");
     const ip=String(req.headers["x-forwarded-for"]||req.socket.remoteAddress||"").split(",")[0].trim();
