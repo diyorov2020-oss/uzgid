@@ -135,7 +135,41 @@ function serveStatic(req,res){
   });
 }
 
+// ---------------- AI yordamchi (Anthropic Claude) ----------------
+const AI_KEY = process.env.ANTHROPIC_API_KEY || "";
+const AI_MODEL = process.env.AI_MODEL || "claude-haiku-4-5-20251001";
+const aiHits = new Map(); // ip -> [timestamps] (oddiy rate-limit)
+function aiRateOk(ip){ const now=Date.now(), win=10*60*1000, max=25; const arr=(aiHits.get(ip)||[]).filter(t=>now-t<win); arr.push(now); aiHits.set(ip,arr); return arr.length<=max; }
+async function getAI(body){
+  if(!AI_KEY) return { error: "AI hozircha sozlanmagan (kalit yo'q)." };
+  const msg = String(body.message||"").slice(0,1500).trim();
+  if(!msg) return { error: "Bo'sh xabar" };
+  const lang = ["uz","ru","en"].includes(body.lang) ? body.lang : "uz";
+  const hist = Array.isArray(body.history) ? body.history.slice(-6) : [];
+  const sys = `Sen UZGID (uzgid.uz) — O'zbekiston axborot portali (ob-havo, valyuta+oltin, namoz+qibla, xaritalar, turizm, transport, davlat xizmatlari, kommunal tariflar, me'yorlar, tezkor/ishonch raqamlari, yangiliklar) yordamchisisan.
+Har doim IMKON QADAR QISQA javob ber — odatda 1-3 gap, ortiqcha gapirma. Do'stona va aniq bo'l.
+TIL: foydalanuvchi qaysi tilda yozsa AYNAN o'sha tilda javob ber; noaniq bo'lsa "${lang}" tilida. Suhbat davomida tilni almashtirma.
+Foydalanuvchi imlo/yozuv xatosi bilan yozsa ham, maqsadini va mazmunini tushunib, shunga qarab javob ber.
+Aniq bugungi raqamlarni (harorat, kurs) to'qima — tegishli bo'limga yo'naltir.
+DINIY SAVOLLAR (muhim): diniy hukm, fatvo, oyat/hadis talqini yoki e'tiqodga oid savollarga JAVOB BERMA. Muloyimlik bilan qisqa javob ber: bunday savollar bo'yicha malakali imom yoki dinshunos olimga murojaat qilishni tavsiya qil va saytning "Namoz vaqtlari / qibla" bo'limini eslat. Munozaraga kirishma.`;
+  const messages = [...hist.map(h=>({ role: h.role==="assistant"?"assistant":"user", content: String(h.content||"").slice(0,2000) })), { role:"user", content: msg }];
+  try{
+    const r = await fetch("https://api.anthropic.com/v1/messages",{ method:"POST", headers:{ "x-api-key":AI_KEY, "anthropic-version":"2023-06-01", "content-type":"application/json" }, body: JSON.stringify({ model:AI_MODEL, max_tokens:450, system:sys, messages }) });
+    const j = await r.json();
+    if(j.error) return { error: j.error.message || "AI xatosi" };
+    return { reply: (j.content && j.content[0] && j.content[0].text) || "" };
+  }catch(e){ return { error: String(e) }; }
+}
+
 http.createServer(async (req,res)=>{
+  if(req.url.startsWith("/api/ai") && req.method==="POST"){
+    res.setHeader("Access-Control-Allow-Origin","*");
+    const ip=String(req.headers["x-forwarded-for"]||req.socket.remoteAddress||"").split(",")[0].trim();
+    if(!aiRateOk(ip)){ res.writeHead(429,{"Content-Type":"application/json;charset=utf-8"}); return res.end(JSON.stringify({error:"Juda ko'p so'rov yuborildi. Biroz kuting."})); }
+    let data=""; req.on("data",c=>{ data+=c; if(data.length>20000){ req.destroy(); } });
+    req.on("end",async()=>{ try{ const out=await getAI(JSON.parse(data||"{}")); res.writeHead(200,{"Content-Type":"application/json;charset=utf-8"}); res.end(JSON.stringify(out)); }catch(e){ res.writeHead(500,{"Content-Type":"application/json;charset=utf-8"}); res.end(JSON.stringify({error:String(e)})); } });
+    return;
+  }
   if(req.url.startsWith("/api/currency") || req.url.startsWith("/api/news")){
     res.setHeader("Access-Control-Allow-Origin","*");
     try{
