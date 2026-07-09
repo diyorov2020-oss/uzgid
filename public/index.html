@@ -615,7 +615,7 @@ const FAQ_DATA=[
  {q:{uz:"Qaysi shahar va viloyatlar qamrab olingan?",ru:"Какие города и регионы охвачены?",en:"Which cities and regions are covered?"},a:{uz:"Barcha 14 hudud va 170 dan ortiq shahar hamda tuman — viloyat/shaharni tepadagi ro'yxatdan tanlaysiz.",ru:"Все 14 регионов и более 170 городов и районов — выберите регион/город в списке вверху.",en:"All 14 regions and 170+ cities and districts — pick your region/city from the top selector."}},
  {q:{uz:"Joylashuvim (GPS) saqlanadimi?",ru:"Сохраняется ли моя геолокация (GPS)?",en:"Is my location (GPS) stored?"},a:{uz:"Yo'q. GPS faqat \"menga yaqin\" joylarni topish uchun brauzeringizda ishlaydi — hech qayerga saqlanmaydi va yuborilmaydi.",ru:"Нет. GPS используется только для поиска ближайших мест в вашем браузере — нигде не сохраняется и не отправляется.",en:"No. GPS is used only to find nearby places in your browser — it is never stored or sent anywhere."}},
  {q:{uz:"Tilni qanday o'zgartiraman?",ru:"Как изменить язык?",en:"How do I change the language?"},a:{uz:"Banner o'ng tepasidagi 🌐 tugmasi orqali: O'zbekcha, Русский yoki English.",ru:"Через кнопку 🌐 в правом верхнем углу баннера: O'zbekcha, Русский или English.",en:"Via the 🌐 button at the top-right of the banner: O'zbekcha, Русский or English."}}];
-const NEARCATS=[["💊","Dorixona",'nwr["amenity"="pharmacy"]'],["🏧","Bankomat",'nwr["amenity"="atm"]'],["🏥","Shifoxona",'nwr["amenity"~"hospital|clinic"]'],["⛽","Shaxobcha",'nwr["amenity"="fuel"]'],["🍽","Restoran",'nwr["amenity"="restaurant"]']];
+const NEARCATS=[["💊",10,'nwr["amenity"="pharmacy"]'],["🏧",8,'nwr["amenity"="atm"]'],["🏥",11,'nwr["amenity"~"hospital|clinic"]'],["⛽",6,'nwr["amenity"="fuel"]'],["🍽",4,'nwr["amenity"="restaurant"]']];
 function favicon(url){ const dom=url.replace(/^https?:\/\//,'').replace(/\/.*$/,''); return `https://www.google.com/s2/favicons?sz=64&domain=${dom}`; }
 const BANKDOM=[["kapital","kapitalbank.uz"],["hamkor","hamkorbank.uz"],["ipoteka","ipotekabank.uz"],["aloqa","aloqabank.uz"],["asaka","asakabank.uz"],["agro","agrobank.uz"],["infin","infinbank.uz"],["milliy","nbu.uz"],["nbu","nbu.uz"],["xalq","xb.uz"],["trast","trastbank.uz"],["turon","turonbank.uz"],["ipak","ipakyulibank.uz"],["orient","ofb.uz"],["anor","anorbank.uz"],["tbc","tbcbank.uz"],["tenge","tengebank.uz"],["davr","davrbank.uz"],["universal","universalbank.uz"],["hayot","hayotbank.uz"],["kdb","kdb.uz"],["poytaxt","poytaxtbank.uz"],["garant","garantbank.uz"],["uzum","uzumbank.uz"],["octo","octobank.uz"],["open","openbank.uz"],["brb","brb.uz"],["asia alliance","aab.uz"],["mkbank","mkbank.uz"],["ravnaq","ravnaqbank.uz"],["ziraat","ziraatbank.uz"],["sqb","sqb.uz"],["sanoat","sqb.uz"],["qurilish","sqb.uz"]];
 function bankIcon(name){ const l=(name||"").toLowerCase(); const m=BANKDOM.find(([k])=>l.includes(k)); return m?`https://www.google.com/s2/favicons?sz=64&domain=${m[1]}`:null; }
@@ -732,7 +732,7 @@ function loadPlaces(){ $("placeCity").textContent=CITY.name; searchCategory(curC
 // ===== MENGA ENG YAQIN =====
 let myPos=null, nearCat=-1;
 function haversine(a,b,c,d){ const R=6371000,r=x=>x*Math.PI/180; const dLat=r(c-a),dLon=r(d-b); const s=Math.sin(dLat/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dLon/2)**2; return 2*R*Math.asin(Math.sqrt(s)); }
-function renderNear(){ $("nearCats").innerHTML=NEARCATS.map((c,i)=>`<button class="cat" data-n="${i}">${c[0]} ${c[1]}</button>`).join("");
+function renderNear(){ const nm=t("cats"); $("nearCats").innerHTML=NEARCATS.map((c,i)=>`<button class="cat" data-n="${i}">${c[0]} ${nm[c[1]]}</button>`).join("");
   document.querySelectorAll("#nearCats .cat").forEach(b=>b.onclick=()=>nearMe(+b.dataset.n));
   if(nearCat<0) $("nearList").innerHTML=`<div class="loading">${t("near_hint")}</div>`; }
 function nearMe(i){ nearCat=i; const list=$("nearList"); document.querySelectorAll("#nearCats .cat").forEach((b,j)=>b.classList.toggle("on",j===i));
@@ -740,7 +740,7 @@ function nearMe(i){ nearCat=i; const list=$("nearList"); document.querySelectorA
   if(!navigator.geolocation){ list.innerHTML=`<div class="err">${t("near_nogps")}</div>`; return; }
   list.innerHTML=`<div class="loading pulse">${t("near_locating")}</div>`;
   navigator.geolocation.getCurrentPosition(p=>{ myPos={lat:p.coords.latitude,lon:p.coords.longitude}; runNear(i,myPos.lat,myPos.lon); },()=>{ list.innerHTML=`<div class="err">${t("near_nogps")}</div>`; }); }
-async function runNear(i,lat,lon){ const [ico,label,sel]=NEARCATS[i]; const my=++placeReq; const list=$("nearList"); list.innerHTML=`<div class="loading pulse">${t("loading")}</div>`;
+async function runNear(i,lat,lon){ const [ico,ci,sel]=NEARCATS[i]; const label=t("cats")[ci]; const my=++placeReq; const list=$("nearList"); list.innerHTML=`<div class="loading pulse">${t("loading")}</div>`;
   try{ const q=`[out:json][timeout:25];(${sel}(around:4000,${lat},${lon}););out center 60;`;
     const els=(await overpass(q)).map(e=>{ const la=e.lat||(e.center&&e.center.lat),lo=e.lon||(e.center&&e.center.lon); if(!la||!lo) return null; const tg=e.tags||{}; return {name:tg.name||tg["name:"+lang]||tg.brand||label,lat:la,lon:lo,dist:haversine(lat,lon,la,lo)}; }).filter(Boolean);
     if(my!==placeReq) return;
