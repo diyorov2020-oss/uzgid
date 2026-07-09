@@ -63,7 +63,7 @@
   .langmenu{position:fixed;background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);display:none;z-index:210;overflow:hidden;min-width:150px}
   .langmenu.open{display:block}
   .langmenu span{display:block;padding:11px 15px;font-size:13px;font-weight:600;cursor:pointer;color:var(--txt)} .langmenu span:hover{background:var(--card2)}
-  .boshhead{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px;box-shadow:var(--shadow)}
+  .boshhead{display:flex;justify-content:space-between;align-items:center;gap:12px 18px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px;box-shadow:var(--shadow)}
   .nav{display:flex;gap:6px;overflow-x:auto;padding:10px 0;scrollbar-width:none} .nav::-webkit-scrollbar{display:none}
   .navi{flex:0 0 auto;display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;padding:9px 16px;border-radius:10px;background:var(--card);border:1px solid var(--line);color:var(--muted);cursor:pointer;white-space:nowrap}
   .navi:hover{border-color:var(--accent)} .navi.on{background:var(--accent);color:#fff;border-color:transparent}
@@ -91,9 +91,12 @@
   .wx-sub{min-width:0}
   .wx-sub h3{font-size:12px;font-weight:800;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px}
   @media(max-width:600px){.wx-extra{grid-template-columns:1fr}}
-  .traffic-box{display:flex;align-items:center;gap:14px;padding:6px 0}
-  .traffic-ball{width:56px;height:56px;border-radius:50%;color:#fff;display:grid;place-items:center;font-size:26px;font-weight:900;flex:0 0 auto;box-shadow:0 4px 12px rgba(0,0,0,.15)}
-  .traffic-lbl{font-size:16px;font-weight:800}
+  .traffic-head{flex:0 0 auto}
+  .traffic-hi{display:flex;align-items:center;gap:11px}
+  .traffic-ball{width:50px;height:50px;border-radius:50%;color:#fff;display:grid;place-items:center;font-size:23px;font-weight:900;flex:0 0 auto;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+  .traffic-ball.sm{width:42px;height:42px;font-size:19px}
+  .traffic-lbl{font-size:15px;font-weight:800;line-height:1.2}
+  @media (max-width:520px){ .traffic-ball{width:44px;height:44px;font-size:20px} .traffic-lbl{font-size:14px} }
   .off-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
   .off{flex:1;min-width:66px;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
   .off .c{font-size:11px;color:var(--muted);font-weight:700} .off .v{font-weight:800;font-size:15px}
@@ -325,6 +328,7 @@
     <div class="adslot" id="ad-top" data-ad="leaderboard">Reklama</div>
     <div class="boshhead">
       <div><div id="boshDate" style="font-size:13px;color:var(--muted)">—</div><div id="boshTime" style="font-size:26px;font-weight:800;font-variant-numeric:tabular-nums">--:--</div></div>
+      <div id="traffic" class="traffic-head"></div>
     </div>
     <div class="grid">
       <div class="card full"><h2><span class="ic">📍</span> <span data-i="w_near"></span><button class="mtog" id="nearToggle" onclick="toggleNear()" title="Yig'ish">▲</button></h2><div class="cats" id="nearCats"></div><div id="nearList" class="fuel-list" style="max-height:230px"><div class="loading" data-i="near_hint"></div></div></div>
@@ -336,7 +340,6 @@
           <div class="wx-sub"><h3>🔌 <span data-i="w_tarif"></span></h3><div id="tarifMini"></div></div>
         </div></div>
       <div class="card"><h2><span class="ic">💵</span> <span data-i="w_currency"></span></h2><div id="cur"><div class="loading pulse"></div></div></div>
-      <div class="card"><h2><span class="ic">🚦</span> <span data-i="w_traffic"></span> <span class="badge" id="trafficCity">—</span></h2><div id="traffic"><div class="loading pulse"></div></div></div>
       <div class="card full"><h2><span class="ic">🚨</span> <span data-i="w_emergency"></span></h2><div id="quicknums"></div></div>
     </div>
     <div id="trafficMap" style="position:absolute;left:-9999px;top:0;width:280px;height:220px" aria-hidden="true"></div>
@@ -539,10 +542,10 @@ function renderTarifMini(){ if(!$("tarifMini")) return; const L=lang, som=t("som
 let trafficMap=null,trafficProv=null,trafficTimer=null;
 function trafficInfo(l){ const A=(u,r,e)=>({uz:u,ru:r,en:e})[lang]||u; if(l<=2)return[A("Bo'sh yo'l","Свободно","Clear"),"#16a34a"]; if(l<=4)return[A("Yengil","Немного пробок","Light"),"#65a30d"]; if(l<=6)return[A("O'rtacha","Средние пробки","Moderate"),"#d97706"]; if(l<=8)return[A("Tirband","Пробки","Heavy"),"#ea580c"]; return[A("Kuchli tirbandlik","Сильные пробки","Severe"),"#dc2626"]; }
 function showTraffic(){ const box=$("traffic"); if(!box||!trafficProv) return; const lvl=trafficProv.state.get("level");
-  if(lvl==null){ box.innerHTML=`<div class="hint" style="padding:10px 0">🚦 ${t("traffic_no")}</div>`; return; }
-  const [lbl,co]=trafficInfo(lvl); const ts=trafficProv.state.get("timestamp"); const upd=ts?new Date(ts).toLocaleTimeString(locale(),{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Tashkent"}):"";
-  box.innerHTML=`<div class="traffic-box"><div class="traffic-ball" style="background:${co}">${lvl}</div><div><div class="traffic-lbl" style="color:${co}">${lbl}</div><div class="hint">${lvl}/10${upd?" · 🕐 "+upd:""}</div></div></div>`; }
-function renderTraffic(){ const box=$("traffic"); if(!box) return; const cc=$("trafficCity"); if(cc) cc.textContent=CITY.name;
+  if(lvl==null){ box.innerHTML=`<div class="traffic-hi"><span class="traffic-ball sm" style="background:#94a3b8">–</span><div><div class="traffic-lbl" style="font-size:13px;color:var(--muted)">${t("traffic_no")}</div><div class="hint">🚦 ${CITY.name}</div></div></div>`; return; }
+  const [lbl,co]=trafficInfo(lvl);
+  box.innerHTML=`<div class="traffic-hi"><span class="traffic-ball" style="background:${co}">${lvl}</span><div><div class="traffic-lbl" style="color:${co}">${lbl}</div><div class="hint">🚦 ${t("w_traffic")} · ${CITY.name}</div></div></div>`; }
+function renderTraffic(){ const box=$("traffic"); if(!box) return;
   if(typeof ymaps==="undefined"){ box.innerHTML=`<div class="hint" style="padding:10px 0">🚦 ${t("traffic_no")}</div>`; return; }
   box.innerHTML=`<div class="loading pulse">${t("loading")}</div>`;
   ymaps.ready(()=>{ try{
@@ -649,13 +652,13 @@ async function loadPrayer(){ $("prCity").textContent=CITY.name; const box=$("pr"
     const d=await (await fetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${CITY.lat}&longitude=${CITY.lon}&method=2`)).json(); const x=d.data.timings;
     prayerTimings=[x.Fajr,x.Sunrise,x.Dhuhr,x.Asr,x.Maghrib,x.Isha]; renderPrayer();
   }catch(e){ box.innerHTML=`<div class="err">${t("loaderr")}</div>`; prayerTimings=null; } }
-function renderPrayer(){ const nm=t("prayers"); const rows=prayerTimings.map((v,i)=>`<div class="pr-row" data-i="${i}"><span>${nm[i]}</span><span class="t">${v}</span></div>`).join("");
+function renderPrayer(){ const nm=t("prayers"); const rows=prayerTimings.map((v,i)=>`<div class="pr-row" data-p="${i}"><span>${nm[i]}</span><span class="t">${v}</span></div>`).join("");
   const b=qiblaBearing(CITY.lat,CITY.lon); const dir=t("dirs")[Math.round(b/45)%8];
   $("pr").innerHTML=`<div class="next-prayer" id="nextPrayer"></div>${rows}<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);text-align:center">🧭 Qibla: <b style="color:var(--txt)">${Math.round(b)}°</b> (${dir})</div>`; updateNextPrayer(); }
 function updateNextPrayer(){ const np=$("nextPrayer"); if(!np||!prayerTimings) return; const nm=t("prayers"); const now=new Date(); const cur=now.getHours()*60+now.getMinutes(); let idx=-1,nmin=Infinity;
   prayerTimings.forEach((v,i)=>{ const [h,m]=v.split(":").map(Number); const mm=h*60+m; if(mm>cur&&mm<nmin){nmin=mm;idx=i;} });
   document.querySelectorAll(".pr-row").forEach(el=>el.classList.remove("active")); let label;
-  if(idx<0){ idx=0; const [h,m]=prayerTimings[0].split(":").map(Number); nmin=h*60+m+1440; label=nm[0]; } else { const el=document.querySelector(`.pr-row[data-i="${idx}"]`); if(el) el.classList.add("active"); label=nm[idx]; }
+  if(idx<0){ idx=0; const [h,m]=prayerTimings[0].split(":").map(Number); nmin=h*60+m+1440; label=nm[0]; } else { const el=document.querySelector(`.pr-row[data-p="${idx}"]`); if(el) el.classList.add("active"); label=nm[idx]; }
   const left=nmin-cur,hh=Math.floor(left/60),mm=left%60; np.innerHTML=`<div class="lbl">${t("next_prayer")}</div><div class="nm">${label}</div><div class="cd">${hh>0?hh+" "+t("hour")+" ":""}${mm} ${t("min")} ${t("left")}</div>`; }
 const MECCA=[21.4225,39.8262];
 function qiblaBearing(lat,lon){ const φ1=lat*Math.PI/180,φ2=MECCA[0]*Math.PI/180,Δλ=(MECCA[1]-lon)*Math.PI/180; const y=Math.sin(Δλ)*Math.cos(φ2),x=Math.cos(φ1)*Math.sin(φ2)-Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ); return (Math.atan2(y,x)*180/Math.PI+360)%360; }
@@ -711,8 +714,8 @@ function loadPlaces(){ $("placeCity").textContent=CITY.name; searchCategory(curC
 // ===== MENGA ENG YAQIN =====
 let myPos=null, nearCat=-1;
 function haversine(a,b,c,d){ const R=6371000,r=x=>x*Math.PI/180; const dLat=r(c-a),dLon=r(d-b); const s=Math.sin(dLat/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dLon/2)**2; return 2*R*Math.asin(Math.sqrt(s)); }
-function renderNear(){ $("nearCats").innerHTML=NEARCATS.map((c,i)=>`<button class="cat" data-i="${i}">${c[0]} ${c[1]}</button>`).join("");
-  document.querySelectorAll("#nearCats .cat").forEach(b=>b.onclick=()=>nearMe(+b.dataset.i));
+function renderNear(){ $("nearCats").innerHTML=NEARCATS.map((c,i)=>`<button class="cat" data-n="${i}">${c[0]} ${c[1]}</button>`).join("");
+  document.querySelectorAll("#nearCats .cat").forEach(b=>b.onclick=()=>nearMe(+b.dataset.n));
   if(nearCat<0) $("nearList").innerHTML=`<div class="loading">${t("near_hint")}</div>`; }
 function nearMe(i){ nearCat=i; const list=$("nearList"); document.querySelectorAll("#nearCats .cat").forEach((b,j)=>b.classList.toggle("on",j===i));
   if(myPos){ runNear(i,myPos.lat,myPos.lon); return; }
