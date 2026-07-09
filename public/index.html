@@ -75,7 +75,7 @@
   .wx-top{display:flex;align-items:center;gap:16px} .wx-emoji{font-size:52px} .wx-temp{font-size:42px;font-weight:800} .wx-desc{color:var(--muted);font-size:14px}
   .wx-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(78px,1fr));gap:9px;margin-top:14px}
   .wx-meta div{background:var(--card2);border-radius:10px;padding:9px 11px;font-size:13px} .wx-meta b{display:block;font-size:16px;margin-top:2px}
-  .aqi{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:5px 10px;border-radius:16px;margin-top:12px}
+  .aqi{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:7px 13px;border-radius:16px;margin-top:12px} .aqi b{font-weight:900}
   .fc{display:flex;gap:8px;overflow-x:auto;margin-top:12px;padding-bottom:4px}
   .fc-day{flex:0 0 auto;text-align:center;background:var(--card2);border-radius:10px;padding:8px 10px;min-width:60px}
   .fc-day .d{font-size:11px;color:var(--muted)} .fc-day .e{font-size:21px} .fc-day .t{font-size:12px;font-weight:700}
@@ -179,7 +179,7 @@
   .hero::before{content:"";position:absolute;top:0;left:0;right:0;bottom:5px;opacity:.22;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cg fill='none' stroke='white' stroke-width='1.25'%3E%3Cpath d='M32 5 L38.5 25.5 L59 32 L38.5 38.5 L32 59 L25.5 38.5 L5 32 L25.5 25.5 Z'/%3E%3Crect x='22' y='22' width='20' height='20' transform='rotate(45 32 32)'/%3E%3Ccircle cx='32' cy='32' r='3.3'/%3E%3Ccircle cx='32' cy='5' r='1.5'/%3E%3Ccircle cx='32' cy='59' r='1.5'/%3E%3Ccircle cx='5' cy='32' r='1.5'/%3E%3Ccircle cx='59' cy='32' r='1.5'/%3E%3C/g%3E%3C/svg%3E");background-size:64px 64px;z-index:0}
   .hero::after{content:"";position:absolute;right:-44px;top:-54px;width:250px;height:250px;opacity:.15;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cg fill='none' stroke='white' stroke-width='2'%3E%3Ccircle cx='125' cy='125' r='120'/%3E%3Ccircle cx='125' cy='125' r='96'/%3E%3Cpath d='M125 12 L142 108 L238 125 L142 142 L125 238 L108 142 L12 125 L108 108 Z'/%3E%3Crect x='83' y='83' width='84' height='84' transform='rotate(45 125 125)'/%3E%3Ccircle cx='125' cy='125' r='15'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;z-index:0}
   .hero>*{position:relative;z-index:1}
-  .hero-ctl{position:absolute;top:14px;right:14px;display:flex;flex-direction:column;align-items:flex-end;gap:9px;z-index:5}
+  .hero-ctl{position:absolute;top:14px;right:14px;display:flex;flex-direction:column;align-items:flex-end;gap:9px;z-index:50}
   .hero-apps{display:flex;gap:7px}
   .hero-app{width:34px;height:34px;border-radius:9px;background:#fff;color:#111;display:grid;place-items:center;box-shadow:0 3px 10px rgba(0,0,0,.2);cursor:pointer;transition:.15s;position:relative}
   .hero-app:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(0,0,0,.28)}
@@ -525,7 +525,7 @@ const BANKDOM=[["kapital","kapitalbank.uz"],["hamkor","hamkorbank.uz"],["ipoteka
 function bankIcon(name){ const l=(name||"").toLowerCase(); const m=BANKDOM.find(([k])=>l.includes(k)); return m?`https://www.google.com/s2/favicons?sz=64&domain=${m[1]}`:null; }
 function renderLinks(id,arr){ $(id).innerHTML=arr.map(([ic,nm,url,d])=>`<a class="govlink" href="${url}" target="_blank"><span class="gi"><img src="${favicon(url)}" alt="" style="width:26px;height:26px;border-radius:6px" onerror="this.parentNode.textContent='${ic}'"></span><span><div class="gn">${nm}</div><div class="gd">${d[lang]||d.uz}</div></span></a>`).join(""); }
 
-function aqiInfo(v){ if(v==null) return ["—","#64708a"]; if(v<=20) return ["✓","#16a34a"]; if(v<=40) return ["✓","#65a30d"]; if(v<=60) return ["~","#d97706"]; if(v<=80) return ["!","#ea580c"]; if(v<=100) return ["!!","#dc2626"]; return ["✕","#9f1239"]; }
+function aqiInfo(v){ const A=(u,r,e)=>({uz:u,ru:r,en:e})[lang]||u; if(v==null) return ["—","#64708a"]; if(v<=20) return [A("Ideal","Отлично","Excellent"),"#16a34a"]; if(v<=40) return [A("Yaxshi","Хорошо","Good"),"#65a30d"]; if(v<=60) return [A("O'rtacha","Средне","Moderate"),"#d97706"]; if(v<=80) return [A("Yomon","Плохо","Poor"),"#ea580c"]; if(v<=100) return [A("Juda yomon","Очень плохо","Very poor"),"#dc2626"]; return [A("Xavfli","Опасно","Hazardous"),"#9f1239"]; }
 function dailyTip(temp,code,aqi){ const T2=t("tips"); if(aqi!=null&&aqi>80) return ["😷",T2.mask]; if([61,63,65,80,81,82,95,96,99].includes(code)) return ["☔",T2.rain]; if([71,73,75,77,85,86].includes(code)) return ["❄️",T2.snow]; if(temp>=34) return ["🥵",T2.hot]; if(temp<=2) return ["🧥",T2.cold]; return ["😊",T2.good]; }
 function loadToday(){ const now=new Date();
   const p=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Tashkent",day:"numeric",month:"numeric",weekday:"short"}).formatToParts(now); const g=x=>p.find(y=>y.type===x).value;
@@ -543,7 +543,7 @@ async function loadWeather(){ $("wxCity").textContent=CITY.name; const box=$("wx
   try{ const u=`https://api.open-meteo.com/v1/forecast?latitude=${CITY.lat}&longitude=${CITY.lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&forecast_days=10&timezone=Asia%2FTashkent`;
     const d=await (await fetch(u)).json(); const c=d.current; const em=(WX[c.weather_code]||["🌡"])[0]; let aqiV=null,aqiHtml="";
     try{ aqiV=(await (await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${CITY.lat}&longitude=${CITY.lon}&current=european_aqi&timezone=Asia%2FTashkent`)).json()).current.european_aqi;
-      const [lb,co]=aqiInfo(aqiV); aqiHtml=`<div class="aqi" style="background:${co}22;color:${co};border:1px solid ${co}66">🌫 ${t("airq")}: ${aqiV} ${lb}</div>`; }catch(_){}
+      const [lb,co]=aqiInfo(aqiV); aqiHtml=`<div class="aqi" style="background:${co}22;color:${co};border:1px solid ${co}66">🌫 ${t("airq")} · <b>AQI ${aqiV}</b> · ${lb}</div>`; }catch(_){}
     let fc='<div class="fc">'; for(let i=0;i<Math.min(9,d.daily.time.length);i++){ const dd=new Date(d.daily.time[i]); const e2=(WX[d.daily.weather_code[i]]||["🌡"])[0]; const dn=i===0?t("today"):dayShort(dd);
       fc+=`<div class="fc-day"><div class="d">${dn}</div><div class="e">${e2}</div><div class="t">${Math.round(d.daily.temperature_2m_max[i])}°/${Math.round(d.daily.temperature_2m_min[i])}°</div></div>`; } fc+='</div>';
     const [ti,tt]=dailyTip(Math.round(c.temperature_2m),c.weather_code,aqiV);
