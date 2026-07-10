@@ -29,6 +29,21 @@ UZGID (uzgid.uz) — O'zbekiston axborot portali. Bitta SPA: `public/index.html`
 - Mobil banner: katta medallion (`.hero::after`) va naqsh (`::before`) yumshatildi (aralashmasligi uchun).
 - Mobil sidebar: pastdagi `V1.0` (`.side-ver`) endi ochilganda ko'rinadi.
 
+## Qilingan (2026-07-11 dizayn sessiyasi, 2-qism)
+- **Namoz:** Ishroq (Quyosh+20daq) va Tahajjud (kecha Shom→Bomdod, oxirgi 1/3) qo'shildi — xira "nafl" uslubida, islom.uz'ga mos.
+- **Bayroq:** hero pastidagi chiziqqa qizil fimbriatsiya qo'shildi (to'liq O'zbek bayrog'i).
+- **Til tugmasi** hero'dan **topbar controls**ga ko'chirildi (endi HAR bo'limda ishlaydi — Fable topgan asosiy bug).
+- **⭐ «Bugun chizig'i» (todaystrip):** topbar tagida, har bo'limda, jonli 4 segment — 🕐vaqt · 🌤harorat · 💵USD · 🕌keyingi namoz+sanoq. Tagida bayroq chizig'i. Mobilda sticky (asosiy tepa anchor; shu sabab beta-bar sticky qaytarildi). Funksiyalar: `stripWeather/stripPrayer/updateTodayStrip/initStrip`; onCityChange + loadCurrency + 1s interval bilan yangilanadi.
+- **DESIGN.md** yaratildi (dizayn tizimi) + **Fable 5** review qildi (natijalar DESIGN.md audit va TODO'da).
+
+## Fable 5 review — keyingi ish (prioritet)
+1. Tipografiya: 25 xil o'lcham → 7 pog'onali shkala (`--fs-*`).
+2. `manba·sana` chip — har jonli kartochkada (ayniqsa ob-havoda yo'q).
+3. Mobil pastki tab-bar (nav scrollda ketmasin).
+4. Valyuta kartochkasi: "eng foydali bank" tepaga, oltin alohida karta.
+5. Ikonka birligi (SVG-line), `:focus-visible`, tap-nishon ≥44px, o'lik CSS tozalash, Yandex xarita lazy-load.
+6. DESIGN.md v2: breakpoint/z-index/token/holat-triad/"definition of done".
+
 ## Keyingi reja (TODO)
 - [ ] **Qiymat taklifi (value prop) — "Nega aynan UZGID?"** → hero'ga aniq shior + saytning noyob afzalligini ko'rsatish (jamlash + ishonch + tejash: banklar kesimida "eng foydali kurs", 3 til, betaraf/bepul). Foydalanuvchi buni birinchi ishlamoqchi.
 - [ ] **Fitnes / sport zallar** — "Joylar" xaritasiga yangi kategoriya (OSM `leisure=fitness_centre`). Bo'sh placeholder emas, real qidiruv. (Foydalanuvchi tanladi: "keyin davom etamiz".)

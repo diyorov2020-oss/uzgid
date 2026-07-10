@@ -56,6 +56,11 @@
   .wrap{max-width:1140px;margin:0 auto;padding:0 16px}
   .testbar{padding:6px 12px;text-align:center;background:#141d30;color:#fbbf24;font-weight:700;font-size:11px;letter-spacing:.3px}
   .topbar{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:60;box-shadow:0 1px 4px rgba(30,60,120,.05)}
+  .todaystrip{background:linear-gradient(90deg,#1eb4d4 0 32%,#ce1126 32% 34%,#f4f7fb 34% 66%,#ce1126 66% 68%,#1eb53a 68%) 0 100%/100% 2px no-repeat,var(--card);position:sticky;top:0;z-index:59;box-shadow:0 2px 6px rgba(30,60,120,.06)}
+  .todaystrip .wrap{display:flex}
+  .ts-seg{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 4px;font-size:13px;color:var(--txt);text-decoration:none;cursor:pointer;white-space:nowrap;border-right:1px solid var(--line);transition:background .15s}
+  .ts-seg:last-child{border-right:none} .ts-seg:hover{background:var(--card2)}
+  .ts-seg b{font-weight:800;font-variant-numeric:tabular-nums} .ts-ic{font-size:15px;line-height:1}
   header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 0}
   .brand{display:flex;align-items:center;gap:12px}
   .logo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:16px;font-weight:900;background:linear-gradient(140deg,var(--accent),#0ea5e9);color:#fff;letter-spacing:.5px}
@@ -191,13 +196,12 @@
     .brand{order:0}
     .controls{order:3;width:100%;justify-content:flex-start}
     .topbar{position:static;box-shadow:none}
-    .testbar{position:sticky;top:0;z-index:61}
     .side-backdrop.open{display:block;position:fixed;inset:0;background:rgba(10,18,32,.5);z-index:65}
   }
   /* ==== Xush kelibsiz banner ==== */
   .hero{position:relative;overflow:hidden;border-radius:var(--radius);padding:30px 28px 34px;margin-bottom:16px;color:#fff;
     background:
-      linear-gradient(90deg,#1eb4d4 0 33.33%,#f4f7fb 33.33% 66.66%,#1eb53a 66.66%) 0 100%/100% 5px no-repeat,
+      linear-gradient(90deg,#1eb4d4 0 32%,#ce1126 32% 34%,#f4f7fb 34% 66%,#ce1126 66% 68%,#1eb53a 68%) 0 100%/100% 5px no-repeat,
       radial-gradient(130% 120% at 90% 6%, rgba(30,181,58,.42), transparent 55%),
       radial-gradient(120% 130% at 5% 97%, rgba(30,180,212,.55), transparent 52%),
       linear-gradient(125deg,#0f5aa8,#1478c8 46%,#17a2c2);
@@ -319,14 +323,21 @@
   <button class="iconbtn hamb" id="hambBtn" aria-label="menu">☰</button>
   <div class="brand" onclick="openTab('bosh')" style="cursor:pointer" title="Bosh sahifa"><div class="logo"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z" fill="#fff"/><circle cx="12" cy="9" r="2.6" fill="#1f6fe5"/></svg></div><div><h1>UZGID</h1><p data-i="tagline">O'zbekiston axborot portali</p></div></div>
   <div class="controls">
+    <div class="langwrap"><button class="iconbtn" id="langBtn">🌐 <span id="langCur">O'z</span> ▾</button><div class="langmenu" id="langMenu"><span data-l="uz">🇺🇿 O'zbekcha</span><span data-l="ru">🇷🇺 Русский</span><span data-l="en">🇬🇧 English</span></div></div>
     <button class="iconbtn" id="themeBtn">🌙</button>
     <select id="regionSel"></select><select id="citySel"></select>
   </div>
 </header></div></div>
+<div class="todaystrip" id="todayStrip"><div class="wrap">
+  <a class="ts-seg" onclick="openTab('bosh')" title="Vaqt"><span class="ts-ic">🕐</span><b id="tsTime">--:--</b></a>
+  <a class="ts-seg" onclick="openTab('bosh')" title="Ob-havo"><span class="ts-ic" id="tsWxIc">🌤</span><b id="tsWx">—</b></a>
+  <a class="ts-seg" onclick="openTab('bosh')" title="Valyuta (USD)"><span class="ts-ic">💵</span><b id="tsCur">—</b></a>
+  <a class="ts-seg" onclick="openTab('namoz')" title="Keyingi namoz"><span class="ts-ic">🕌</span><b id="tsPray">—</b></a>
+</div></div>
 <div class="wrap">
   <section class="panel on" id="p-bosh">
     <div class="hero">
-      <div class="hero-ctl"><div class="langwrap"><button class="iconbtn" id="langBtn">🌐 <span id="langCur">O'z</span> ▾</button><div class="langmenu" id="langMenu"><span data-l="uz">🇺🇿 O'zbekcha</span><span data-l="ru">🇷🇺 Русский</span><span data-l="en">🇬🇧 English</span></div></div>
+      <div class="hero-ctl">
         <div class="hero-apps">
           <a class="hero-app" href="#" onclick="return false" data-tip="App Store · tez orada" title="App Store — tez orada"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.6c0-2 1.6-3 1.7-3-1-1.4-2.4-1.6-2.9-1.6-1.2-.1-2.4.7-3 .7-.6 0-1.6-.7-2.6-.7-1.3 0-2.6.8-3.2 2-1.4 2.4-.4 6 1 8 .6 1 1.4 2 2.4 2 .9 0 1.3-.6 2.4-.6s1.4.6 2.4.6 1.7-.9 2.3-1.9c.7-1 1-2 1-2-.1 0-2-.8-2-3zM14.5 6.3c.5-.6.9-1.5.8-2.3-.8 0-1.7.5-2.2 1.1-.5.5-.9 1.4-.8 2.2.9.1 1.8-.4 2.2-1z"/></svg></a>
           <a class="hero-app" href="#" onclick="return false" data-tip="Google Play · tez orada" title="Google Play — tez orada"><svg viewBox="0 0 24 24"><path d="M3.6 2.3C3.4 2.5 3.3 2.8 3.3 3.2v17.6c0 .4.1.7.3.9l9.5-9.4L3.6 2.3z" fill="#00d0ff"/><path d="M16.9 8.6 3.9 1.2c-.1-.1-.3-.1-.3 0l9.5 9.5 3.8-2.1z" fill="#00e676"/><path d="M20.4 11.1 16.9 9l-3.9 3.3 3.9 3.3 3.5-2.1c.6-.4.6-1.6 0-2.4z" fill="#ffce00"/><path d="M3.6 21.7c.1.1.2.1.3 0l13-7.4-3.5-3-9.8 10.4z" fill="#ff3b30"/></svg></a>
@@ -656,7 +667,7 @@ async function loadWeather(){ $("wxCity").textContent=CITY.name; const box=$("wx
       <div class="wx-meta"><div>${t("humidity")}<b>${c.relative_humidity_2m}%</b></div><div>${t("wind")}<b>${Math.round(c.wind_speed_10m)} km/s</b></div><div>🌅 ${t("sunrise")}<b>${d.daily.sunrise[0].slice(11)}</b></div><div>🌇 ${t("sunset")}<b>${d.daily.sunset[0].slice(11)}</b></div></div>${aqiHtml}${fc}<div class="tip"><span class="i">${ti}</span><span>${tt}</span></div>`;
   }catch(e){ box.innerHTML=`<div class="err">${t("loaderr")}</div>`; } }
 
-async function loadCurrency(){ const box=$("cur"); box.innerHTML=`<div class="loading pulse">${t("loading")}</div>`; try{ curData=await (await fetch("/api/currency")).json(); try{ goldUsd=(await (await fetch("https://api.gold-api.com/price/XAU")).json()).price; }catch(_){} renderCurrency(); }catch(e){ box.innerHTML=`<div class="err">${t("loaderr")}</div>`; } }
+async function loadCurrency(){ const box=$("cur"); box.innerHTML=`<div class="loading pulse">${t("loading")}</div>`; try{ curData=await (await fetch("/api/currency")).json(); try{ goldUsd=(await (await fetch("https://api.gold-api.com/price/XAU")).json()).price; }catch(_){} renderCurrency(); updateTodayStrip(); }catch(e){ box.innerHTML=`<div class="err">${t("loaderr")}</div>`; } }
 function renderCurrency(){ if(!curData) return; const off=curData.official||[]; const offHtml=off.map(o=>`<div class="off"><div class="c">${o.code}</div><div class="v">${Math.round(o.rate).toLocaleString("ru-RU")}</div></div>`).join("");
   const banks=(curData.banks&&curData.banks[curTab])||[]; const bB=Math.max(0,...banks.map(b=>b.buy||0)); const ss=banks.filter(b=>b.sell).map(b=>b.sell); const bS=ss.length?Math.min(...ss):0;
   const shown=curExpand?banks:banks.slice(0,6);
@@ -680,7 +691,11 @@ async function loadPrayer(){ $("prCity").textContent=CITY.name; const box=$("pr"
     const d=await (await fetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${CITY.lat}&longitude=${CITY.lon}&method=99&methodSettings=15.5,null,15.5&school=1&tune=0,0,0,1,0,4,0,0,0`)).json(); const x=d.data.timings;
     prayerTimings=[x.Fajr,x.Sunrise,x.Dhuhr,x.Asr,x.Maghrib,x.Isha]; renderPrayer();
   }catch(e){ box.innerHTML=`<div class="err">${t("loaderr")}</div>`; prayerTimings=null; } }
-function renderPrayer(){ const nm=t("prayers"); const rows=prayerTimings.map((v,i)=>`<div class="pr-row" data-p="${i}"><span>${nm[i]}</span><span class="t">${v}</span></div>`).join("");
+function renderPrayer(){ const nm=t("prayers"); const pad=n=>String(n).padStart(2,"0"),toMin=s=>{const[a,b]=s.split(":").map(Number);return a*60+b;},fmt=m=>`${pad(Math.floor(m/60))}:${pad(m%60)}`;
+  const ish=fmt((toMin(prayerTimings[1])+20)%1440); const mg=toMin(prayerTimings[4]),fj=toMin(prayerTimings[0]),night=(fj+1440-mg)%1440,tah=fmt(Math.floor(mg+night*2/3)%1440);
+  const naflW={uz:"nafl",ru:"нафль",en:"nafl"}[lang],ishL={uz:"Ishroq",ru:"Ишрак",en:"Ishraq"}[lang],tahL={uz:"Tahajjud",ru:"Тахаджуд",en:"Tahajjud"}[lang];
+  const naflRow=(nm2,tm)=>`<div class="pr-row" style="opacity:.5;font-size:13px"><span>${nm2} <small style="color:var(--muted)">· ${naflW}</small></span><span class="t">${tm}</span></div>`;
+  let rows=""; prayerTimings.forEach((v,i)=>{ rows+=`<div class="pr-row" data-p="${i}"><span>${nm[i]}</span><span class="t">${v}</span></div>`; if(i===1) rows+=naflRow(ishL,ish); }); rows+=naflRow(tahL,tah);
   const b=qiblaBearing(CITY.lat,CITY.lon); const dir=t("dirs")[Math.round(b/45)%8];
   $("pr").innerHTML=`<div class="next-prayer" id="nextPrayer"></div>${rows}<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line)"><div class="compass" style="--qibla:${b}deg"><span class="c cn">N</span><span class="c ce">E</span><span class="c cs">S</span><span class="c cw">W</span><div class="needle"><span class="kaaba">🕋</span><span class="stick"></span></div><div class="dot"></div></div><div style="text-align:center;font-size:15px;font-weight:800">🧭 Qibla: <b style="color:var(--accent)">${Math.round(b)}°</b> <span style="color:var(--muted);font-weight:500;font-size:13px">(${dir})</span></div><div style="text-align:center;font-size:12px;color:var(--muted);margin-top:4px">🕋 ${t("qibla_to")}</div></div>`; updateNextPrayer(); }
 function updateNextPrayer(){ const np=$("nextPrayer"); if(!np||!prayerTimings) return; const nm=t("prayers"); const now=new Date(); const cur=now.getHours()*60+now.getMinutes(); let idx=-1,nmin=Infinity;
@@ -766,7 +781,7 @@ function buildSelectors(){ const rs=$("regionSel"),cs=$("citySel"); rs.innerHTML
   const sv=(localStorage.getItem("uzgid_loc")||"0,0").split(",").map(Number); const ri=REGIONS[sv[0]]?sv[0]:0; const ci=REGIONS[ri].cities[sv[1]]?sv[1]:0; rs.value=ri; fill(ri,ci); }
 function nearestCity(lat,lon){ let bd=Infinity,bi=0,bj=0,best=null; REGIONS.forEach((r,i)=>r.cities.forEach((c,j)=>{ const d=Math.hypot(c[1]-lat,c[2]-lon); if(d<bd){bd=d;best=c;bi=i;bj=j;} })); return {best,bi,bj}; }
 // GPS tugmasi olib tashlandi — "menga yaqin" bo'limi kerak bo'lganda joylashuvni o'zi so'raydi.
-function onCityChange(){ loaded={}; loadTab(activeTab); $("updated").textContent=t("updated")+": "+new Date().toLocaleTimeString(locale(),{timeZone:"Asia/Tashkent"}); }
+function onCityChange(){ loaded={}; loadTab(activeTab); stripWeather(); stripPrayer(); $("updated").textContent=t("updated")+": "+new Date().toLocaleTimeString(locale(),{timeZone:"Asia/Tashkent"}); }
 
 // Hamburger (mobil menyu)
 $("hambBtn").onclick=()=>{ $("side").classList.toggle("open"); $("sideBackdrop").classList.toggle("open"); };
@@ -812,9 +827,18 @@ function doSearch(q){ const res=[]; const add=(ic,lab,act)=>res.push({ic,lab,act
 (function(){ const q=new URLSearchParams(location.search).get("q"); if(!q) return; const ql=q.trim().toLowerCase();
   const hit=NAVID.find(id=> t("n_"+id).toLowerCase().includes(ql) || (ALIAS[id]||[]).some(k=>k.includes(ql)||ql.includes(k)) );
   const hs=$("heroSearch"); if(hs) hs.value=q; if(hit) setTimeout(()=>openTab(hit),0); })();
-applyStatic(); buildSelectors(); buildNav(); loadTab("bosh");
+let stripTemp=null,stripEmoji="";
+async function stripWeather(){ try{ const d=await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${CITY.lat}&longitude=${CITY.lon}&current=temperature_2m,weather_code&timezone=Asia%2FTashkent`)).json(); stripTemp=Math.round(d.current.temperature_2m); stripEmoji=(WX[d.current.weather_code]||["🌡"])[0]; updateTodayStrip(); }catch(e){} }
+async function stripPrayer(){ try{ const p=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Tashkent",day:"2-digit",month:"2-digit",year:"numeric"}).formatToParts(new Date()),g=x=>p.find(y=>y.type===x).value,date=`${g("day")}-${g("month")}-${g("year")}`; const d=await (await fetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${CITY.lat}&longitude=${CITY.lon}&method=99&methodSettings=15.5,null,15.5&school=1&tune=0,0,0,1,0,4,0,0,0`)).json(),x=d.data.timings; prayerTimings=[x.Fajr,x.Sunrise,x.Dhuhr,x.Asr,x.Maghrib,x.Isha]; updateTodayStrip(); }catch(e){} }
+function updateTodayStrip(){ const tt=$("tsTime"); if(!tt) return;
+  const tz=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Tashkent",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date()); tt.textContent=tz;
+  if($("tsWx")) $("tsWx").textContent=stripTemp!=null?stripTemp+"°":"—"; if($("tsWxIc")&&stripEmoji) $("tsWxIc").textContent=stripEmoji;
+  if($("tsCur")&&curData){ const u=(curData.official||[]).find(o=>o.code==="USD"); if(u) $("tsCur").textContent=Math.round(u.rate).toLocaleString("ru-RU"); }
+  if($("tsPray")&&prayerTimings){ const nm=t("prayers"); const [ch,cm]=tz.split(":").map(Number),cur=ch*60+cm; let idx=-1,nmin=Infinity; prayerTimings.forEach((v,i)=>{ if(i===1)return; const[h,m]=v.split(":").map(Number),mm=h*60+m; if(mm>cur&&mm<nmin){nmin=mm;idx=i;} }); if(idx<0){ idx=0; const[h,m]=prayerTimings[0].split(":").map(Number); nmin=h*60+m+1440; } const left=nmin-cur,hh=Math.floor(left/60),mm=left%60; $("tsPray").textContent=`${nm[idx]} ${hh>0?hh+":"+String(mm).padStart(2,"0"):mm+"m"}`; } }
+function initStrip(){ updateTodayStrip(); stripWeather(); stripPrayer(); }
+applyStatic(); buildSelectors(); buildNav(); loadTab("bosh"); initStrip();
 $("updated").textContent=t("updated")+": "+new Date().toLocaleTimeString(locale(),{timeZone:"Asia/Tashkent"});
-setInterval(()=>{ if(activeTab==="bosh") boshClock(); if(activeTab==="namoz") updateNextPrayer(); }, 1000);
+setInterval(()=>{ if(activeTab==="bosh") boshClock(); if(activeTab==="namoz") updateNextPrayer(); updateTodayStrip(); }, 1000);
 </script>
 </body>
 </html>
