@@ -21,7 +21,16 @@ UZGID (uzgid.uz) — O'zbekiston axborot portali. Bitta SPA: `public/index.html`
 4. **Kalendar** — tayyor `renderCalendar()` (CSS ham bor edi) Turizm paneliga ulandi (`#calWrap`).
 5. **Qibla vizual kompasi** — tayyor, lekin ulanmagan `loadReligion` kompasi namozdagi `renderPrayer()`ga ko'chirildi (🕋 qibla burchagiga buriladi). O'lik nusxa o'chirildi.
 
+## Qilingan (2026-07-11 UI/mobil sessiyasi)
+- GPS tugmasi headerdan olib tashlandi ("menga yaqin" o'zi joylashuvni so'raydi).
+- Ob-havo bloki o'lchami kichraytirildi; havo sifati (AQI) chipi tozalandi (🌫 o'rniga rangli nuqta).
+- Mobil: topbar (region/city) endi `position:static` (qotib turmaydi); beta testbar `sticky` (tepada qoladi).
+- Mobil header: brand (logo/UZGID/tagline) hamburger'dan oldinga; hamburger o'ngga `margin-left:auto` bilan qotdi → til o'zgarganda qimirlamaydi.
+- Mobil banner: katta medallion (`.hero::after`) va naqsh (`::before`) yumshatildi (aralashmasligi uchun).
+- Mobil sidebar: pastdagi `V1.0` (`.side-ver`) endi ochilganda ko'rinadi.
+
 ## Keyingi reja (TODO)
+- [ ] **Qiymat taklifi (value prop) — "Nega aynan UZGID?"** → hero'ga aniq shior + saytning noyob afzalligini ko'rsatish (jamlash + ishonch + tejash: banklar kesimida "eng foydali kurs", 3 til, betaraf/bepul). Foydalanuvchi buni birinchi ishlamoqchi.
 - [ ] **Fitnes / sport zallar** — "Joylar" xaritasiga yangi kategoriya (OSM `leisure=fitness_centre`). Bo'sh placeholder emas, real qidiruv. (Foydalanuvchi tanladi: "keyin davom etamiz".)
 - [ ] **Turizm kengaytmasi (tur paketlar)** — alohida sayt EMAS. Turizm panelini "marshrutlar + litsenziyalangan tur-firmalar katalogi" ko'rinishida kengaytirish (UZGID = betaraf gid/katalog, sotuvchi emas). Booking/to'lov kerak bo'lsa — keyin `tur.uzgid.uz` alohida servis.
 - [ ] **Jonli qibla kompasi (ixtiyoriy)** — iPhone'da device-orientation bilan telefon burilганда aylanadigan real kompas (iOS ruxsat tugmasi kerak).
