@@ -676,7 +676,8 @@ function updateCalc(){ if(!curData) return; const amt=parseFloat($("calcAmt").va
 
 async function loadPrayer(){ $("prCity").textContent=CITY.name; const box=$("pr"); box.innerHTML=`<div class="loading pulse">${t("loading")}</div>`;
   try{ const p=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Tashkent",day:"2-digit",month:"2-digit",year:"numeric"}).formatToParts(new Date()); const g=x=>p.find(y=>y.type===x).value; const date=`${g("day")}-${g("month")}-${g("year")}`;
-    const d=await (await fetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${CITY.lat}&longitude=${CITY.lon}&method=2`)).json(); const x=d.data.timings;
+    // O'zbekiston (islom.uz / musulmonlar idorasi) rasmiy usuli: Bomdod/Xufton 15.5°, Asr Hanafiy (school=1), ihtiyot: Peshin +1, Shom +4 daqiqa
+    const d=await (await fetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${CITY.lat}&longitude=${CITY.lon}&method=99&methodSettings=15.5,null,15.5&school=1&tune=0,0,0,1,0,4,0,0,0`)).json(); const x=d.data.timings;
     prayerTimings=[x.Fajr,x.Sunrise,x.Dhuhr,x.Asr,x.Maghrib,x.Isha]; renderPrayer();
   }catch(e){ box.innerHTML=`<div class="err">${t("loaderr")}</div>`; prayerTimings=null; } }
 function renderPrayer(){ const nm=t("prayers"); const rows=prayerTimings.map((v,i)=>`<div class="pr-row" data-p="${i}"><span>${nm[i]}</span><span class="t">${v}</span></div>`).join("");

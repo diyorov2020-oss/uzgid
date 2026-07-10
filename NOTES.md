@@ -36,6 +36,15 @@ UZGID (uzgid.uz) — O'zbekiston axborot portali. Bitta SPA: `public/index.html`
 - [ ] **Jonli qibla kompasi (ixtiyoriy)** — iPhone'da device-orientation bilan telefon burilганда aylanadigan real kompas (iOS ruxsat tugmasi kerak).
 - [ ] Deploy: yuqoridagilar tayyor bo'lgach Render hook orqali.
 
+## Namoz vaqti — O'zbekiston rasmiy formulasi (MUHIM)
+`loadPrayer()` Aladhan API'dan **quyidagi aniq sozlama bilan** oladi (islom.uz / O'zbekiston musulmonlar idorasiga 100% mos, 11.07.2026 Toshkentda 6/6 vaqt tekshirilgan):
+`method=99&methodSettings=15.5,null,15.5&school=1&tune=0,0,0,1,0,4,0,0,0`
+- Bomdod/Xufton burchagi: **15.5°**
+- Asr: **Hanafiy** (school=1) — Aladhan default Shafiy noto'g'ri edi (~72 daq farq!)
+- Ihtiyot: Peshin **+1**, Shom **+4** daqiqa (tune tartibi: Imsak,Fajr,Sunrise,Dhuhr,Asr,Maghrib,Sunset,Isha,Midnight)
+- Eski `method=2` (ISNA) **noto'g'ri** edi — o'zgartirilmasin.
+- ⏳ Boshqa fasllar (qish) ham tekshirish tavsiya (bir necha kun islom.uz bilan solishtirish).
+
 ## Muhim eslatmalar
 - Barcha UI matni 3 tilda — yangi matn qo'shsang `T.uz/ru/en` uchalasiga qo'sh.
 - `index.html` katta bitta fayl — o'zgarishdan keyin JS sintaksisini tekshir (eng katta `<script>` blokini `node --check`).
