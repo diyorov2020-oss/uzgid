@@ -44,6 +44,12 @@ UZGID (uzgid.uz) — O'zbekiston axborot portali. Bitta SPA: `public/index.html`
 5. Ikonka birligi (SVG-line), `:focus-visible`, tap-nishon ≥44px, o'lik CSS tozalash, Yandex xarita lazy-load.
 6. DESIGN.md v2: breakpoint/z-index/token/holat-triad/"definition of done".
 
+## KATTA G'OYA — Transport: real-time avtobus xaritasi (kelajak bosqich)
+Foydalanuvchi so'rovi: Transport bo'limida Toshkent avtobuslarining **real vaqtda harakatini** ko'rsatuvchi **haqiqiy interaktiv xarita** (Yandex Maps ichidagidek, lekin O'ZIMIZNIKI — havola/embed emas). Marshrutlar, bekatlar, bekat nomlari; foydalanuvchi o'z joylashuvi + atrofini ko'rsin. Pul to'lashga tayyor (juda qimmat bo'lmasa).
+**Baho (2 qism):**
+- **Xarita + marshrut + bekatlar:** DOABLE & arzon — MapLibre GL yoki Leaflet + OSM tiles (bepul) / MapTiler (bepul tier). Bekat/marshrut = Toshkent GTFS ma'lumoti.
+- **Real-time avtobus joylashuvi:** BLOKER — Toshkentda ochiq GTFS-realtime / transport API bor-yo'qligiga bog'liq. Yandex o'z jonli ma'lumotini bermaydi. **1-qadam (davay bo'lganda): Toshshahartransxizmat / smart-transport ochiq API/feed bor-yo'qligini aniqlash.** Bo'lsa — arzon va real; bo'lmasa — hamkorlik/scraping kerak.
+
 ## Keyingi reja (TODO)
 - [ ] **Qiymat taklifi (value prop) — "Nega aynan UZGID?"** → hero'ga aniq shior + saytning noyob afzalligini ko'rsatish (jamlash + ishonch + tejash: banklar kesimida "eng foydali kurs", 3 til, betaraf/bepul). Foydalanuvchi buni birinchi ishlamoqchi.
 - [ ] **Fitnes / sport zallar** — "Joylar" xaritasiga yangi kategoriya (OSM `leisure=fitness_centre`). Bo'sh placeholder emas, real qidiruv. (Foydalanuvchi tanladi: "keyin davom etamiz".)
