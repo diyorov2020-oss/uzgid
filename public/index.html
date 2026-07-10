@@ -183,7 +183,7 @@
   .appmain{margin-left:66px;transition:margin .22s}
   .hamb{display:none} .side-backdrop{display:none}
   @media (max-width:900px){
-    .side{width:250px;transform:translateX(-100%);transition:transform .25s;box-shadow:3px 0 30px rgba(0,0,0,.25)}
+    .side{width:250px;left:auto;right:0;border-right:none;border-left:1px solid var(--line);transform:translateX(100%);transition:transform .25s;box-shadow:-3px 0 30px rgba(0,0,0,.25)}
     .side .side-item .sl,.side .side-head .st,.side .side-ver{opacity:1}
     .side.open{transform:none}
     .appmain{margin-left:0}
