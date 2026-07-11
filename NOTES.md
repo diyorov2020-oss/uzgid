@@ -91,6 +91,7 @@ UZGID (uzgid.uz) — O'zbekiston axborot portali. Bitta SPA: `public/index.html`
 - **MUHIM tuzatish:** `getNews` ilgari faqat `uz/ru/en` qabul qilardi — **zh yo'q edi** (xitoyda uz yangilik chiqardi). Endi `["uz","ru","en","zh"]`. zh feed yo'q → uz olinadi → AI xitoychaga o'giradi.
 - Xatoga chidamli: `AI_KEY` yo'q yoki xato/timeout (22s) bo'lsa — asl sarlavha qaytadi (`try/catch`).
 - Frontend: `d.translated` bo'lsa yangilik ro'yxati tepasida `🌐 AI tarjima` eslatmasi (`news_ai`, 4 til) — shaffoflik.
+- **Parsing (muhim saboq):** dastlab natija JSON massiv so'ralgandi — **en ishladi, zh ishlamadi** (xitoycha tarjimadagi ichki `"` qo'shtirnoqlar JSON'ni buzib, fallback→uz, va 15 daq keshlandi). Yechim: modeldan **raqamli satrlar** (`1. ...`) so'raladi, regex `^\s*(\d+)[.)-]\s*(.+)$` bilan parse — qo'shtirnoqqa chidamli, qisman ham qo'llanadi. `max_tokens` 3500→6000 (xitoycha uzunroq, kesilmasin).
 - Deploy qilindi (main push + Render hook).
 
 ## Fable 5 review — keyingi ish (prioritet)
