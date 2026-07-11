@@ -57,7 +57,13 @@ UZGID (uzgid.uz) — O'zbekiston axborot portali. Bitta SPA: `public/index.html`
 - **中文 (zh) to'liq qo'shildi** — `T.zh` bloki (**115 kalit**, uz/ru/en bilan 1:1 mos; `dirs·8, seasons·4, prayers·6, cats·14, tips·6`). Til tanlagichdan `zh`ning `class="soon"` va onclick guard'i olib tashlandi → endi ishlaydi. `locale()`ga `zh→zh-CN` (Intl sana/oy/hafta xitoycha).
 - **Muhim:** kodda ko'p joyda `{uz,ru,en}[lang]` inline lug'atlar **fallback'siz** edi — zh'da `undefined` chiqarardi. Node-skript bilan HAR birini topib zh qo'shildi: me'yor manba (582), «Batafsil →» (585/588), namoz nafl/Ishroq/Tahajjud (719), kalendar hafta kunlari (751) + «bayram yo'q» (761), shahar yorliqlari (738), feedback savol/Ha/Yo'q (872), `fmtNewsDate` vaqt+locale (799-801), FAQ til-javobi. Tekshiruv: fallback'siz til-lug'atlarning hammasida `zh:` bor (skript ✓).
   - **Yangi til qo'shganda:** (1) `T`ga blok, (2) `locale()`, (3) til tanlagich span, (4) Node-skript bilan fallback'siz `[lang]`/`[L]` lug'atlarni skanerlab har biriga til kalitini qo'sh.
-- **Data (zh emas, uz-fallback):** FAQ savol-javoblari, joy tavsiflari (POI), shahar «haqida» matni, ob-havo tavsifi (WXD), bayram nomlari (HOLIDAYS), GOV/PAY/... `d[lang]||d.uz` — zh'da uz ko'rinadi (xato emas, xavfsiz). To'liq zh-data — alohida katta ish (kelajakda).
+- **Data (zh emas, uz-fallback):** ~~FAQ, POI, WXD, HOLIDAYS, linklar...~~ → **BAJARILDI (pastga qarang).**
+
+## Qilingan (2026-07-11 Xitoy tili DATA sessiyasi)
+- **Barcha data zh'ga o'tkazildi.** Node-skript (`scratchpad/zhfill.js`) `en:"..."}` bilan tugaydigan **170 tarjima obyektiga** `zh` qo'shdi: POI (28 joy tavsifi), GOV/PAY/EDU/TRANS/KINO/TEATR/AFISHA/SPORT/EBOOK/OFFNEWS/NUMS/ISHONCH/TV linklari, tarif/me'yor/yoqilg'i inline matnlari, NEARCATS, FAQ_DATA (savol+javob), bayramlar (HOLIDAYS). Qo'shimcha: `FACTS.zh` (8 fakt), `WXD.zh` (ob-havo tavsifi, 19 kod), `PHRASES` 3-element (so'zlashgich xitoycha, `renderPhrasebook` `lang==="zh"` da zh ko'rsatadi).
+- Tekshiruv: `en:"..."}` (zh'siz) qoldi = **0**. JS toza. Jonli render tasdiqlandi (政府服务, POI, bayram, fakt, ob-havo).
+- **Qoldi (kichik):** `STATS` (shahar aholi/asos/balandlik) — `~2.9 mln / Mil.av. III asr / 455 m` — barcha tillar uchun bir xil (uz birlik so'zlari); ru/en'da ham shunday edi. Xohlansa keyin zh birlik so'zlariga o'giriladi.
+- **Yangi til qo'shishda data ham:** `zhfill.js`dagidek `en`→yangi-til xaritasi bilan skript ishlat.
 - Deploy qilindi (main push + Render hook).
 
 ## Fable 5 review — keyingi ish (prioritet)
