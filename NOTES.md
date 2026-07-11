@@ -43,6 +43,16 @@ UZGID (uzgid.uz) — O'zbekiston axborot portali. Bitta SPA: `public/index.html`
 - **⛽ Yoqilg'i narxlari kartasi** (kutilgan qaror #2 — tavsiya funksiya). Xizmatlar panelida, tarif kartasidan keyin (`#fuel`, `renderFuel()`, i18n `w_fuel`). Turlar: Benzin (AI-80/91/92/95), Dizel (DT), Avto-gaz (Metan/Propan). **Narxlar hozircha OLIB TASHLANGAN** — har turi yonida «Tez orada» (soxta raqam ko'rsatmaslik uchun; foydalanuvchi so'radi). Aniq narx tayyor bo'lsa → `renderFuel()` ichidagi ro'yxatga qiymat qo'shiladi.
 - Deploy qilindi (main push + Render hook).
 
+## Qilingan (2026-07-11 yangiliklar + ticket + kino sessiyasi)
+- **Yangiliklar — ko'p rasmiy manba agregatori** (server.js `getNews`/`fetchFeed`, `NEWS_SOURCES`). Faqat Gazeta.uz emas: **UzA** (davlat agentligi — prezident qarorlari/vazir tayinlovlari), **Kun.uz, Gazeta.uz, Xabar.uz, Review.uz** (iqtisod), **Podrobno** (faqat `ru`). Har manbadan ≤8, eng yangi tartibda, sarlavha bo'yicha dedupe, top 30. Kesh 15 daq **til bo'yicha** (`newsCache[lang]`). Bir manba yiqilsa qolganlari ishlaydi (Promise.all + 9s timeout + try/catch).
+  - `/api/news?lang=uz|ru|en` — handler `lang`ni uzatadi. Manba tanlash: `url[lang] || url.uz` (boshqa tilga tushmaydi — shuning uchun `uz`da Podrobno chiqmaydi).
+  - Frontend `loadNews` yangilandi: har xabar **sarlavha + pastida `manba · vaqt`** (`.news-t/.news-m/.news-src`, `fmtNewsDate` relativ vaqt uz/ru/en). Badge: `UzA·Kun·Gazeta·Xabar·Review`.
+  - ⚠️ president.uz'da RSS yo'q (404), gov.uz/kun.uz/rss/daryo/norma turli manzillari 0 — ishlayotganlari yuqoridagilar. Rasmiy tayinlov/qaror = UzA orqali keladi.
+  - **Manba qo'shish:** `NEWS_SOURCES`ga `{name,domain,url:{uz,ru,en}}` qo'sh (RSS `<item>` qaytishini avval `curl`da tekshir).
+- **ticket.uz TUZATILDI:** u aslida endi **BCD Travel** (biznes-sayohat) sayti edi — logo ham BCD'niki. AFISHA'da → **iTicket.uz** (https://iticket.uz) ga almashtirildi; `ticket.uz.png` o'chirildi, `iticket.uz.png` qo'shildi, `LOGOS`da `ticket.uz`→`iticket.uz`.
+- **Kino kengaytirildi:** KINO'ga **Kinoman.uz** (🍿) + **Kinopoisk** (⭐, host `www.kinopoisk.ru`) qo'shildi. Kinopoisk logo bor; Kinoman sifatli logo topilmadi → 🍿 emoji.
+- Deploy qilindi (main push + Render hook).
+
 ## Fable 5 review — keyingi ish (prioritet)
 1. Tipografiya: 25 xil o'lcham → 7 pog'onali shkala (`--fs-*`).
 2. `manba·sana` chip — har jonli kartochkada (ayniqsa ob-havoda yo'q).
@@ -60,7 +70,7 @@ Foydalanuvchi so'rovi: Transport bo'limida Toshkent avtobuslarining **real vaqtd
 ## ⏭️ DAVOM — foydalanuvchi tanlashi kerak (2026-07-11 holati)
 Hammasi deploy qilingan. ✅ Qaror #1 (logo) va ⛽ yoqilg'i BAJARILDI (yuqoriga qarang). Keyingi funksiya tanlovi:
    - ⛽ **Yoqilg'i narxlarini to'ldirish** (hozir «tez orada» — aniq raqam kerak; manba tekshirish)
-   - 🖼 **Qolgan 13 logo** (rasmiy fayl topib qo'shish: e-imzo, customs, teatr, cinema, lex, natlib ...)
+   - 🖼 **Qolgan logolar** (rasmiy fayl topib qo'shish: e-imzo, customs, teatr, cinema, lex, natlib, kinoman ...)
    - 🕌 **Namoz eslatma** (PWA push bildirishnoma)
    - 🧭 **"Yo'l ko'rsat"** — "menga yaqin" natijalariga marshrut tugmasi
    - 🇨🇳 **Xitoy tili** to'liq tarjima (~114 UI + data)
