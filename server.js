@@ -132,8 +132,27 @@ async function fetchFeed(src, lang){
   }catch(e){ return []; }
   finally{ clearTimeout(timer); }
 }
+// Sarlavhalarni tanlangan tilga AI (Anthropic) bilan tarjima — batch, keshlanadi.
+async function translateNews(items, lang){
+  if(!AI_KEY || !items.length) return items;
+  const names = { ru:"Russian", en:"English", zh:"Simplified Chinese" };
+  const target = names[lang]; if(!target) return items;
+  try{
+    const numbered = items.map((n,i)=>`${i+1}. ${n.title}`).join("\n");
+    const sys = `You translate Uzbekistan news headlines into ${target}. Keep each translation concise and natural, preserve meaning, proper nouns and numbers. If a headline is already in ${target}, keep it as is. Return ONLY a JSON array of exactly ${items.length} strings, same order, no numbering, no commentary.`;
+    const ctrl = new AbortController(); const tm = setTimeout(()=>ctrl.abort(), 22000);
+    const r = await fetch("https://api.anthropic.com/v1/messages",{ method:"POST", signal:ctrl.signal, headers:{ "x-api-key":AI_KEY, "anthropic-version":"2023-06-01", "content-type":"application/json" }, body: JSON.stringify({ model:AI_MODEL, max_tokens:3500, system:sys, messages:[{ role:"user", content:numbered }] }) });
+    clearTimeout(tm);
+    const j = await r.json();
+    const txt = (j.content && j.content[0] && j.content[0].text) || "";
+    const mm = txt.match(/\[[\s\S]*\]/); if(!mm) return items;
+    const arr = JSON.parse(mm[0]);
+    if(Array.isArray(arr) && arr.length===items.length) return items.map((n,i)=>({ ...n, title:String(arr[i]||n.title) }));
+    return items;
+  }catch(e){ return items; }
+}
 async function getNews(langRaw){
-  const lang = ["uz","ru","en"].includes(langRaw) ? langRaw : "uz";
+  const lang = ["uz","ru","en","zh"].includes(langRaw) ? langRaw : "uz";
   const c = newsCache[lang];
   if(c && Date.now()-c.ts < 15*60*1000) return c.data;
   const results = await Promise.all(NEWS_SOURCES.map(s=>fetchFeed(s, lang)));
@@ -143,7 +162,9 @@ async function getNews(langRaw){
   // sarlavha bo'yicha dublikatlarni olib tashlash
   const seen = new Set();
   items = items.filter(n=>{ const k=n.title.toLowerCase().slice(0,60); if(seen.has(k)) return false; seen.add(k); return true; }).slice(0,30);
-  const data = { updated:new Date().toISOString(), sources: NEWS_SOURCES.filter(s=>s.url[lang]||s.url.uz).map(s=>s.name), items };
+  // AI tarjima (uz'dan boshqa til tanlanganda)
+  if(lang!=="uz") items = await translateNews(items, lang);
+  const data = { updated:new Date().toISOString(), sources: NEWS_SOURCES.filter(s=>s.url[lang]||s.url.uz).map(s=>s.name), items, translated: lang!=="uz" };
   newsCache[lang] = { data, ts: Date.now() };
   return data;
 }
