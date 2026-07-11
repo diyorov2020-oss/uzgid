@@ -66,6 +66,14 @@ UZGID (uzgid.uz) — O'zbekiston axborot portali. Bitta SPA: `public/index.html`
 - **Yangi til qo'shishda data ham:** `zhfill.js`dagidek `en`→yangi-til xaritasi bilan skript ishlat.
 - Deploy qilindi (main push + Render hook).
 
+## Qilingan (2026-07-11 footer + PWA install sessiyasi)
+- **To'liq footer** (sayt eng pastida, 4 kolonka): brend+tagline+📲install tugmasi+til tanlagich · Asosiy (bosh/namoz/joylar/transport/xizmatlar) · Ma'lumot (turizm/raqamlar/media/yangiliklar) · UZGID (yordam/aloqa/Telegram). Pastida manba+copyright+`#updated`. CSS `.site-footer/.foot-*` (720px'da 2 ustun). Eski oddiy footer o'rniga.
+- **Til tanlagich footer'da ham** — selektor `#langSeg span` → `.langseg span` (applyStatic highlight + onclick binding), footer switcher `class="langseg foot-langseg"` (id yo'q). Ikkalasi sinxron ishlaydi.
+- **Haqiqiy PWA install:** header'da 📲 `#installIcon` + footer tugma → `doInstall()`. `beforeinstallprompt` ushlanadi (Android/desktop native oyna); yo'q bo'lsa (iPhone) `install_help` yo'riqnoma alert. Standalone rejimda header ikonka yashiriladi.
+- **Service worker** `public/sw.js` — **keshsiz** (fetch interceptsiz, faqat installability uchun; sayt tez yangilangani uchun eskirmasin). `index.html` load'da ro'yxatdan o'tadi. Manifest allaqachon bor (icon 192/512+maskable).
+- **FAQ**ga 2 yangi savol (4 tilda): ⛽ yoqilg'i narxlari, yangilik manbalari (UzA/Kun/Gazeta/Xabar/Review). i18n: `install/foot_main/foot_info/install_help` (uz/ru/en/zh).
+- Deploy qilindi (main push + Render hook).
+
 ## Fable 5 review — keyingi ish (prioritet)
 1. Tipografiya: 25 xil o'lcham → 7 pog'onali shkala (`--fs-*`).
 2. `manba·sana` chip — har jonli kartochkada (ayniqsa ob-havoda yo'q).
