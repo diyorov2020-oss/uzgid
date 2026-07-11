@@ -86,6 +86,13 @@ UZGID (uzgid.uz) — O'zbekiston axborot portali. Bitta SPA: `public/index.html`
 - **Qolgan (tashqi/atoqli — tabiiy, tuzatilmaydi):** yangilik SARLAVHALARI (uz manba feedlaridan — jonli, tarjima qilib bo'lmaydi); Yandex xarita yorliqlari (API uz/zh'ni qo'llamaydi — hozir ru_RU); shahar/viloyat NOMLARI va bank brendlari (atoqli ot, lotin); kichik shaharda zh.wikipedia bo'lmasa bo'sh (uz'dagidek).
 - Deploy qilindi (main push + Render hook).
 
+## Qilingan (2026-07-11 yangiliklar AI tarjima sessiyasi)
+- **Yangilik sarlavhalari AI bilan tarjima** (server.js `translateNews`). Tanlangan til uz'dan boshqa bo'lsa (ru/en/zh) — barcha ~30 sarlavha **bitta batch** Anthropic (`AI_MODEL`=Haiku, mavjud `AI_KEY`) chaqiruvida tarjima qilinadi. Natija JSON massiv. `getNews` keshi (15 daq, til bo'yicha) tarjimani ham saqlaydi → arzon (til boshiga 15 daqda 1 chaqiruv), tez (keshdan).
+- **MUHIM tuzatish:** `getNews` ilgari faqat `uz/ru/en` qabul qilardi — **zh yo'q edi** (xitoyda uz yangilik chiqardi). Endi `["uz","ru","en","zh"]`. zh feed yo'q → uz olinadi → AI xitoychaga o'giradi.
+- Xatoga chidamli: `AI_KEY` yo'q yoki xato/timeout (22s) bo'lsa — asl sarlavha qaytadi (`try/catch`).
+- Frontend: `d.translated` bo'lsa yangilik ro'yxati tepasida `🌐 AI tarjima` eslatmasi (`news_ai`, 4 til) — shaffoflik.
+- Deploy qilindi (main push + Render hook).
+
 ## Fable 5 review — keyingi ish (prioritet)
 1. Tipografiya: 25 xil o'lcham → 7 pog'onali shkala (`--fs-*`).
 2. `manba·sana` chip — har jonli kartochkada (ayniqsa ob-havoda yo'q).
