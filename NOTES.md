@@ -74,6 +74,18 @@ UZGID (uzgid.uz) — O'zbekiston axborot portali. Bitta SPA: `public/index.html`
 - **FAQ**ga 2 yangi savol (4 tilda): ⛽ yoqilg'i narxlari, yangilik manbalari (UzA/Kun/Gazeta/Xabar/Review). i18n: `install/foot_main/foot_info/install_help` (uz/ru/en/zh).
 - Deploy qilindi (main push + Render hook).
 
+## Qilingan (2026-07-11 to'liq til qamrovi sessiyasi)
+- **Maqsad:** qaysi til tanlansa — sayt TO'LIQ o'sha tilda (hech qayerda boshqa til qolmasin). Statik audit + tuzatish.
+- **Topilgan «uz-leak» (zh'da o'zbekcha chiqardigan) `||uz` fallbackli helperlar:** `trafficInfo`, `aqiInfo` (`(u,r,e)=>({uz,ru,en})[lang]||u`) → `(u,r,e,z)` + zh qo'shildi. (Avvalgi zh-audit faqat fallback'sizlarni qidirgan — bularni o'tkazib yuborgan edi.)
+- **STATS birliklari** (`~2.9 mln / Mil.av. III asr / 455 m`) → `locStat()` funksiyasi til bo'yicha o'giradi (mln/ming/yil/asr/Mil.av. → ru/en/zh). Yorliqlar (Aholi/Founded/...) allaqachon lokal edi.
+- **Masofa** (menga yaqin) `" m"/" km"` → `t("unit_m")/t("unit_km")` (zh: 米/公里).
+- **Reklama** (2 adslot) va **«rasmiy»** badge → `data-i="ad"/"official_badge"`. Yangi i18n kalitlar (4 til): `ad, official_badge, unit_km, unit_m`.
+- **Wikipedia tili** (shahar «haqida») zh tanlanganda `zh.wikipedia.org` (2 joyda `wl`).
+- **`<html lang>`** applyStatic'da allaqachon dinamik. Placeholderlar `data-ph`/`t()` bilan ✓. Feedback rahmati zh bor ✓.
+- **T jami: 123 kalit × 4 til (teng).** JS toza, 0 ta 3-tilli helper qoldi.
+- **Qolgan (tashqi/atoqli — tabiiy, tuzatilmaydi):** yangilik SARLAVHALARI (uz manba feedlaridan — jonli, tarjima qilib bo'lmaydi); Yandex xarita yorliqlari (API uz/zh'ni qo'llamaydi — hozir ru_RU); shahar/viloyat NOMLARI va bank brendlari (atoqli ot, lotin); kichik shaharda zh.wikipedia bo'lmasa bo'sh (uz'dagidek).
+- Deploy qilindi (main push + Render hook).
+
 ## Fable 5 review — keyingi ish (prioritet)
 1. Tipografiya: 25 xil o'lcham → 7 pog'onali shkala (`--fs-*`).
 2. `manba·sana` chip — har jonli kartochkada (ayniqsa ob-havoda yo'q).
