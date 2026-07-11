@@ -53,6 +53,13 @@ UZGID (uzgid.uz) — O'zbekiston axborot portali. Bitta SPA: `public/index.html`
 - **Kino kengaytirildi:** KINO'ga **Kinoman.uz** (🍿) + **Kinopoisk** (⭐, host `www.kinopoisk.ru`) qo'shildi. Kinopoisk logo bor; Kinoman sifatli logo topilmadi → 🍿 emoji.
 - Deploy qilindi (main push + Render hook).
 
+## Qilingan (2026-07-11 Xitoy tili sessiyasi)
+- **中文 (zh) to'liq qo'shildi** — `T.zh` bloki (**115 kalit**, uz/ru/en bilan 1:1 mos; `dirs·8, seasons·4, prayers·6, cats·14, tips·6`). Til tanlagichdan `zh`ning `class="soon"` va onclick guard'i olib tashlandi → endi ishlaydi. `locale()`ga `zh→zh-CN` (Intl sana/oy/hafta xitoycha).
+- **Muhim:** kodda ko'p joyda `{uz,ru,en}[lang]` inline lug'atlar **fallback'siz** edi — zh'da `undefined` chiqarardi. Node-skript bilan HAR birini topib zh qo'shildi: me'yor manba (582), «Batafsil →» (585/588), namoz nafl/Ishroq/Tahajjud (719), kalendar hafta kunlari (751) + «bayram yo'q» (761), shahar yorliqlari (738), feedback savol/Ha/Yo'q (872), `fmtNewsDate` vaqt+locale (799-801), FAQ til-javobi. Tekshiruv: fallback'siz til-lug'atlarning hammasida `zh:` bor (skript ✓).
+  - **Yangi til qo'shganda:** (1) `T`ga blok, (2) `locale()`, (3) til tanlagich span, (4) Node-skript bilan fallback'siz `[lang]`/`[L]` lug'atlarni skanerlab har biriga til kalitini qo'sh.
+- **Data (zh emas, uz-fallback):** FAQ savol-javoblari, joy tavsiflari (POI), shahar «haqida» matni, ob-havo tavsifi (WXD), bayram nomlari (HOLIDAYS), GOV/PAY/... `d[lang]||d.uz` — zh'da uz ko'rinadi (xato emas, xavfsiz). To'liq zh-data — alohida katta ish (kelajakda).
+- Deploy qilindi (main push + Render hook).
+
 ## Fable 5 review — keyingi ish (prioritet)
 1. Tipografiya: 25 xil o'lcham → 7 pog'onali shkala (`--fs-*`).
 2. `manba·sana` chip — har jonli kartochkada (ayniqsa ob-havoda yo'q).
@@ -73,7 +80,7 @@ Hammasi deploy qilingan. ✅ Qaror #1 (logo) va ⛽ yoqilg'i BAJARILDI (yuqoriga
    - 🖼 **Qolgan logolar** (rasmiy fayl topib qo'shish: e-imzo, customs, teatr, cinema, lex, natlib, kinoman ...)
    - 🕌 **Namoz eslatma** (PWA push bildirishnoma)
    - 🧭 **"Yo'l ko'rsat"** — "menga yaqin" natijalariga marshrut tugmasi
-   - 🇨🇳 **Xitoy tili** to'liq tarjima (~114 UI + data)
+   - 🇨🇳 **Xitoy tili DATA** (UI tayyor ✅; qolgani: FAQ, POI, shahar/ob-havo tavsifi, bayram nomlari — zh'ga)
    - 🚌 **Avtobus real-time** (MyBus.uz/3TM manba tekshirishdan boshlanadi)
    - 📐 **Fable tizim:** tipografiya 25→7, manba·sana chip, mobil tab-bar
 
