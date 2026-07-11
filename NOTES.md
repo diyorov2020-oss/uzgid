@@ -36,6 +36,13 @@ UZGID (uzgid.uz) — O'zbekiston axborot portali. Bitta SPA: `public/index.html`
 - **⭐ «Bugun chizig'i» (todaystrip):** topbar tagida, har bo'limda, jonli 4 segment — 🕐vaqt · 🌤harorat · 💵USD · 🕌keyingi namoz+sanoq. Tagida bayroq chizig'i. Mobilda sticky (asosiy tepa anchor; shu sabab beta-bar sticky qaytarildi). Funksiyalar: `stripWeather/stripPrayer/updateTodayStrip/initStrip`; onCityChange + loadCurrency + 1s interval bilan yangilanadi.
 - **DESIGN.md** yaratildi (dizayn tizimi) + **Fable 5** review qildi (natijalar DESIGN.md audit va TODO'da).
 
+## Qilingan (2026-07-11 logo + yoqilg'i sessiyasi)
+- **Real brend logolari** (kutilgan qaror #1 — «logo fayl» tanlandi). `public/logos/<host>.png` — lokal beriladi (3-tomon favicon-servisiga bog'liq emas). Avtomatik yuklab olindi: apple-touch-icon (~180px) → bo'lmasa Google favicon. **27/40 host** logolangan (My Gov, Soliq, CBU, OneID, Open Data, Mehnat, ССВ, UzBMB, HEMIS, Railway, Uzairways, Qanot Sharq, Centrum Air, Avtovokzal, Yandex Go, MyTaxi, Click, Payme, Uzum, Paynet, Afisha, Ticket, PFL, UzA, Norma ...). Qolgan 13 tasi (e-imzo, kadastr, customs, silkavia, uzairports, cinema, teatr, championat, ziyouz, ziyonet, kitob, natlib, lex) bot bloklagani/16px favicon sabab **emoji fallback**da qoldi.
+  - `renderLinks` yangilandi: `LOGOS` Set + `linkHost()`. Logo bor host → `<img src="/logos/host.png">` (38px, oq fon), yo'q/yuklanmasa → emoji (`onerror`).
+  - **Logo qo'shish:** rasmiy fayl bo'lsa → `public/logos/<host>.png` ga tashla + `LOGOS` Set'ga host qo'sh.
+- **⛽ Yoqilg'i narxlari kartasi** (kutilgan qaror #2 — tavsiya funksiya). Xizmatlar panelida, tarif kartasidan keyin (`#fuel`, `renderFuel()`, i18n `w_fuel`). Turlar: Benzin (AI-80/91/92/95), Dizel (DT), Avto-gaz (Metan/Propan). **Narxlar hozircha OLIB TASHLANGAN** — har turi yonida «Tez orada» (soxta raqam ko'rsatmaslik uchun; foydalanuvchi so'radi). Aniq narx tayyor bo'lsa → `renderFuel()` ichidagi ro'yxatga qiymat qo'shiladi.
+- Deploy qilindi (main push + Render hook).
+
 ## Fable 5 review — keyingi ish (prioritet)
 1. Tipografiya: 25 xil o'lcham → 7 pog'onali shkala (`--fs-*`).
 2. `manba·sana` chip — har jonli kartochkada (ayniqsa ob-havoda yo'q).
@@ -51,10 +58,9 @@ Foydalanuvchi so'rovi: Transport bo'limida Toshkent avtobuslarining **real vaqtd
 - **Real-time avtobus joylashuvi:** BLOKER — Toshkentda ochiq GTFS-realtime / transport API bor-yo'qligiga bog'liq. Yandex o'z jonli ma'lumotini bermaydi. **1-qadam (davay bo'lganda): Toshshahartransxizmat / smart-transport ochiq API/feed bor-yo'qligini aniqlash.** Bo'lsa — arzon va real; bo'lmasa — hamkorlik/scraping kerak. **Nomzod manbalar (user):** MyBus.uz, 3TM — ochiq olib bo'lsa olamiz, ariza kerak bo'lsa uni ham qilamiz.
 
 ## ⏭️ DAVOM — foydalanuvchi tanlashi kerak (2026-07-11 holati)
-Hammasi deploy qilingan. Keyingi qadam uchun tanlov:
-1. **Ikonkalar:** hozirgi **emoji + harf-avatar** qolsinmi (ishonchli, tavsiya) YOKI ~25-30 bank/xizmat **real logo faylini** repoga (`/logos/`) qo'shamizmi (brendli, qo'lda yig'ish)?
-2. **Yangi funksiya (qaysi biri):**
-   - ⛽ **Yoqilg'i narxi** (Benzin/Metan bugungi narx — tarif kabi) ← tavsiya, noyob
+Hammasi deploy qilingan. ✅ Qaror #1 (logo) va ⛽ yoqilg'i BAJARILDI (yuqoriga qarang). Keyingi funksiya tanlovi:
+   - ⛽ **Yoqilg'i narxlarini to'ldirish** (hozir «tez orada» — aniq raqam kerak; manba tekshirish)
+   - 🖼 **Qolgan 13 logo** (rasmiy fayl topib qo'shish: e-imzo, customs, teatr, cinema, lex, natlib ...)
    - 🕌 **Namoz eslatma** (PWA push bildirishnoma)
    - 🧭 **"Yo'l ko'rsat"** — "menga yaqin" natijalariga marshrut tugmasi
    - 🇨🇳 **Xitoy tili** to'liq tarjima (~114 UI + data)
