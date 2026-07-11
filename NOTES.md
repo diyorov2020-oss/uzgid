@@ -50,6 +50,17 @@ Foydalanuvchi so'rovi: Transport bo'limida Toshkent avtobuslarining **real vaqtd
 - **Xarita + marshrut + bekatlar:** DOABLE & arzon — MapLibre GL yoki Leaflet + OSM tiles (bepul) / MapTiler (bepul tier). Bekat/marshrut = Toshkent GTFS ma'lumoti.
 - **Real-time avtobus joylashuvi:** BLOKER — Toshkentda ochiq GTFS-realtime / transport API bor-yo'qligiga bog'liq. Yandex o'z jonli ma'lumotini bermaydi. **1-qadam (davay bo'lganda): Toshshahartransxizmat / smart-transport ochiq API/feed bor-yo'qligini aniqlash.** Bo'lsa — arzon va real; bo'lmasa — hamkorlik/scraping kerak. **Nomzod manbalar (user):** MyBus.uz, 3TM — ochiq olib bo'lsa olamiz, ariza kerak bo'lsa uni ham qilamiz.
 
+## ⏭️ DAVOM — foydalanuvchi tanlashi kerak (2026-07-11 holati)
+Hammasi deploy qilingan. Keyingi qadam uchun tanlov:
+1. **Ikonkalar:** hozirgi **emoji + harf-avatar** qolsinmi (ishonchli, tavsiya) YOKI ~25-30 bank/xizmat **real logo faylini** repoga (`/logos/`) qo'shamizmi (brendli, qo'lda yig'ish)?
+2. **Yangi funksiya (qaysi biri):**
+   - ⛽ **Yoqilg'i narxi** (Benzin/Metan bugungi narx — tarif kabi) ← tavsiya, noyob
+   - 🕌 **Namoz eslatma** (PWA push bildirishnoma)
+   - 🧭 **"Yo'l ko'rsat"** — "menga yaqin" natijalariga marshrut tugmasi
+   - 🇨🇳 **Xitoy tili** to'liq tarjima (~114 UI + data)
+   - 🚌 **Avtobus real-time** (MyBus.uz/3TM manba tekshirishdan boshlanadi)
+   - 📐 **Fable tizim:** tipografiya 25→7, manba·sana chip, mobil tab-bar
+
 ## Keyingi reja (TODO)
 - [ ] **Qiymat taklifi (value prop) — "Nega aynan UZGID?"** → hero'ga aniq shior + saytning noyob afzalligini ko'rsatish (jamlash + ishonch + tejash: banklar kesimida "eng foydali kurs", 3 til, betaraf/bepul). Foydalanuvchi buni birinchi ishlamoqchi.
 - [ ] **Fitnes / sport zallar** — "Joylar" xaritasiga yangi kategoriya (OSM `leisure=fitness_centre`). Bo'sh placeholder emas, real qidiruv. (Foydalanuvchi tanladi: "keyin davom etamiz".)
