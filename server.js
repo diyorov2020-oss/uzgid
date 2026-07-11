@@ -139,17 +139,21 @@ async function translateNews(items, lang){
   const target = names[lang]; if(!target) return items;
   try{
     const numbered = items.map((n,i)=>`${i+1}. ${n.title}`).join("\n");
-    const sys = `You translate Uzbekistan news headlines into ${target}. Keep each translation concise and natural, preserve meaning, proper nouns and numbers. If a headline is already in ${target}, keep it as is. Return ONLY a JSON array of exactly ${items.length} strings, same order, no numbering, no commentary.`;
+    const sys = `You translate Uzbekistan news headlines into ${target}. Keep each translation concise and natural; preserve meaning, proper nouns and numbers. If a headline is already in ${target}, repeat it. Output EXACTLY one line per headline, each prefixed with the same number and a period (e.g. "1. ..."). Output ONLY these ${items.length} numbered lines — no JSON, no quotes around lines, no commentary.`;
     const ctrl = new AbortController(); const tm = setTimeout(()=>ctrl.abort(), 22000);
     const r = await fetch("https://api.anthropic.com/v1/messages",{ method:"POST", signal:ctrl.signal, headers:{ "x-api-key":AI_KEY, "anthropic-version":"2023-06-01", "content-type":"application/json" }, body: JSON.stringify({ model:AI_MODEL, max_tokens:6000, system:sys, messages:[{ role:"user", content:numbered }] }) });
     clearTimeout(tm);
     const j = await r.json();
     const txt = (j.content && j.content[0] && j.content[0].text) || "";
-    const mm = txt.match(/\[[\s\S]*\]/); if(!mm) return items;
-    const arr = JSON.parse(mm[0]);
-    // qisman ham qo'llaymiz: nechta kelsa o'shancha, qolgani asl (hammasini tashlamaymiz)
-    if(Array.isArray(arr) && arr.length) return items.map((n,i)=> (i<arr.length && arr[i]) ? { ...n, title:String(arr[i]) } : n);
-    return items;
+    if(!txt) return items;
+    // raqamli satrlar bo'yicha parse — qo'shtirnoqqa chidamli, qisman ham qo'llanadi
+    const out = items.map(n=>({ ...n }));
+    let hits = 0;
+    txt.split(/\r?\n/).forEach(line=>{
+      const m = line.match(/^\s*(\d+)[.)\-]\s*(.+\S)\s*$/);
+      if(m){ const idx = +m[1]-1; if(idx>=0 && idx<out.length){ out[idx].title = m[2]; hits++; } }
+    });
+    return hits ? out : items;
   }catch(e){ return items; }
 }
 async function getNews(langRaw){
