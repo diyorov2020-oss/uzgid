@@ -141,13 +141,14 @@ async function translateNews(items, lang){
     const numbered = items.map((n,i)=>`${i+1}. ${n.title}`).join("\n");
     const sys = `You translate Uzbekistan news headlines into ${target}. Keep each translation concise and natural, preserve meaning, proper nouns and numbers. If a headline is already in ${target}, keep it as is. Return ONLY a JSON array of exactly ${items.length} strings, same order, no numbering, no commentary.`;
     const ctrl = new AbortController(); const tm = setTimeout(()=>ctrl.abort(), 22000);
-    const r = await fetch("https://api.anthropic.com/v1/messages",{ method:"POST", signal:ctrl.signal, headers:{ "x-api-key":AI_KEY, "anthropic-version":"2023-06-01", "content-type":"application/json" }, body: JSON.stringify({ model:AI_MODEL, max_tokens:3500, system:sys, messages:[{ role:"user", content:numbered }] }) });
+    const r = await fetch("https://api.anthropic.com/v1/messages",{ method:"POST", signal:ctrl.signal, headers:{ "x-api-key":AI_KEY, "anthropic-version":"2023-06-01", "content-type":"application/json" }, body: JSON.stringify({ model:AI_MODEL, max_tokens:6000, system:sys, messages:[{ role:"user", content:numbered }] }) });
     clearTimeout(tm);
     const j = await r.json();
     const txt = (j.content && j.content[0] && j.content[0].text) || "";
     const mm = txt.match(/\[[\s\S]*\]/); if(!mm) return items;
     const arr = JSON.parse(mm[0]);
-    if(Array.isArray(arr) && arr.length===items.length) return items.map((n,i)=>({ ...n, title:String(arr[i]||n.title) }));
+    // qisman ham qo'llaymiz: nechta kelsa o'shancha, qolgani asl (hammasini tashlamaymiz)
+    if(Array.isArray(arr) && arr.length) return items.map((n,i)=> (i<arr.length && arr[i]) ? { ...n, title:String(arr[i]) } : n);
     return items;
   }catch(e){ return items; }
 }
