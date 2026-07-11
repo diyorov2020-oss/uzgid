@@ -100,23 +100,51 @@ async function getCurrency(){
   return data;
 }
 
-// --- Yangiliklar (gazeta.uz RSS) ---
-let newsCache = { data: null, ts: 0 };
-async function getNews(){
-  if(newsCache.data && Date.now()-newsCache.ts < 15*60*1000) return newsCache.data;
-  const r = await fetch("https://www.gazeta.uz/uz/rss/",{headers:{"User-Agent":"Mozilla/5.0"}});
-  const xml = await r.text();
-  const $ = cheerio.load(xml, {xmlMode:true});
-  const items = [];
-  $("item").slice(0,15).each((i,el)=>{
-    items.push({
-      title: $(el).find("title").first().text().trim(),
-      link: $(el).find("link").first().text().trim(),
-      date: $(el).find("pubDate").first().text().trim()
+// --- Yangiliklar: ko'p rasmiy/ishonchli manbadan agregatsiya ---
+// UzA = O'zbekiston Milliy axborot agentligi (rasmiy: prezident qarorlari, tayinlovlar).
+const NEWS_SOURCES = [
+  { name:"UzA",       domain:"uza.uz",    url:{ uz:"https://uza.uz/uz/rss",            ru:"https://uza.uz/ru/rss",            en:"https://uza.uz/en/rss" } },
+  { name:"Kun.uz",    domain:"kun.uz",    url:{ uz:"https://kun.uz/uz/news/rss",       ru:"https://kun.uz/ru/news/rss",       en:"https://kun.uz/en/news/rss" } },
+  { name:"Gazeta.uz", domain:"gazeta.uz", url:{ uz:"https://www.gazeta.uz/uz/rss/",    ru:"https://www.gazeta.uz/ru/rss/",    en:"https://www.gazeta.uz/en/rss/" } },
+  { name:"Xabar.uz",  domain:"xabar.uz",  url:{ uz:"https://xabar.uz/uz/rss",          ru:"https://xabar.uz/ru/rss" } },
+  { name:"Review.uz", domain:"review.uz", url:{ uz:"https://review.uz/rss" } },
+  { name:"Podrobno",  domain:"podrobno.uz", url:{ ru:"https://podrobno.uz/rss/" } },
+];
+const newsCache = {}; // lang -> { data, ts }
+async function fetchFeed(src, lang){
+  const url = src.url[lang] || src.url.uz; // aniq til, bo'lmasa uz; boshqa tilga tushmaymiz
+  if(!url) return [];
+  const c = new AbortController(); const timer = setTimeout(()=>c.abort(), 9000);
+  try{
+    const r = await fetch(url,{ headers:{"User-Agent":"Mozilla/5.0"}, signal:c.signal, redirect:"follow" });
+    if(!r.ok) return [];
+    const xml = await r.text();
+    const $ = cheerio.load(xml, {xmlMode:true});
+    const out = [];
+    $("item").slice(0,8).each((i,el)=>{
+      const title = $(el).find("title").first().text().trim();
+      let link = $(el).find("link").first().text().trim();
+      if(!link){ const g=$(el).find("guid").first().text().trim(); if(/^https?:/.test(g)) link=g; }
+      const date = $(el).find("pubDate").first().text().trim();
+      if(title && link) out.push({ title, link, date, ts: Date.parse(date)||0, source:src.name, domain:src.domain });
     });
-  });
-  const data = { updated:new Date().toISOString(), source:"gazeta.uz", items };
-  newsCache = { data, ts: Date.now() };
+    return out;
+  }catch(e){ return []; }
+  finally{ clearTimeout(timer); }
+}
+async function getNews(langRaw){
+  const lang = ["uz","ru","en"].includes(langRaw) ? langRaw : "uz";
+  const c = newsCache[lang];
+  if(c && Date.now()-c.ts < 15*60*1000) return c.data;
+  const results = await Promise.all(NEWS_SOURCES.map(s=>fetchFeed(s, lang)));
+  let items = [].concat(...results);
+  // eng yangi birinchi
+  items.sort((a,b)=> b.ts - a.ts);
+  // sarlavha bo'yicha dublikatlarni olib tashlash
+  const seen = new Set();
+  items = items.filter(n=>{ const k=n.title.toLowerCase().slice(0,60); if(seen.has(k)) return false; seen.add(k); return true; }).slice(0,30);
+  const data = { updated:new Date().toISOString(), sources: NEWS_SOURCES.filter(s=>s.url[lang]||s.url.uz).map(s=>s.name), items };
+  newsCache[lang] = { data, ts: Date.now() };
   return data;
 }
 
@@ -201,7 +229,8 @@ http.createServer(async (req,res)=>{
   if(req.url.startsWith("/api/currency") || req.url.startsWith("/api/news")){
     res.setHeader("Access-Control-Allow-Origin","*");
     try{
-      const data = req.url.startsWith("/api/news") ? await getNews() : await getCurrency();
+      const q = new URL(req.url,"http://x").searchParams;
+      const data = req.url.startsWith("/api/news") ? await getNews(q.get("lang")) : await getCurrency();
       res.writeHead(200,{"Content-Type":"application/json;charset=utf-8"});
       res.end(JSON.stringify(data));
     }catch(e){
