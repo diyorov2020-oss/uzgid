@@ -105,7 +105,18 @@ UZGID (uzgid.uz) — O'zbekiston axborot portali. Bitta SPA: `public/index.html`
 - **Strip mobilda 2×2:** `@media (max-width:600px)` — `.todaystrip .wrap{flex-wrap:wrap}` + `.ts-seg{flex:1 1 50%}` + nth-child border tuzatish. Gorizontal suzish yo'q (4 segment 400px ekranda sig'masdi).
 - **Pull-to-refresh (mobil):** `#ptr` indikator + `pullRefresh()` (= `loaded={}; loadTab(activeTab); stripWeather(); stripPrayer()`) + touch handlerlar (touchstart/move/end IIFE). Faqat `window.scrollY===0` va pastga tortishda; `#placeMap/#trafficMap/.fuel-list/#aiMsgs` ichida ishlamaydi (o'z scroll'i); `html,body{overscroll-behavior-y:contain}` — brauzer o'z pull-refresh'ini o'chiradi. Boshqarish: `TH=70` (yangilash bo'sag'asi), `MAX=110`, `dy*0.5` qarshilik.
 - **Deploy oson qilindi:** `.env` (RENDER_DEPLOY_HOOK, gitignore'da) + `deploy.command` (git push + hook, ikki marta bosib). **Hook URL:** `srv-d977bt9o3t8c73a520kg` (`.env`da to'liq). Poll: `curl -s https://uzgid.uz/ | grep <marker>` bilan jonli tasdiqlanadi (Render ~1 daq).
-- Deploy qilindi (4 marta, main push + Render hook) — hammasi jonli saytda tasdiqlandi.
+- Deploy qilindi (main push + Render hook) — hammasi jonli saytda tasdiqlandi.
+
+### Fable 5 review tuzatishlari (2026-07-24, shu sessiya oxiri)
+Fable 5 bugungi diffni tekshirdi (6 topilma, hammasi tuzatildi):
+- **[yuqori] pull-to-refresh to'qnashuvi:** istisno selektoriga `#news,.hero-sugg,.side,.cal-grid` qo'shildi (ular ichida scroll o'zi ishlasin, `scrollY===0` bo'lsa ham pull-refresh ishga tushmasin).
+- **[yuqori] loadCurrency poyga holati:** `let curReq=0; const my=++curReq;` + har yozuvdan oldin `if(my!==curReq) return`. Til/shahar/pull-refresh parallel chaqiruvda eski (sekin) so'rov ekranni bosib qolmaydi (`searchCategory`dagi `placeReq` uslubi).
+- **[o'rta] deferTraffic:** `let trafficLoaded=false` — muvaffaqiyatда `true`; `deferTraffic()` guard bilan; `openTab`'da `if(id==="bosh") deferTraffic()` — bosh sahifaga qaytganda trafik bo'sh qolib ketmaydi (avval `loaded.bosh` sababli qayta urinmasdi).
+- **[o'rta] strip AQI tor ekran:** `@media (max-width:380px)` — `.ts-seg`/`.ts-aqi` kichik shrift/padding (siqilib toshib chiqmasin).
+- **[past] o'lik kod:** `loadWeather()` va `loadBoshWx()` BUTUNLAY o'chirildi (endi mavjud emas).
+- **[past] server.js sw.js:** `path.basename(file)==="sw.js"` -> `Cache-Control: no-cache` (service worker yangilanishi tez yetsin).
+- Qo'shimcha: marquee tezligi 38s->76s (foydalanuvchi so'rovi, yarim baravar sekinroq).
+- Toza deb topilganlar: `ensureYmaps` singleton, marquee uzluksizligi, AQI null/0 mantiq, i18n to'liq, timeout tozalash.
 
 ## Fable 5 review — keyingi ish (prioritet)
 1. Tipografiya: 25 xil o'lcham → 7 pog'onali shkala (`--fs-*`).
