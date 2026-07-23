@@ -954,7 +954,7 @@ async function stripPrayer(){ try{ const p=new Intl.DateTimeFormat("en-GB",{time
 function updateTodayStrip(){ const tt=$("tsTime"); if(!tt) return;
   const tz=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Tashkent",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date()); tt.textContent=tz;
   if($("tsWx")) $("tsWx").textContent=stripTemp!=null?stripTemp+"°":"—"; if($("tsWxIc")&&stripEmoji) $("tsWxIc").textContent=stripEmoji;
-  const aq=$("tsAqi"); if(aq){ if(stripAqi!=null){ const [lb,co]=aqiInfo(stripAqi); aq.textContent=stripAqi; aq.style.color=co; aq.style.borderColor=co+"66"; aq.style.background=co+"1a"; aq.title=t("airq")+": "+lb; aq.style.display=""; } else { aq.style.display="none"; } }
+  const aq=$("tsAqi"); if(aq){ if(stripAqi!=null){ const [lb,co]=aqiInfo(stripAqi); aq.textContent="AQI "+stripAqi; aq.style.color=co; aq.style.borderColor=co+"66"; aq.style.background=co+"1a"; aq.title=t("airq")+": "+lb; aq.style.display=""; } else { aq.style.display="none"; } }
   if($("tsCur")&&curData){ const u=(curData.official||[]).find(o=>o.code==="USD"); if(u) $("tsCur").textContent=Math.round(u.rate).toLocaleString("ru-RU"); }
   if($("tsPray")&&prayerTimings){ const nm=t("prayers"); const [ch,cm]=tz.split(":").map(Number),cur=ch*60+cm; let idx=-1,nmin=Infinity; prayerTimings.forEach((v,i)=>{ if(i===1)return; const[h,m]=v.split(":").map(Number),mm=h*60+m; if(mm>cur&&mm<nmin){nmin=mm;idx=i;} }); if(idx<0) idx=0; $("tsPray").textContent=`${nm[idx]} ${prayerTimings[idx]}`; } }
 function initStrip(){ updateTodayStrip(); stripWeather(); stripPrayer(); }
