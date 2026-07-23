@@ -68,6 +68,11 @@
     .ts-seg:nth-child(2n){border-right:none}
     .ts-seg:nth-child(n+3){border-bottom:none}
   }
+  html,body{overscroll-behavior-y:contain} /* brauzerning o'z pull-refresh'ini o'chiramiz — o'zimizniki ishlaydi */
+  #ptr{position:fixed;top:0;left:0;right:0;height:0;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;pointer-events:none;z-index:80}
+  #ptr span{display:flex;align-items:center;justify-content:center;width:34px;height:34px;margin-bottom:7px;border-radius:50%;background:var(--card);box-shadow:var(--shadow);color:var(--accent);font-size:16px;font-weight:800}
+  #ptr.spin span{animation:ptrspin .7s linear infinite}
+  @keyframes ptrspin{to{transform:rotate(360deg)}}
   header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 0}
   .brand{display:flex;align-items:center;gap:12px}
   .logo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:16px;font-weight:900;background:linear-gradient(140deg,var(--accent),#0ea5e9);color:#fff;letter-spacing:.5px}
@@ -341,6 +346,7 @@
 </style>
 </head>
 <body>
+<div id="ptr" aria-hidden="true"><span id="ptrIcon">↓</span></div>
 <aside class="side" id="side">
   <div class="side-head" onclick="openTab('bosh')"><div class="logo"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z" fill="#fff"/><circle cx="12" cy="9" r="2.6" fill="#1f6fe5"/></svg></div><span class="st">UZGID</span></div>
   <div id="sidemenu"></div>
@@ -968,6 +974,22 @@ function stackSticky(){ const ts=$("todayStrip"); if(!ts) return; const mobile=w
 window.addEventListener("resize",stackSticky);
 function renderFeedback(){ const fb=$("feedback"); if(!fb) return; const L=lang,q={uz:"Sayt foydali bo'ldimi?",ru:"Сайт был полезен?",en:"Was the site useful?",zh:"本网站有帮助吗？"}[L],y={uz:"Ha",ru:"Да",en:"Yes",zh:"有"}[L],n={uz:"Yo'q",ru:"Нет",en:"No",zh:"没有"}[L]; fb.innerHTML=`<span class="fb-q">${q}</span><button class="fb-b" onclick="sendFeedback('up')">👍 ${y}</button><button class="fb-b" onclick="sendFeedback('down')">👎 ${n}</button><span class="fb-thanks" id="fbThanks"></span>`; }
 function sendFeedback(v){ const fb=$("feedback"); if(!fb||fb.dataset.sent) return; fb.dataset.sent="1"; try{ fetch("/api/contact",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:"⭐ Sayt bahosi",contact:activeTab+" · "+lang,message:(v==="up"?"👍 Sayt foydali bo'ldi":"👎 Sayt foydali bo'lmadi")})}); }catch(e){} const th=$("fbThanks"); if(th) th.textContent="✅ "+({uz:"Rahmat!",ru:"Спасибо!",en:"Thanks!",zh:"谢谢！"}[lang]||"Rahmat!"); }
+// ===== Pastga tortib yangilash (pull-to-refresh, mobil) =====
+function pullRefresh(){ loaded={}; loadTab(activeTab); stripWeather(); stripPrayer(); $("updated").textContent=t("updated")+": "+new Date().toLocaleTimeString(locale(),{timeZone:"Asia/Tashkent"}); }
+(function(){ let sy=0,pulling=false,dist=0; const TH=70,MAX=110; const P=()=>$("ptr"); const setH=h=>{ const el=P(); if(el) el.style.height=h+"px"; };
+  addEventListener("touchstart",e=>{ pulling=false;
+    if(window.scrollY>0||e.touches.length!==1) return;
+    if(e.target.closest&&e.target.closest("#placeMap,#trafficMap,.fuel-list,#aiMsgs")) return; // xarita/ro'yxat/chat ichida — o'z scroll'i ishlasin
+    sy=e.touches[0].clientY; pulling=true; dist=0; const el=P(); if(el){ el.classList.remove("spin"); el.style.transition="none"; } },{passive:true});
+  addEventListener("touchmove",e=>{ if(!pulling) return; const dy=e.touches[0].clientY-sy;
+    if(dy<=0||window.scrollY>0){ dist=0; setH(0); if(window.scrollY>0) pulling=false; return; }
+    dist=Math.min(MAX,dy*0.5); if(dy>4&&e.cancelable) e.preventDefault(); setH(dist);
+    const ic=$("ptrIcon"); if(ic) ic.textContent=dist>=TH?"↑":"↓"; },{passive:false});
+  addEventListener("touchend",()=>{ if(!pulling) return; pulling=false; const el=P();
+    if(dist>=TH){ if(el){ el.style.transition="height .2s"; el.classList.add("spin"); } setH(46); const ic=$("ptrIcon"); if(ic) ic.textContent="⟳";
+      pullRefresh(); setTimeout(()=>{ if(el){ el.classList.remove("spin"); el.style.transition="height .25s"; } setH(0); },900); }
+    else { if(el) el.style.transition="height .2s"; setH(0); } dist=0; },{passive:true});
+})();
 applyStatic(); buildSelectors(); buildNav(); loadTab("bosh"); initStrip(); stackSticky(); setTimeout(stackSticky,300);
 $("updated").textContent=t("updated")+": "+new Date().toLocaleTimeString(locale(),{timeZone:"Asia/Tashkent"});
 setInterval(()=>{ if(activeTab==="namoz") updateNextPrayer(); updateTodayStrip(); }, 1000);
