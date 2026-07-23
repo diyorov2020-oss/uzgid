@@ -782,7 +782,23 @@ async function loadWeather(){ $("wxCity").textContent=CITY.name; const box=$("wx
       <div class="wx-meta"><div>${t("humidity")}<b>${c.relative_humidity_2m}%</b></div><div>${t("wind")}<b>${Math.round(c.wind_speed_10m)} km/s</b></div><div>🌅 ${t("sunrise")}<b>${d.daily.sunrise[0].slice(11)}</b></div><div>🌇 ${t("sunset")}<b>${d.daily.sunset[0].slice(11)}</b></div></div>${aqiHtml}${fc}<div class="tip"><span class="i">${ti}</span><span>${tt}</span></div>`;
   }catch(e){ box.innerHTML=`<div class="err">${t("loaderr")}</div>`; } }
 
-async function loadCurrency(){ const box=$("cur"); box.innerHTML=`<div class="loading pulse">${t("loading")}</div>`; try{ curData=await (await fetch("/api/currency")).json(); try{ goldUsd=(await (await fetch("https://api.gold-api.com/price/XAU")).json()).price; }catch(_){} renderCurrency(); updateTodayStrip(); }catch(e){ box.innerHTML=`<div class="err">${t("loaderr")}</div>`; } }
+async function loadCurrency(){ const box=$("cur"); if(box) box.innerHTML=`<div class="loading pulse">${t("loading")}</div>`;
+  // Render bepul tarifda server uxlab qolishi mumkin -> timeout + qayta urinish (birinchisi tez, keyingilari uyg'onishni kutadi)
+  for(let a=1;a<=3;a++){
+    try{
+      const c=new AbortController(), tm=setTimeout(()=>c.abort(), a===1?8000:22000);
+      let r; try{ r=await fetch("/api/currency",{signal:c.signal}); } finally{ clearTimeout(tm); }
+      if(!r.ok) throw new Error("HTTP "+r.status);
+      const d=await r.json(); if(!d||!Array.isArray(d.official)||!d.official.length) throw new Error("bo'sh javob");
+      curData=d;
+      try{ goldUsd=(await (await fetch("https://api.gold-api.com/price/XAU")).json()).price; }catch(_){}
+      renderCurrency(); updateTodayStrip(); return;
+    }catch(e){
+      if(a<3){ if(box) box.innerHTML=`<div class="loading pulse">${t("loading")} (${a}/3)…</div>`; await new Promise(r=>setTimeout(r,1500)); }
+      else if(box){ const rt=({uz:"Qayta urinish",ru:"Повторить",en:"Retry",zh:"重试"})[lang]||"Qayta"; box.innerHTML=`<div class="err">${t("loaderr")} <button onclick="loadCurrency()" style="margin-left:8px;padding:4px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card2);color:var(--accent);font-weight:700;cursor:pointer">↻ ${rt}</button></div>`; }
+    }
+  }
+}
 function renderCurrency(){ if(!curData) return; const off=curData.official||[]; const offHtml=off.map(o=>`<div class="off"><div class="c">${o.code}</div><div class="v">${Math.round(o.rate).toLocaleString("ru-RU")}</div></div>`).join("");
   const banks0=(curData.banks&&curData.banks[curTab])||[]; const bB=Math.max(0,...banks0.map(b=>b.buy||0)); const ss=banks0.filter(b=>b.sell).map(b=>b.sell); const bS=ss.length?Math.min(...ss):0;
   const banks=[...banks0].sort((a,b)=>((b.buy===bB?1:0)+(b.sell===bS?1:0))-((a.buy===bB?1:0)+(a.sell===bS?1:0)));
