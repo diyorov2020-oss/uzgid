@@ -44,7 +44,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
 <link rel="icon" href="/favicon.ico" sizes="any" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%231f6fe5'/%3E%3Cpath d='M32 13c-7 0-12 5-12 12 0 9 12 22 12 22s12-13 12-22c0-7-5-12-12-12z' fill='white'/%3E%3Ccircle cx='32' cy='25' r='5' fill='%231f6fe5'/%3E%3C/svg%3E" />
-<script src="https://api-maps.yandex.ru/2.1/?apikey=95c03d4c-fd17-40c5-a893-c7cbaba66bb7&lang=ru_RU"></script>
+<!-- Yandex Maps head'dan olib tashlandi — endi faqat xarita/trafik kerak bo'lganda ensureYmaps() lazy-load qiladi (birinchi ochilishni bloklamaslik uchun) -->
 <style>
   :root{ --bg:#eef2f9; --card:#ffffff; --card2:#f4f7fc; --txt:#152238; --muted:#64708a; --line:#e3e9f3;
     --accent:#1f6fe5; --good:#16a34a; --bad:#dc2626; --radius:16px; --shadow:0 4px 16px rgba(30,60,120,.08),0 1px 3px rgba(30,60,120,.05);}
@@ -61,6 +61,7 @@
   .ts-seg{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 4px;font-size:13px;color:var(--txt);text-decoration:none;cursor:pointer;white-space:nowrap;border-right:1px solid var(--line);transition:background .15s}
   .ts-seg:last-child{border-right:none} .ts-seg:hover{background:var(--card2)}
   .ts-seg b{font-weight:800;font-variant-numeric:tabular-nums} .ts-ic{font-size:15px;line-height:1}
+  .ts-aqi{margin-left:2px;font-size:11px;font-weight:800;font-variant-numeric:tabular-nums;padding:1px 6px;border-radius:20px;border:1px solid transparent;line-height:1.5}
   header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 0}
   .brand{display:flex;align-items:center;gap:12px}
   .logo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:16px;font-weight:900;background:linear-gradient(140deg,var(--accent),#0ea5e9);color:#fff;letter-spacing:.5px}
@@ -354,7 +355,7 @@
 </header></div></div>
 <div class="todaystrip" id="todayStrip"><div class="wrap">
   <a class="ts-seg" onclick="openTab('bosh')" title="Vaqt"><span class="ts-ic">🕐</span><b id="tsTime">--:--</b></a>
-  <a class="ts-seg" onclick="openTab('bosh')" title="Ob-havo"><span class="ts-ic" id="tsWxIc">🌤</span><b id="tsWx">—</b></a>
+  <a class="ts-seg" onclick="openTab('bosh')" title="Ob-havo · Havo sifati (AQI)"><span class="ts-ic" id="tsWxIc">🌤</span><b id="tsWx">—</b><span class="ts-aqi" id="tsAqi" style="display:none"></span></a>
   <a class="ts-seg" onclick="openTab('bosh')" title="Valyuta (USD)"><span class="ts-ic">💵</span><b id="tsCur">—</b></a>
   <a class="ts-seg" onclick="openTab('namoz')" title="Keyingi namoz"><span class="ts-ic">🕌</span><b id="tsPray">—</b></a>
 </div></div>
@@ -376,15 +377,14 @@
     </div>
     <div class="adslot" id="ad-top" data-ad="leaderboard" data-i="ad">Reklama</div>
     <div class="boshhead">
-      <div><div id="boshDate" style="font-size:13px;color:var(--muted)">—</div><div id="boshTime" style="font-size:26px;font-weight:800;font-variant-numeric:tabular-nums">--:--</div></div>
+      <div id="boshDate" style="font-size:14px;color:var(--muted);font-weight:600">—</div>
       <div id="traffic" class="traffic-head"></div>
     </div>
     <div class="grid">
       <div class="card full"><h2><span class="ic">📍</span> <span data-i="w_near"></span><button class="mtog" id="nearToggle" onclick="toggleNear()" title="Yig'ish">▲</button></h2><div class="cats" id="nearCats"></div><div id="nearList" class="fuel-list" style="max-height:230px"><div class="loading" data-i="near_hint"></div></div></div>
-      <div class="card w2"><h2><span class="ic">🌤</span> <span data-i="w_weather"></span> <span class="badge" id="wxCity">—</span></h2>
-        <div id="wx"><div class="loading pulse"></div></div>
+      <div class="card w2"><h2><span class="ic">💡</span> <span data-i="w_today"></span></h2>
+        <div id="today"><div class="loading pulse"></div></div>
         <div class="wx-extra">
-          <div class="wx-sub"><h3>💡 <span data-i="w_today"></span></h3><div id="today"><div class="loading pulse"></div></div></div>
           <div class="wx-sub"><h3>💰 <span data-i="w_meyor"></span></h3><div id="meyorMini"></div></div>
           <div class="wx-sub"><h3>🔌 <span data-i="w_tarif"></span></h3><div id="tarifMini"></div></div>
         </div></div>
@@ -591,7 +591,7 @@ function buildNav(){ $("sidemenu").innerHTML=NAVID.map((id,i)=>`<div class="side
 function closeSide(){ $("side").classList.remove("open"); $("sideBackdrop").classList.remove("open"); }
 function openTab(id){ activeTab=id; document.querySelectorAll(".side-item").forEach(x=>x.classList.toggle("on",x.dataset.t===id)); document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+id)); loadTab(id); closeSide(); window.scrollTo({top:0,behavior:"smooth"}); }
 function loadTab(id){ if(loaded[id]) return; loaded[id]=true;
-  if(id==="bosh"){ loadWeather(); loadCurrency(); renderNear(); loadToday(); renderQuickNums(); renderMeyorMini(); renderTarifMini(); renderTraffic(); boshClock(); }
+  if(id==="bosh"){ loadCurrency(); renderNear(); loadToday(); renderQuickNums(); renderMeyorMini(); renderTarifMini(); deferTraffic(); }
   else if(id==="namoz") loadPrayer();
   else if(id==="joylar"){ buildCats(); loadPlaces(); }
   else if(id==="transport") renderLinks("trans",TRANS);
@@ -652,6 +652,17 @@ function renderMeyorMini(){ if(!$("meyorMini")) return; const L=lang, som=t("som
 function renderTarifMini(){ if(!$("tarifMini")) return; const L=lang, som=t("som"); const wv=WATER_TARIF[getRegionName()];
   const rows=[{l:{uz:"Elektr (≤200 kVt)",ru:"Свет (≤200 кВт)",en:"Electricity (≤200)",zh:"电（≤200 千瓦）"},v:"650"},{l:{uz:"Gaz (ovqat)",ru:"Газ (готовка)",en:"Gas (cooking)",zh:"燃气（做饭）"},v:"2 000"},{l:{uz:"Suv+oqova (jami)",ru:"Вода+канал. (итого)",en:"Water+sewage (total)",zh:"供水+排污（合计）"},v:(wv?wv.toLocaleString("ru-RU"):"—")}];
   $("tarifMini").innerHTML=rows.map(r=>`<div class="trow"><span class="tl">${r.l[L]||r.l.uz}</span><span class="tv">${r.v} ${som}</span></div>`).join("")+`<a class="hint" style="display:inline-block;margin-top:8px;color:var(--accent);cursor:pointer;font-weight:700" onclick="openTab('xizmatlar')">${({uz:"Batafsil →",ru:"Подробнее →",en:"Details →",zh:"详情 →"})[L]}</a>`; }
+// Yandex Maps'ni faqat kerak bo'lganda (trafik/xarita ochilganda) yuklaymiz — head'da emas
+let _ymapsP=null;
+function ensureYmaps(){
+  if(_ymapsP) return _ymapsP;
+  if(window.ymaps&&ymaps.ready){ return (_ymapsP=new Promise(r=>ymaps.ready(r))); }
+  _ymapsP=new Promise((resolve,reject)=>{ const s=document.createElement("script");
+    s.src="https://api-maps.yandex.ru/2.1/?apikey=95c03d4c-fd17-40c5-a893-c7cbaba66bb7&lang=ru_RU"; s.async=true;
+    s.onload=()=>ymaps.ready(resolve); s.onerror=()=>{ _ymapsP=null; reject(new Error("ymaps yuklanmadi")); };
+    document.head.appendChild(s); });
+  return _ymapsP;
+}
 let trafficMap=null,trafficProv=null,trafficTimer=null;
 function trafficInfo(l){ const A=(u,r,e,z)=>({uz:u,ru:r,en:e,zh:z})[lang]||u; if(l<=2)return[A("Bo'sh yo'l","Свободно","Clear","畅通"),"#16a34a"]; if(l<=4)return[A("Yengil","Немного пробок","Light","轻微拥堵"),"#65a30d"]; if(l<=6)return[A("O'rtacha","Средние пробки","Moderate","中等拥堵"),"#d97706"]; if(l<=8)return[A("Tirband","Пробки","Heavy","拥堵"),"#ea580c"]; return[A("Kuchli tirbandlik","Сильные пробки","Severe","严重拥堵"),"#dc2626"]; }
 function showTraffic(){ const box=$("traffic"); if(!box||!trafficProv) return; const lvl=trafficProv.state.get("level");
@@ -659,15 +670,17 @@ function showTraffic(){ const box=$("traffic"); if(!box||!trafficProv) return; c
   const [lbl,co]=trafficInfo(lvl);
   box.innerHTML=`<div class="traffic-hi"><span class="traffic-ball" style="background:${co}">${lvl}</span><div><div class="traffic-lbl" style="color:${co}">${lbl}</div><div class="hint">🚦 ${t("w_traffic")} · ${CITY.name}</div></div></div>`; }
 function renderTraffic(){ const box=$("traffic"); if(!box) return;
-  if(typeof ymaps==="undefined"){ box.innerHTML=`<div class="hint" style="padding:10px 0">🚦 ${t("traffic_no")}</div>`; return; }
+  const fail=()=>{ box.innerHTML=`<div class="hint" style="padding:10px 0">🚦 ${t("traffic_no")}</div>`; };
   box.innerHTML=`<div class="loading pulse">${t("loading")}</div>`;
-  ymaps.ready(()=>{ try{
+  ensureYmaps().then(()=>{ try{
     if(!trafficMap){ trafficMap=new ymaps.Map("trafficMap",{center:[CITY.lat,CITY.lon],zoom:11,controls:[]},{suppressMapOpenBlock:true});
       const tc=new ymaps.control.TrafficControl({state:{providerKey:"traffic#actual",trafficShown:true}}); trafficMap.controls.add(tc);
       trafficProv=tc.getProvider("traffic#actual"); trafficProv.state.events.add("change",showTraffic);
     } else { trafficMap.setCenter([CITY.lat,CITY.lon],11); }
     clearTimeout(trafficTimer); trafficTimer=setTimeout(showTraffic,2600);
-  }catch(e){ box.innerHTML=`<div class="hint" style="padding:10px 0">🚦 ${t("traffic_no")}</div>`; } }); }
+  }catch(e){ fail(); } }).catch(fail); }
+// Trafikni birinchi ochilishda bloklamaymiz — sahifa bo'shashgach fon'da yuklaymiz (foydalanuvchi hali bosh sahifada bo'lsa)
+function deferTraffic(){ (window.requestIdleCallback||(f=>setTimeout(f,2500)))(()=>{ if(activeTab==="bosh") renderTraffic(); },{timeout:4000}); }
 const WATER_TARIF={"Toshkent shahri":2760,"Toshkent viloyati":4485,"Sirdaryo":6555,"Jizzax":6555,"Samarqand":5405,"Buxoro":8970,"Navoiy":6095,"Qashqadaryo":7475,"Surxondaryo":9430,"Xorazm":7302,"Andijon":3795,"Namangan":7590,"Farg'ona":4287,"Qoraqalpog'iston":7101};
 function getRegionName(){ const rs=$("regionSel"); const ri=rs&&rs.value!==""?+rs.value:0; return (REGIONS[ri]||REGIONS[0]).name; }
 function renderTarif(){ const L=lang, som=t("som"); const r=(l,v)=>`<div class="trow"><span class="tl">${l}</span><span class="tv">${v}</span></div>`; const T2=s=>s[L]||s.uz;
@@ -835,7 +848,7 @@ function renderCalendar(){ if(!$("calWrap")) return;
   $("calWrap").innerHTML=`<div class="cal-head"><button class="cal-nav" onclick="calOffset--;renderCalendar()">‹</button><div class="cal-title">${monthName} ${y}</div><button class="cal-nav" onclick="calOffset++;renderCalendar()">›</button></div><div class="cal-grid">${wd.map(w=>`<div class="cal-dow">${w}</div>`).join("")}${cells}</div><div class="cal-hols">${holList}</div>`; }
 
 let placeMap=null,curCat=0,placeReq=0;
-function ensurePlaceMap(cb){ if(placeMap){cb();return;} if(typeof ymaps==="undefined"){ setTimeout(()=>ensurePlaceMap(cb),400); return; } ymaps.ready(()=>{ if(!placeMap) placeMap=new ymaps.Map('placeMap',{center:[CITY.lat,CITY.lon],zoom:12,controls:['zoomControl','geolocationControl','typeSelector']},{suppressMapOpenBlock:true}); cb(); }); }
+function ensurePlaceMap(cb){ if(placeMap){cb();return;} ensureYmaps().then(()=>{ if(!placeMap) placeMap=new ymaps.Map('placeMap',{center:[CITY.lat,CITY.lon],zoom:12,controls:['zoomControl','geolocationControl','typeSelector']},{suppressMapOpenBlock:true}); cb(); }).catch(()=>{}); }
 function buildCats(){ const nm=t("cats"); $("cats").innerHTML=CATSEL.map((c,i)=>`<button class="cat ${i===curCat?'on':''}" data-c="${i}">${CATICO[i]} ${nm[i]}</button>`).join(""); document.querySelectorAll("#cats .cat").forEach(b=>b.onclick=()=>searchCategory(+b.dataset.c)); }
 async function overpass(q){ const eps=["https://overpass-api.de/api/interpreter","https://overpass.private.coffee/api/interpreter","https://overpass.kumi.systems/api/interpreter"]; for(const ep of eps){ try{ const r=await fetch(ep,{method:"POST",body:"data="+encodeURIComponent(q)}); if(r.ok) return (await r.json()).elements||[]; }catch(e){} } throw new Error("band"); }
 async function searchCategory(i){ curCat=i; const my=++placeReq; const label=t("cats")[i],ico=CATICO[i],sels=CATSEL[i]; const list=$("placeList"); list.innerHTML=`<div class="loading pulse">${t("loading")}</div>`; document.querySelectorAll("#cats .cat").forEach((b,j)=>b.classList.toggle("on",j===i));
@@ -932,12 +945,16 @@ function doSearch(q){ const res=[]; const add=(ic,lab,act)=>res.push({ic,lab,act
 (function(){ const q=new URLSearchParams(location.search).get("q"); if(!q) return; const ql=q.trim().toLowerCase();
   const hit=NAVID.find(id=> t("n_"+id).toLowerCase().includes(ql) || (ALIAS[id]||[]).some(k=>k.includes(ql)||ql.includes(k)) );
   const hs=$("heroSearch"); if(hs) hs.value=q; if(hit) setTimeout(()=>openTab(hit),0); })();
-let stripTemp=null,stripEmoji="";
-async function stripWeather(){ try{ const d=await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${CITY.lat}&longitude=${CITY.lon}&current=temperature_2m,weather_code&timezone=Asia%2FTashkent`)).json(); stripTemp=Math.round(d.current.temperature_2m); stripEmoji=(WX[d.current.weather_code]||["🌡"])[0]; updateTodayStrip(); }catch(e){} }
+let stripTemp=null,stripEmoji="",stripAqi=null;
+async function stripWeather(){
+  try{ const d=await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${CITY.lat}&longitude=${CITY.lon}&current=temperature_2m,weather_code&timezone=Asia%2FTashkent`)).json(); stripTemp=Math.round(d.current.temperature_2m); stripEmoji=(WX[d.current.weather_code]||["🌡"])[0]; }catch(e){}
+  try{ const a=await (await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${CITY.lat}&longitude=${CITY.lon}&current=european_aqi&timezone=Asia%2FTashkent`)).json(); stripAqi=(a.current&&a.current.european_aqi!=null)?a.current.european_aqi:null; }catch(e){}
+  updateTodayStrip(); }
 async function stripPrayer(){ try{ const p=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Tashkent",day:"2-digit",month:"2-digit",year:"numeric"}).formatToParts(new Date()),g=x=>p.find(y=>y.type===x).value,date=`${g("day")}-${g("month")}-${g("year")}`; const d=await (await fetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${CITY.lat}&longitude=${CITY.lon}&method=99&methodSettings=15.5,null,15.5&school=1&tune=0,0,0,1,0,4,0,0,0`)).json(),x=d.data.timings; prayerTimings=[x.Fajr,x.Sunrise,x.Dhuhr,x.Asr,x.Maghrib,x.Isha]; updateTodayStrip(); }catch(e){} }
 function updateTodayStrip(){ const tt=$("tsTime"); if(!tt) return;
   const tz=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Tashkent",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date()); tt.textContent=tz;
   if($("tsWx")) $("tsWx").textContent=stripTemp!=null?stripTemp+"°":"—"; if($("tsWxIc")&&stripEmoji) $("tsWxIc").textContent=stripEmoji;
+  const aq=$("tsAqi"); if(aq){ if(stripAqi!=null){ const [lb,co]=aqiInfo(stripAqi); aq.textContent=stripAqi; aq.style.color=co; aq.style.borderColor=co+"66"; aq.style.background=co+"1a"; aq.title=t("airq")+": "+lb; aq.style.display=""; } else { aq.style.display="none"; } }
   if($("tsCur")&&curData){ const u=(curData.official||[]).find(o=>o.code==="USD"); if(u) $("tsCur").textContent=Math.round(u.rate).toLocaleString("ru-RU"); }
   if($("tsPray")&&prayerTimings){ const nm=t("prayers"); const [ch,cm]=tz.split(":").map(Number),cur=ch*60+cm; let idx=-1,nmin=Infinity; prayerTimings.forEach((v,i)=>{ if(i===1)return; const[h,m]=v.split(":").map(Number),mm=h*60+m; if(mm>cur&&mm<nmin){nmin=mm;idx=i;} }); if(idx<0) idx=0; $("tsPray").textContent=`${nm[idx]} ${prayerTimings[idx]}`; } }
 function initStrip(){ updateTodayStrip(); stripWeather(); stripPrayer(); }
@@ -947,7 +964,7 @@ function renderFeedback(){ const fb=$("feedback"); if(!fb) return; const L=lang,
 function sendFeedback(v){ const fb=$("feedback"); if(!fb||fb.dataset.sent) return; fb.dataset.sent="1"; try{ fetch("/api/contact",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:"⭐ Sayt bahosi",contact:activeTab+" · "+lang,message:(v==="up"?"👍 Sayt foydali bo'ldi":"👎 Sayt foydali bo'lmadi")})}); }catch(e){} const th=$("fbThanks"); if(th) th.textContent="✅ "+({uz:"Rahmat!",ru:"Спасибо!",en:"Thanks!",zh:"谢谢！"}[lang]||"Rahmat!"); }
 applyStatic(); buildSelectors(); buildNav(); loadTab("bosh"); initStrip(); stackSticky(); setTimeout(stackSticky,300);
 $("updated").textContent=t("updated")+": "+new Date().toLocaleTimeString(locale(),{timeZone:"Asia/Tashkent"});
-setInterval(()=>{ if(activeTab==="bosh") boshClock(); if(activeTab==="namoz") updateNextPrayer(); updateTodayStrip(); }, 1000);
+setInterval(()=>{ if(activeTab==="namoz") updateNextPrayer(); updateTodayStrip(); }, 1000);
 </script>
 </body>
 </html>

@@ -184,7 +184,14 @@ function serveStatic(req,res){
   const file = path.join(PUBLIC, path.normalize(p).replace(/^(\.\.[/\\])+/,""));
   fs.readFile(file,(err,buf)=>{
     if(err){ res.writeHead(404); return res.end("Not found"); }
-    res.writeHead(200,{"Content-Type":MIME[path.extname(file)]||"application/octet-stream"});
+    const ext = path.extname(file);
+    const headers = {"Content-Type":MIME[ext]||"application/octet-stream"};
+    // Kesh: rasm/ikonka/logo uzoq (o'zgarmaydi), JS/CSS o'rtacha, HTML doim yangilanadi (revalidatsiya)
+    if(ext===".html"){ headers["Cache-Control"]="no-cache"; }
+    else if([".png",".jpg",".jpeg",".webp",".svg",".ico"].includes(ext)){ headers["Cache-Control"]="public, max-age=604800"; } // 7 kun
+    else if([".js",".css",".woff",".woff2"].includes(ext)){ headers["Cache-Control"]="public, max-age=86400"; }       // 1 kun
+    else { headers["Cache-Control"]="public, max-age=3600"; }
+    res.writeHead(200, headers);
     res.end(buf);
   });
 }
