@@ -94,6 +94,16 @@ UZGID (uzgid.uz) — O'zbekiston axborot portali. Bitta SPA: `public/index.html`
 - **Parsing (muhim saboq):** dastlab natija JSON massiv so'ralgandi — **en ishladi, zh ishlamadi** (xitoycha tarjimadagi ichki `"` qo'shtirnoqlar JSON'ni buzib, fallback→uz, va 15 daq keshlandi). Yechim: modeldan **raqamli satrlar** (`1. ...`) so'raladi, regex `^\s*(\d+)[.)-]\s*(.+)$` bilan parse — qo'shtirnoqqa chidamli, qisman ham qo'llanadi. `max_tokens` 3500→6000 (xitoycha uzunroq, kesilmasin).
 - Deploy qilindi (main push + Render hook).
 
+## Qilingan (2026-07-24 tezlik + bosh sahifa sessiyasi)
+- **Muammo (o'lchangan):** mobil'da sekin ochilardi. Asosiy sabab — **Yandex Maps API `<head>`da sinxron** (render bloklovchi) + bosh sahifa `renderTraffic()` darhol **yashirin to'liq Yandex xarita** ochardi (har kirishda xarita dvijogi yuklanardi).
+- **Yandex lazy-load:** head'dagi `<script src=api-maps...>` olib tashlandi. Yangi `ensureYmaps()` (promise, `s.async`) — Yandex faqat trafik/xarita KERAK bo'lganda yuklanadi. `renderTraffic` va `ensurePlaceMap` shunga o'tkazildi (avval `typeof ymaps==="undefined"` polling edi).
+- **Trafik kechiktirildi:** `deferTraffic()` — `requestIdleCallback` (fallback setTimeout 2500) bilan, faqat `activeTab==="bosh"` bo'lsa. Bosh sahifa darhol chiqadi, trafik fon'da keladi (foydalanuvchi ketsa umuman yuklanmaydi).
+- **Statik kesh (server.js `serveStatic`):** `Cache-Control` qo'shildi — rasm/logo/ico/svg **7 kun** (604800), js/css 1 kun, html `no-cache`. Takroriy kirishda 28 logo+ikonka brauzer keshidan (qayta yuklanmaydi).
+- **Bosh sahifa soddalashtirildi (foydalanuvchi so'rovi):** tepa qatorga (`todaystrip`) **AQI** qo'shildi (`#tsAqi`, `aqiInfo` rangi bilan; `stripWeather` endi air-quality API'ni ham oladi, `stripAqi`). Pastdagi **soat** (`#boshTime`) va **9-kunlik ob-havo kartasi** (`#wx`) olib tashlandi — sana (`#boshDate`) qoldi, ob-havo kartasi o'rnida **💡 Bugun + 💰 Me'yor + 🔌 Tarif** qoldi. `loadTab("bosh")`dan `loadWeather()`/`boshClock()` olindi.
+  - ⚠️ **O'lik kod:** `loadWeather()` va `loadBoshWx()` endi chaqirilmaydi (`#wx`/`#wxCity`/`#boshWx` yo'q). Keyin tozalasa bo'ladi (hozir zararsiz).
+- **Deploy oson qilindi:** `.env` (RENDER_DEPLOY_HOOK, gitignore'da) + `deploy.command` (git push + hook, ikki marta bosib). **Hook URL:** `srv-d977bt9o3t8c73a520kg`.
+- Deploy qilindi (main push + Render hook `dep-...`) — jonli saytda tasdiqlandi.
+
 ## Fable 5 review — keyingi ish (prioritet)
 1. Tipografiya: 25 xil o'lcham → 7 pog'onali shkala (`--fs-*`).
 2. `manba·sana` chip — har jonli kartochkada (ayniqsa ob-havoda yo'q).
