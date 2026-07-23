@@ -191,6 +191,7 @@ function serveStatic(req,res){
     else if([".png",".jpg",".jpeg",".webp",".svg",".ico"].includes(ext)){ headers["Cache-Control"]="public, max-age=604800"; } // 7 kun
     else if([".js",".css",".woff",".woff2"].includes(ext)){ headers["Cache-Control"]="public, max-age=86400"; }       // 1 kun
     else { headers["Cache-Control"]="public, max-age=3600"; }
+    if(path.basename(file)==="sw.js"){ headers["Cache-Control"]="no-cache"; } // service worker keshlanmasin (yangilanish tez yetsin)
     res.writeHead(200, headers);
     res.end(buf);
   });

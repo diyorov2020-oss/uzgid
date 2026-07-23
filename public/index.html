@@ -55,7 +55,7 @@
   body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cg fill='none' stroke='%231f6fe5' stroke-width='1.1' opacity='0.09'%3E%3Crect x='14' y='14' width='20' height='20'/%3E%3Crect x='14' y='14' width='20' height='20' transform='rotate(45 24 24)'/%3E%3Ccircle cx='24' cy='24' r='2.5'/%3E%3C/g%3E%3C/svg%3E") repeat}
   .wrap{max-width:1140px;margin:0 auto;padding:0 16px}
   .testbar{overflow:hidden;background:#141d30;color:#fbbf24;font-weight:700;font-size:11px;letter-spacing:.3px;padding:6px 0}
-  .testbar-track{display:inline-flex;white-space:nowrap;animation:tbmarq 38s linear infinite;will-change:transform}
+  .testbar-track{display:inline-flex;white-space:nowrap;animation:tbmarq 76s linear infinite;will-change:transform}
   .testbar-track:hover{animation-play-state:paused}
   .testbar-track span{padding:0 1.6rem}
   @keyframes tbmarq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
@@ -72,6 +72,10 @@
     .ts-seg{flex:1 1 50%;border-bottom:1px solid var(--line)}
     .ts-seg:nth-child(2n){border-right:none}
     .ts-seg:nth-child(n+3){border-bottom:none}
+  }
+  @media (max-width:380px){ /* juda tor ekran: AQI siqilib toshib chiqmasin */
+    .ts-seg{font-size:12px;gap:4px;padding:8px 2px}
+    .ts-aqi{font-size:10px;padding:1px 4px;margin-left:0}
   }
   html,body{overscroll-behavior-y:contain} /* brauzerning o'z pull-refresh'ini o'chiramiz — o'zimizniki ishlaydi */
   #ptr{position:fixed;top:0;left:0;right:0;height:0;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;pointer-events:none;z-index:80}
@@ -608,7 +612,7 @@ if(window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches){ 
 function buildNav(){ $("sidemenu").innerHTML=NAVID.map((id,i)=>`<div class="side-item ${id===activeTab?'on':''}" data-t="${id}"><span class="si">${navIcon(id)}</span><span class="sl">${t("n_"+id)}</span></div>`).join("");
   document.querySelectorAll(".side-item").forEach(x=>x.onclick=()=>openTab(x.dataset.t)); }
 function closeSide(){ $("side").classList.remove("open"); $("sideBackdrop").classList.remove("open"); }
-function openTab(id){ activeTab=id; document.querySelectorAll(".side-item").forEach(x=>x.classList.toggle("on",x.dataset.t===id)); document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+id)); loadTab(id); closeSide(); window.scrollTo({top:0,behavior:"smooth"}); }
+function openTab(id){ activeTab=id; document.querySelectorAll(".side-item").forEach(x=>x.classList.toggle("on",x.dataset.t===id)); document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+id)); loadTab(id); if(id==="bosh") deferTraffic(); closeSide(); window.scrollTo({top:0,behavior:"smooth"}); }
 function loadTab(id){ if(loaded[id]) return; loaded[id]=true;
   if(id==="bosh"){ loadCurrency(); renderNear(); loadToday(); renderQuickNums(); renderMeyorMini(); renderTarifMini(); deferTraffic(); }
   else if(id==="namoz") loadPrayer();
@@ -623,7 +627,7 @@ function loadTab(id){ if(loaded[id]) return; loaded[id]=true;
   else if(id==="yordam") renderFaq(); }
 function renderFaq(){ if(!$("faqBox")) return; $("faqBox").innerHTML=FAQ_DATA.map(f=>`<details class="faq"><summary>${f.q[lang]||f.q.uz}</summary><div class="fa">${f.a[lang]||f.a.uz}</div></details>`).join(""); }
 function boshClock(){ const el=$("boshTime"); if(el) el.textContent=new Intl.DateTimeFormat(locale(),{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZone:"Asia/Tashkent",hour12:false}).format(new Date()); }
-function loadBoshWx(){ boshClock(); (async()=>{ try{ const d=await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${CITY.lat}&longitude=${CITY.lon}&current=temperature_2m,weather_code&timezone=Asia%2FTashkent`)).json(); const c=d.current; const em=(WX[c.weather_code]||["🌡"])[0]; $("boshWx").innerHTML=`<span style="font-size:30px">${em}</span> <b style="font-size:22px;color:var(--txt)">${Math.round(c.temperature_2m)}°</b><br><span>${wxDesc(c.weather_code)} · ${CITY.name}</span>`; }catch(e){} })(); }
+// loadBoshWx / loadWeather olib tashlandi — bosh sahifadagi soat va 9-kunlik ob-havo kartasi endi yo'q (2026-07-24)
 const APPLE_SVG='<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M16.4 12.6c0-2 1.6-3 1.7-3-1-1.4-2.4-1.6-2.9-1.6-1.2-.1-2.4.7-3 .7-.6 0-1.6-.7-2.6-.7-1.3 0-2.6.8-3.2 2-1.4 2.4-.4 6 1 8 .6 1 1.4 2 2.4 2 .9 0 1.3-.6 2.4-.6s1.4.6 2.4.6 1.7-.9 2.3-1.9c.7-1 1-2 1-2-.1 0-2-.8-2-3zM14.5 6.3c.5-.6.9-1.5.8-2.3-.8 0-1.7.5-2.2 1.1-.5.5-.9 1.4-.8 2.2.9.1 1.8-.4 2.2-1z"/></svg>';
 const PLAY_SVG='<svg viewBox="0 0 24 24"><path d="M3.6 2.3C3.4 2.5 3.3 2.8 3.3 3.2v17.6c0 .4.1.7.3.9l9.5-9.4L3.6 2.3z" fill="#00d0ff"/><path d="M16.9 8.6 3.9 1.2c-.1-.1-.3-.1-.3 0l9.5 9.5 3.8-2.1z" fill="#00e676"/><path d="M20.4 11.1 16.9 9l-3.9 3.3 3.9 3.3 3.5-2.1c.6-.4.6-1.6 0-2.4z" fill="#ffce00"/><path d="M3.6 21.7c.1.1.2.1.3 0l13-7.4-3.5-3-9.8 10.4z" fill="#ff3b30"/></svg>';
 const GOLD_SVG='<svg viewBox="0 0 24 24" width="20" height="20"><defs><linearGradient id="ggr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f9df85"/><stop offset="1" stop-color="#c99518"/></linearGradient></defs><g fill="url(#ggr)" stroke="#a87c12" stroke-width=".6" stroke-linejoin="round"><path d="M8.7 9.5l.9-3h4.8l.9 3z"/><path d="M3.6 17l1.2-4h6.2l1.2 4z"/><path d="M11.6 17l1.2-4h6.2l1.2 4z"/></g></svg>';
@@ -696,10 +700,11 @@ function renderTraffic(){ const box=$("traffic"); if(!box) return;
       const tc=new ymaps.control.TrafficControl({state:{providerKey:"traffic#actual",trafficShown:true}}); trafficMap.controls.add(tc);
       trafficProv=tc.getProvider("traffic#actual"); trafficProv.state.events.add("change",showTraffic);
     } else { trafficMap.setCenter([CITY.lat,CITY.lon],11); }
-    clearTimeout(trafficTimer); trafficTimer=setTimeout(showTraffic,2600);
+    clearTimeout(trafficTimer); trafficTimer=setTimeout(showTraffic,2600); trafficLoaded=true;
   }catch(e){ fail(); } }).catch(fail); }
 // Trafikni birinchi ochilishda bloklamaymiz — sahifa bo'shashgach fon'da yuklaymiz (foydalanuvchi hali bosh sahifada bo'lsa)
-function deferTraffic(){ (window.requestIdleCallback||(f=>setTimeout(f,2500)))(()=>{ if(activeTab==="bosh") renderTraffic(); },{timeout:4000}); }
+let trafficLoaded=false;
+function deferTraffic(){ if(trafficLoaded) return; (window.requestIdleCallback||(f=>setTimeout(f,2500)))(()=>{ if(activeTab==="bosh"&&!trafficLoaded) renderTraffic(); },{timeout:4000}); }
 const WATER_TARIF={"Toshkent shahri":2760,"Toshkent viloyati":4485,"Sirdaryo":6555,"Jizzax":6555,"Samarqand":5405,"Buxoro":8970,"Navoiy":6095,"Qashqadaryo":7475,"Surxondaryo":9430,"Xorazm":7302,"Andijon":3795,"Namangan":7590,"Farg'ona":4287,"Qoraqalpog'iston":7101};
 function getRegionName(){ const rs=$("regionSel"); const ri=rs&&rs.value!==""?+rs.value:0; return (REGIONS[ri]||REGIONS[0]).name; }
 function renderTarif(){ const L=lang, som=t("som"); const r=(l,v)=>`<div class="trow"><span class="tl">${l}</span><span class="tv">${v}</span></div>`; const T2=s=>s[L]||s.uz;
@@ -777,30 +782,25 @@ function loadToday(){ const now=new Date();
   const dline=lang==="ru"?`${doy}${t("dayof2")}`:lang==="en"?`${t("dayof")} ${doy} ${t("dayof2")}`:`${t("dayof")} ${doy}${t("dayof2")}`;
   $("today").innerHTML=`<div class="big" style="text-transform:capitalize">${wd}</div><div class="sub" style="margin:2px 0 12px">${dline} · ${season}</div><div class="fact">💡 <b>${t("funfact")}:</b> ${fact}</div>`; }
 
-async function loadWeather(){ $("wxCity").textContent=CITY.name; const box=$("wx"); box.innerHTML=`<div class="loading pulse">${t("loading")}</div>`;
-  try{ const u=`https://api.open-meteo.com/v1/forecast?latitude=${CITY.lat}&longitude=${CITY.lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&forecast_days=10&timezone=Asia%2FTashkent`;
-    const d=await (await fetch(u)).json(); const c=d.current; const em=(WX[c.weather_code]||["🌡"])[0]; let aqiV=null,aqiHtml="";
-    try{ aqiV=(await (await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${CITY.lat}&longitude=${CITY.lon}&current=european_aqi&timezone=Asia%2FTashkent`)).json()).current.european_aqi;
-      const [lb,co]=aqiInfo(aqiV); aqiHtml=`<div class="aqi" style="background:${co}18;color:${co};border:1px solid ${co}55"><span class="aqi-dot" style="background:${co}"></span>${t("airq")}: <b>${aqiV}</b> · ${lb}</div>`; }catch(_){}
-    let fc='<div class="fc">'; for(let i=0;i<Math.min(9,d.daily.time.length);i++){ const dd=new Date(d.daily.time[i]); const e2=(WX[d.daily.weather_code[i]]||["🌡"])[0]; const dn=i===0?t("today"):dayShort(dd);
-      fc+=`<div class="fc-day"><div class="d">${dn}</div><div class="e">${e2}</div><div class="t">${Math.round(d.daily.temperature_2m_max[i])}°/${Math.round(d.daily.temperature_2m_min[i])}°</div></div>`; } fc+='</div>';
-    const [ti,tt]=dailyTip(Math.round(c.temperature_2m),c.weather_code,aqiV);
-    box.innerHTML=`<div class="wx-top"><div class="wx-emoji">${em}</div><div><div class="wx-temp">${Math.round(c.temperature_2m)}°</div><div class="wx-desc">${wxDesc(c.weather_code)} • ${t("feels")} ${Math.round(c.apparent_temperature)}°</div></div></div>
-      <div class="wx-meta"><div>${t("humidity")}<b>${c.relative_humidity_2m}%</b></div><div>${t("wind")}<b>${Math.round(c.wind_speed_10m)} km/s</b></div><div>🌅 ${t("sunrise")}<b>${d.daily.sunrise[0].slice(11)}</b></div><div>🌇 ${t("sunset")}<b>${d.daily.sunset[0].slice(11)}</b></div></div>${aqiHtml}${fc}<div class="tip"><span class="i">${ti}</span><span>${tt}</span></div>`;
-  }catch(e){ box.innerHTML=`<div class="err">${t("loaderr")}</div>`; } }
 
-async function loadCurrency(){ const box=$("cur"); if(box) box.innerHTML=`<div class="loading pulse">${t("loading")}</div>`;
+let curReq=0;
+async function loadCurrency(){ const my=++curReq; const box=$("cur"); if(box) box.innerHTML=`<div class="loading pulse">${t("loading")}</div>`;
   // Render bepul tarifda server uxlab qolishi mumkin -> timeout + qayta urinish (birinchisi tez, keyingilari uyg'onishni kutadi)
+  // my/curReq: til/shahar almashuv yoki pull-refresh yangi chaqiruv boshlasa, eski (sekin) chaqiruv ekranni bosib qolmasin
   for(let a=1;a<=3;a++){
+    if(my!==curReq) return; // eskirgan chaqiruv
     try{
       const c=new AbortController(), tm=setTimeout(()=>c.abort(), a===1?8000:22000);
       let r; try{ r=await fetch("/api/currency",{signal:c.signal}); } finally{ clearTimeout(tm); }
       if(!r.ok) throw new Error("HTTP "+r.status);
       const d=await r.json(); if(!d||!Array.isArray(d.official)||!d.official.length) throw new Error("bo'sh javob");
+      if(my!==curReq) return; // javob keldi, lekin oradan yangi chaqiruv o'tib ketgan
       curData=d;
       try{ goldUsd=(await (await fetch("https://api.gold-api.com/price/XAU")).json()).price; }catch(_){}
+      if(my!==curReq) return;
       renderCurrency(); updateTodayStrip(); return;
     }catch(e){
+      if(my!==curReq) return;
       if(a<3){ if(box) box.innerHTML=`<div class="loading pulse">${t("loading")} (${a}/3)…</div>`; await new Promise(r=>setTimeout(r,1500)); }
       else if(box){ const rt=({uz:"Qayta urinish",ru:"Повторить",en:"Retry",zh:"重试"})[lang]||"Qayta"; box.innerHTML=`<div class="err">${t("loaderr")} <button onclick="loadCurrency()" style="margin-left:8px;padding:4px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card2);color:var(--accent);font-weight:700;cursor:pointer">↻ ${rt}</button></div>`; }
     }
@@ -1002,7 +1002,7 @@ function pullRefresh(){ loaded={}; loadTab(activeTab); stripWeather(); stripPray
 (function(){ let sy=0,pulling=false,dist=0; const TH=70,MAX=110; const P=()=>$("ptr"); const setH=h=>{ const el=P(); if(el) el.style.height=h+"px"; };
   addEventListener("touchstart",e=>{ pulling=false;
     if(window.scrollY>0||e.touches.length!==1) return;
-    if(e.target.closest&&e.target.closest("#placeMap,#trafficMap,.fuel-list,#aiMsgs")) return; // xarita/ro'yxat/chat ichida — o'z scroll'i ishlasin
+    if(e.target.closest&&e.target.closest("#placeMap,#trafficMap,.fuel-list,#aiMsgs,#news,.hero-sugg,.side,.cal-grid")) return; // xarita/ro'yxat/chat/menyu ichida — o'z scroll'i ishlasin
     sy=e.touches[0].clientY; pulling=true; dist=0; const el=P(); if(el){ el.classList.remove("spin"); el.style.transition="none"; } },{passive:true});
   addEventListener("touchmove",e=>{ if(!pulling) return; const dy=e.touches[0].clientY-sy;
     if(dy<=0||window.scrollY>0){ dist=0; setH(0); if(window.scrollY>0) pulling=false; return; }
