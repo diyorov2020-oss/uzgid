@@ -62,6 +62,12 @@
   .ts-seg:last-child{border-right:none} .ts-seg:hover{background:var(--card2)}
   .ts-seg b{font-weight:800;font-variant-numeric:tabular-nums} .ts-ic{font-size:15px;line-height:1}
   .ts-aqi{margin-left:2px;font-size:11px;font-weight:800;font-variant-numeric:tabular-nums;padding:1px 6px;border-radius:20px;border:1px solid transparent;line-height:1.5}
+  @media (max-width:600px){ /* mobil: strip 2x2 (gorizontal suzish bo'lmasin) */
+    .todaystrip .wrap{flex-wrap:wrap}
+    .ts-seg{flex:1 1 50%;border-bottom:1px solid var(--line)}
+    .ts-seg:nth-child(2n){border-right:none}
+    .ts-seg:nth-child(n+3){border-bottom:none}
+  }
   header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 0}
   .brand{display:flex;align-items:center;gap:12px}
   .logo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:16px;font-weight:900;background:linear-gradient(140deg,var(--accent),#0ea5e9);color:#fff;letter-spacing:.5px}
