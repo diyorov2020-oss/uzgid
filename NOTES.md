@@ -101,8 +101,11 @@ UZGID (uzgid.uz) — O'zbekiston axborot portali. Bitta SPA: `public/index.html`
 - **Statik kesh (server.js `serveStatic`):** `Cache-Control` qo'shildi — rasm/logo/ico/svg **7 kun** (604800), js/css 1 kun, html `no-cache`. Takroriy kirishda 28 logo+ikonka brauzer keshidan (qayta yuklanmaydi).
 - **Bosh sahifa soddalashtirildi (foydalanuvchi so'rovi):** tepa qatorga (`todaystrip`) **AQI** qo'shildi (`#tsAqi`, `aqiInfo` rangi bilan; `stripWeather` endi air-quality API'ni ham oladi, `stripAqi`). Pastdagi **soat** (`#boshTime`) va **9-kunlik ob-havo kartasi** (`#wx`) olib tashlandi — sana (`#boshDate`) qoldi, ob-havo kartasi o'rnida **💡 Bugun + 💰 Me'yor + 🔌 Tarif** qoldi. `loadTab("bosh")`dan `loadWeather()`/`boshClock()` olindi.
   - ⚠️ **O'lik kod:** `loadWeather()` va `loadBoshWx()` endi chaqirilmaydi (`#wx`/`#wxCity`/`#boshWx` yo'q). Keyin tozalasa bo'ladi (hozir zararsiz).
-- **Deploy oson qilindi:** `.env` (RENDER_DEPLOY_HOOK, gitignore'da) + `deploy.command` (git push + hook, ikki marta bosib). **Hook URL:** `srv-d977bt9o3t8c73a520kg`.
-- Deploy qilindi (main push + Render hook `dep-...`) — jonli saytda tasdiqlandi.
+- **AQI yozuvi:** strip'da faqat raqam edi → `aq.textContent="AQI "+stripAqi` (odamlar tushunsin, foydalanuvchi so'rovi).
+- **Strip mobilda 2×2:** `@media (max-width:600px)` — `.todaystrip .wrap{flex-wrap:wrap}` + `.ts-seg{flex:1 1 50%}` + nth-child border tuzatish. Gorizontal suzish yo'q (4 segment 400px ekranda sig'masdi).
+- **Pull-to-refresh (mobil):** `#ptr` indikator + `pullRefresh()` (= `loaded={}; loadTab(activeTab); stripWeather(); stripPrayer()`) + touch handlerlar (touchstart/move/end IIFE). Faqat `window.scrollY===0` va pastga tortishda; `#placeMap/#trafficMap/.fuel-list/#aiMsgs` ichida ishlamaydi (o'z scroll'i); `html,body{overscroll-behavior-y:contain}` — brauzer o'z pull-refresh'ini o'chiradi. Boshqarish: `TH=70` (yangilash bo'sag'asi), `MAX=110`, `dy*0.5` qarshilik.
+- **Deploy oson qilindi:** `.env` (RENDER_DEPLOY_HOOK, gitignore'da) + `deploy.command` (git push + hook, ikki marta bosib). **Hook URL:** `srv-d977bt9o3t8c73a520kg` (`.env`da to'liq). Poll: `curl -s https://uzgid.uz/ | grep <marker>` bilan jonli tasdiqlanadi (Render ~1 daq).
+- Deploy qilindi (4 marta, main push + Render hook) — hammasi jonli saytda tasdiqlandi.
 
 ## Fable 5 review — keyingi ish (prioritet)
 1. Tipografiya: 25 xil o'lcham → 7 pog'onali shkala (`--fs-*`).
