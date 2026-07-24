@@ -106,6 +106,12 @@
   .navi{flex:0 0 auto;display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;padding:9px 16px;border-radius:10px;background:var(--card);border:1px solid var(--line);color:var(--muted);cursor:pointer;white-space:nowrap}
   .navi:hover{border-color:var(--accent)} .navi.on{background:var(--accent);color:#fff;border-color:transparent}
   .panel{display:none} .panel.on{display:block;animation:fade .25s ease}
+  /* ==== Orqaga tugmasi (subpanellar tepasida) ==== */
+  .backbar{display:none;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:9px 14px;margin-bottom:14px;box-shadow:var(--shadow);cursor:pointer;font:inherit;font-size:14px;font-weight:700;color:var(--txt);-webkit-tap-highlight-color:transparent}
+  .backbar:hover{border-color:var(--accent)}
+  .backbar .bk-ar{font-size:18px;line-height:1;color:var(--accent);font-weight:900}
+  .backbar .bk-sec{color:var(--muted);font-weight:600}
+  .backbar.on{display:inline-flex}
   @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;grid-auto-flow:row dense}
   .full{grid-column:1/-1} .w2{grid-column:span 2}
@@ -381,6 +387,7 @@
   <a class="ts-seg" onclick="openTab('namoz')" title="Keyingi namoz"><span class="ts-ic">🕌</span><b id="tsPray">—</b></a>
 </div></div>
 <div class="wrap">
+  <button class="backbar" id="backBar" onclick="goBack()" aria-label="Orqaga"><span class="bk-ar">←</span><span id="backLbl">Orqaga</span><span class="bk-sec" id="backSec"></span></button>
   <section class="panel on" id="p-bosh">
     <div class="hero">
       <div class="hero-ctl">
@@ -593,14 +600,14 @@ const GOV=[["🏛","My Gov UZ","https://my.gov.uz",{uz:"Davlat xizmatlari",ru:"�
 
 const $=id=>document.getElementById(id);
 let CITY={name:"Toshkent",lat:41.311,lon:69.279};
-let prayerTimings=null,curData=null,curTab="USD",calcState={amt:1,cur:"USD"},loaded={},activeTab="bosh",goldUsd=null,curExpand=false,calOffset=0;
+let prayerTimings=null,curData=null,curTab="USD",calcState={amt:1,cur:"USD"},loaded={},activeTab="bosh",goldUsd=null,curExpand=false,calOffset=0,navDepth=0;
 
 // THEME
 function applyTheme(x){ if(x==="dark") document.documentElement.setAttribute("data-theme","dark"); else document.documentElement.removeAttribute("data-theme"); $("themeBtn").textContent=(x==="dark")?"☀️":"🌙"; }
 applyTheme(localStorage.getItem("uzgid_theme")||"light");
 $("themeBtn").onclick=()=>{ const c=document.documentElement.getAttribute("data-theme")==="dark"?"dark":"light"; const n=c==="dark"?"light":"dark"; localStorage.setItem("uzgid_theme",n); applyTheme(n); };
 // LANG
-document.querySelectorAll(".langseg span").forEach(s=>s.onclick=()=>{ lang=s.dataset.l; localStorage.setItem("uzgid_lang",lang); applyStatic(); buildNav(); loaded={}; loadTab(activeTab); });
+document.querySelectorAll(".langseg span").forEach(s=>s.onclick=()=>{ lang=s.dataset.l; localStorage.setItem("uzgid_lang",lang); applyStatic(); buildNav(); updateBackBar(activeTab); loaded={}; loadTab(activeTab); });
 // ==== PWA o'rnatish ====
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{})); }
 let deferredPrompt=null;
@@ -612,7 +619,16 @@ if(window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches){ 
 function buildNav(){ $("sidemenu").innerHTML=NAVID.map((id,i)=>`<div class="side-item ${id===activeTab?'on':''}" data-t="${id}"><span class="si">${navIcon(id)}</span><span class="sl">${t("n_"+id)}</span></div>`).join("");
   document.querySelectorAll(".side-item").forEach(x=>x.onclick=()=>openTab(x.dataset.t)); }
 function closeSide(){ $("side").classList.remove("open"); $("sideBackdrop").classList.remove("open"); }
-function openTab(id){ activeTab=id; document.querySelectorAll(".side-item").forEach(x=>x.classList.toggle("on",x.dataset.t===id)); document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+id)); loadTab(id); if(id==="bosh") deferTraffic(); closeSide(); window.scrollTo({top:0,behavior:"smooth"}); }
+function openTab(id,opts){ opts=opts||{}; const prev=activeTab; activeTab=id; document.querySelectorAll(".side-item").forEach(x=>x.classList.toggle("on",x.dataset.t===id)); document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+id)); loadTab(id); if(id==="bosh") deferTraffic(); closeSide(); updateBackBar(id); window.scrollTo({top:0,behavior:"smooth"});
+  if(!opts.pop && prev!==id){ history.pushState({tab:id},"","#"+id); navDepth++; } }
+// ==== Orqaga tugmasi (subpanel tepasida) — 4 tilda ====
+const BACK_LBL={uz:"Orqaga",ru:"Назад",en:"Back",zh:"返回"};
+function updateBackBar(id){ const bb=$("backBar"); if(!bb) return;
+  if(!id||id==="bosh"){ bb.classList.remove("on"); return; }
+  bb.classList.add("on");
+  const l=$("backLbl"); if(l) l.textContent=BACK_LBL[lang]||BACK_LBL.uz;
+  const s=$("backSec"); if(s) s.textContent="· "+t("n_"+id); }
+function goBack(){ if(navDepth>0) history.back(); else openTab("bosh"); }
 function loadTab(id){ if(loaded[id]) return; loaded[id]=true;
   if(id==="bosh"){ loadCurrency(); renderNear(); loadToday(); renderQuickNums(); renderMeyorMini(); renderTarifMini(); deferTraffic(); }
   else if(id==="namoz") loadPrayer();
@@ -1014,6 +1030,14 @@ function pullRefresh(){ loaded={}; loadTab(activeTab); stripWeather(); stripPray
     else { if(el) el.style.transition="height .2s"; setH(0); } dist=0; },{passive:true});
 })();
 applyStatic(); buildSelectors(); buildNav(); loadTab("bosh"); initStrip(); stackSticky(); setTimeout(stackSticky,300);
+// ==== Brauzer/telefon «orqaga» tugmasi tarixi ====
+(function(){
+  const h=(location.hash||"").replace(/^#/,"");
+  const start=NAVID.includes(h)?h:"bosh";
+  history.replaceState({tab:start},"","#"+start);
+  if(start!=="bosh") openTab(start,{pop:true}); else updateBackBar("bosh");
+  window.addEventListener("popstate",e=>{ if(navDepth>0) navDepth--; const id=(e.state&&e.state.tab)||"bosh"; openTab(id,{pop:true}); });
+})();
 $("updated").textContent=t("updated")+": "+new Date().toLocaleTimeString(locale(),{timeZone:"Asia/Tashkent"});
 setInterval(()=>{ if(activeTab==="namoz") updateNextPrayer(); updateTodayStrip(); }, 1000);
 </script>
